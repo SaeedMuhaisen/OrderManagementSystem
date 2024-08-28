@@ -22,27 +22,27 @@ public class User implements UserDetails {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     private UUID id;
-    @Column(unique = true)
-    private String oauthId;
 
     private String firstname;
     private String lastname;
     private String email;
+
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, fetch = FetchType.EAGER)
     private List<Token> tokens=new ArrayList<>();
     private String password;
 
     @Enumerated(EnumType.STRING)
     private UserStatus userStatus;
-    @ElementCollection(fetch = FetchType.EAGER)
+
     @Enumerated(EnumType.STRING)
-    @CollectionTable(name = "user_roles", joinColumns = @JoinColumn(name = "user_id"))
-    @Column(name = "role")
-    private Set<Role> roles = new HashSet<>();
+    private Role role;
+
+    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, fetch = FetchType.EAGER)
+    private Set<Product> products=new HashSet<>();
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
-        return roles;
+        return role.getAuthorities();
     }
 
     @Override

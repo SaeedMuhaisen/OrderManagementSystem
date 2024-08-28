@@ -1,5 +1,6 @@
 package com.OrderManagementSystem.Configuration;
 
+import com.OrderManagementSystem.Entities.Role;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -16,17 +17,22 @@ import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 
 import java.util.Arrays;
 
+import static com.OrderManagementSystem.Entities.Role.ADMIN;
+
 @Configuration
 @EnableWebSecurity
 @RequiredArgsConstructor
 @EnableMethodSecurity
+
 public class MySecurityConfig {
     private final AuthenticationProvider authenticationProvider;
     private final JwtAuthenticationFilter jwtAuthFilter;
     @Bean
     public CorsConfigurationSource corsConfigurationSource() {
         CorsConfiguration configuration = new CorsConfiguration();
-        configuration.addAllowedOrigin("http://localhost:6922"); // Add your frontend's origin
+        //configuration.addAllowedOrigin("http://localhost:8081"); // Add your frontend's origin        configuration.addAllowedOrigin("http://localhost:8081"); // Add your frontend's origin
+        configuration.addAllowedOriginPattern("**"); // Add your frontend's origin
+
         configuration.addAllowedMethod("*"); // Allow all HTTP methods
         configuration.addAllowedHeader("*"); // Allow all headers
         configuration.setAllowCredentials(true);
@@ -42,22 +48,21 @@ public class MySecurityConfig {
                 .and()
                 .csrf()
                 .disable()
-                .authorizeRequests()
-                .requestMatchers("/api/admin/**").hasRole("ADMIN")
-                .requestMatchers("/api/seller/**").hasAnyRole("SELLER", "ADMIN")
-                .requestMatchers("/api/buyer/**").hasAnyRole("BUYER", "ADMIN")
-                .requestMatchers("/api/public/**").permitAll()
-                .requestMatchers(
-                        "/api/public/**",
-                        "/api/register/**",
-                        "/api/register",
-                        "api/preview",
-                        "api/preview/**"
+                .authorizeHttpRequests((requests) -> requests
+                        .requestMatchers(
+                                "/api/public/**",
+                                "/api/register/**",
+                                "/api/register",
+                                "api/preview",
+                                "api/preview/**"
+                        )
+                        .permitAll()
+                        .requestMatchers("/api/public/**").permitAll()
+                        .requestMatchers("/api/admin/**").hasRole(ADMIN.name())
+                        .requestMatchers("/api/seller/**").hasAnyRole(Role.SELLER.name(), Role.ADMIN.name())
+                        .requestMatchers("/api/buyer/**").hasAnyRole(Role.BUYER.name(), ADMIN.name())
+                        .anyRequest().authenticated()
                 )
-                .permitAll()
-                .anyRequest()
-                .authenticated()
-                .and()
                 .sessionManagement()
                 .sessionCreationPolicy(SessionCreationPolicy.STATELESS)
                 .and()

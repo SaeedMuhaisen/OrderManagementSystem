@@ -6,6 +6,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.http.converter.HttpMessageNotReadableException;
+import org.springframework.security.access.AccessDeniedException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseStatus;
@@ -27,6 +28,18 @@ public class MyExceptionHandler extends DefaultHandlerExceptionResolver {
     public ResponseEntity<?> handle(RuntimeException e,HttpServletRequest request) {
         logger.error("CRITICAL ERROR OCCURRED - RUNTIME EXCEPTION CAUGHT: {} - ENDPOINT: {}",e.getCause(),request.getRequestURI());
         return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
+    }
+
+    @ExceptionHandler(Exception.class)
+    public ResponseEntity<String> handleException(Exception e) {
+        logger.error("Unhandled exception occurred", e);
+        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("An unexpected error occurred");
+    }
+
+    @ExceptionHandler(AccessDeniedException.class)
+    public ResponseEntity<String> handleAccessDeniedException(AccessDeniedException e) {
+        logger.error("Access denied", e);
+        return ResponseEntity.status(HttpStatus.FORBIDDEN).body("Access denied");
     }
 }
 

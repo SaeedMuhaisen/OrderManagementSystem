@@ -2,6 +2,7 @@ package com.OrderManagementSystem.CSR.Services;
 
 import com.OrderManagementSystem.CSR.Repositories.TokenRepository;
 import com.OrderManagementSystem.CSR.Repositories.UserRepository;
+import com.OrderManagementSystem.Entities.Role;
 import com.OrderManagementSystem.Entities.Token;
 import com.OrderManagementSystem.Entities.User;
 import com.OrderManagementSystem.Entities.enums.TokenType;
@@ -28,6 +29,7 @@ import org.springframework.stereotype.Component;
 
 import java.time.LocalDate;
 import java.util.Collections;
+import java.util.HashSet;
 
 
 @RequiredArgsConstructor
@@ -77,6 +79,7 @@ public class AuthenticationServices {
                 .accessToken(jwtToken)
                 .refreshToken(refreshToken)
                 .userId(user.getId())
+                .role(user.getRole().name())
                 .build();
     }
 
@@ -95,14 +98,17 @@ public class AuthenticationServices {
                 throw new UserAlreadyExistsException("Email address is already in use: " + userExists.get().getEmail());
             }
         }
-
+        var set=new HashSet<Role>();
+        set.add(Role.SELLER);
         var user = User.builder()
                 .firstname(registerRequest.getFirstname())
                 .lastname(registerRequest.getLastname())
                 .email(registerRequest.getEmail())
                 .password(passwordEncoder.encode(registerRequest.getPassword()))
                 .userStatus(UserStatus.ACTIVE)
+                .role(Role.SELLER)
                 .build();
+
         var savedUser = userRepository.save(user);
         var jwtToken = jwtService.generateToken(user);
         var refreshToken = jwtService.generateRefreshToken(user);
@@ -111,6 +117,7 @@ public class AuthenticationServices {
         return AuthenticationResponse.builder()
                 .accessToken(jwtToken)
                 .refreshToken(refreshToken)
+                .role(user.getRole().name())
                 .build();
     }
     private void saveUserToken(User user, String jwtToken) {
