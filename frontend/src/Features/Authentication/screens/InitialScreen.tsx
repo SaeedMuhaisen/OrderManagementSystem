@@ -2,9 +2,10 @@ import React, { useState } from 'react';
 import { CustomFetchResult, setUser } from '../../../redux';
 import { useDispatch } from 'react-redux';
 import { useNavigate, } from 'react-router-dom';
+import { host } from '../../Common/connectionConfig';
 
 //import { Alert, AlertDescription } from '@/components/ui/alert';
-const localhost = 'http://localhost:8080';
+
 async function originalRequest(endpoint, config) {
     try {
         let customResponse: CustomFetchResult = {
@@ -12,7 +13,7 @@ async function originalRequest(endpoint, config) {
             statusText: '',
             data: undefined,
         }
-        let response = await fetch(localhost + endpoint, config);
+        let response = await fetch(host + endpoint, config);
         customResponse.status = response.status;
         customResponse.statusText = response.statusText;
         const text = await response.text();
@@ -77,7 +78,8 @@ export const InitialScreen = () => {
                     lastname: 'test',
                     email: email,
                     access_token: customResponse.data.access_token,
-                    refresh_token: customResponse.data.refresh_token
+                    refresh_token: customResponse.data.refresh_token,
+                    role: customResponse.data.role
                 }))
                 navigate('/home');
             } else {
@@ -110,7 +112,8 @@ export const InitialScreen = () => {
                     lastname: 'test',
                     email: email,
                     access_token: customResponse.data.access_token,
-                    refresh_token: customResponse.data.refresh_token
+                    refresh_token: customResponse.data.refresh_token,
+                    role: customResponse.data.role
                 }))
             } else {
                 console.log('somethign went wrong: ', customResponse.data, customResponse.status, customResponse.statusText);

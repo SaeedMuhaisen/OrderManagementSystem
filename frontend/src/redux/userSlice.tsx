@@ -1,5 +1,6 @@
 import { createAsyncThunk, createSlice, PayloadAction } from '@reduxjs/toolkit';
-const localhost = 'http://192.168.8.181:8080';
+import { host } from '../Features/Common/connectionConfig';
+
 
 export interface UserState {
     userId: number | null,
@@ -9,6 +10,7 @@ export interface UserState {
     email: string,
     access_token: string,
     refresh_token: string,
+    role: 'ADMIN' | 'BUYER' | 'SELLER' | ''
 }
 
 export const refreshTokens = createAsyncThunk(
@@ -48,7 +50,7 @@ export const originalRequest = async (endpoint: any, config: any) => {
             data: undefined,
         }
         //console.log(`🟣UserSlice - originalRequest starting - endpoint: ${endpoint}, configs: ${JSON.stringify(config, null, 2)}`);
-        let response = await fetch(localhost + endpoint, config);
+        let response = await fetch(host + endpoint, config);
         customResponse.status = response.status;
         customResponse.statusText = response.statusText;
         const text = await response.text();
@@ -163,7 +165,7 @@ export const userSlice = createSlice({
         email: "",
         access_token: "",
         refresh_token: "",
-        role: "admin"
+        role: ''
     },
     reducers: {
         updateUserTokens: (state, action) => {
@@ -187,6 +189,7 @@ export const userSlice = createSlice({
             state.firstname = action.payload.firstname;
             state.lastname = action.payload.lastname;
             state.email = action.payload.email;
+            state.role = action.payload.role
         },
         updateTokenAndAccessToken: (state, action) => {
             state.refresh_token = action.payload.refresh_token;

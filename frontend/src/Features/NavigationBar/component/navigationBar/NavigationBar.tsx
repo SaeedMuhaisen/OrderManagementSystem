@@ -1,15 +1,15 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { useSelector } from "react-redux";
 import "./sidebar.css"; // Import your CSS file
 import { SideBarButton } from "../buttons/SideBarButton";
+import { UserState } from "../../../../redux";
 
 export const NavigationBar = () => {
-    //const userRole = useSelector((state: any) => state.user.role);
-    let userRole = 'admin'
-
-    if (userRole === 'admin') {
+    const user: UserState = useSelector((state: any) => state.user);
+    useEffect(() => { console.log(user.role) }, [])
+    if (user.role === 'ADMIN') {
         return <AdminSidebar />;
-    } else if (userRole === 'seller') {
+    } else if (user.role === 'SELLER') {
         return <SellerSideBar />;
     }
     else {
@@ -44,10 +44,10 @@ const SellerSideBar = () => {
         <div className="container">
             <nav className="sidebar">
                 <div className="menu">
-                    <SideBarButton setActive={setActive} active={active} title={"Home"} />
-                    <SideBarButton setActive={setActive} active={active} title={"Products"} />
-                    <SideBarButton setActive={setActive} active={active} title={"Orders"} />
-                    <SideBarButton setActive={setActive} active={active} title={"Customers"} />
+                    <SideBarButton setActive={setActive} active={active} title={"Home"} navigateTo="/seller/home" />
+                    <SideBarButton setActive={setActive} active={active} title={"Products"} navigateTo="/seller/products" />
+                    <SideBarButton setActive={setActive} active={active} title={"Orders"} navigateTo="/seller/orders" />
+                    <SideBarButton setActive={setActive} active={active} title={"Customers"} navigateTo="/seller/customers" />
                 </div>
                 <div className="user-menu">
                     <SideBarButton setActive={setActive} active={active} title={"User"} />

@@ -13,7 +13,11 @@ const persistConfig = {
   storage,
 };
 
-const persistedReducer = persistReducer(persistConfig, rootReducer);
+const resettableRootReducer = (state, action) => {
+  if (action.type === 'store/reset') { return rootReducer(undefined, action); }
+  return rootReducer(state, action);
+};
+const persistedReducer = persistReducer(persistConfig, resettableRootReducer);
 
 const store = configureStore({
   reducer: persistedReducer,
