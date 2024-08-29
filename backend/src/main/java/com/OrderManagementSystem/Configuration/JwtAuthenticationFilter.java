@@ -49,7 +49,21 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
       filterChain.doFilter(request, response);
       return;
     }
-    final String authHeader = request.getHeader("Authorization");
+    if (request.getServletPath().contains("socket") || request.getServletPath().contains("notify")) {
+      logger.info("Skipping authentication for websocket");
+      filterChain.doFilter(request, response);
+      return;
+    }
+    String authHeader="";
+    if(request.getServletPath().contains("chat")){
+      authHeader="Bearer "+request.getQueryString();
+
+      var temp=request.getHeaderNames();
+      logger.info(temp.toString());
+    }
+    else {
+      authHeader = request.getHeader("Authorization");
+    }
     if (authHeader == null || !authHeader.startsWith("Bearer ")) {
       logger.warn("Missing or invalid Authorization header");
       response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);

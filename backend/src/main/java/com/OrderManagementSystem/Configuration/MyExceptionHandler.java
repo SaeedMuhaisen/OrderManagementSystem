@@ -26,7 +26,7 @@ public class MyExceptionHandler extends DefaultHandlerExceptionResolver {
     @ExceptionHandler(RuntimeException.class)
     @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
     public ResponseEntity<?> handle(RuntimeException e,HttpServletRequest request) {
-        logger.error("CRITICAL ERROR OCCURRED - RUNTIME EXCEPTION CAUGHT: {} - ENDPOINT: {}",e.getCause(),request.getRequestURI());
+        logger.error("CRITICAL ERROR OCCURRED - RUNTIME EXCEPTION CAUGHT: {} - ENDPOINT: {}, class {}, stack trace{}",e.getMessage(),request.getRequestURI(),e.getClass(),e.getStackTrace());
         return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
     }
 

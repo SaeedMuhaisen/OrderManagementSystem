@@ -1,15 +1,14 @@
 package com.OrderManagementSystem.CSR.Services;
 
+
 import com.OrderManagementSystem.CSR.Repositories.ProductRepository;
 import com.OrderManagementSystem.CSR.Repositories.UserRepository;
 import com.OrderManagementSystem.Entities.Product;
 import com.OrderManagementSystem.Entities.User;
 import com.OrderManagementSystem.Models.DTO.CreateProductDTO;
 import lombok.RequiredArgsConstructor;
-import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Component;
-import org.springframework.stereotype.Service;
 
 import java.time.Instant;
 import java.util.UUID;
@@ -35,7 +34,6 @@ public class ProductServices {
                 .visible(createProductDTO.isVisible())
                 .user(user)
                 .build();
-
         productRepository.save(product);
 
     }

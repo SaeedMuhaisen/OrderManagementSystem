@@ -15,10 +15,7 @@ import com.OrderManagementSystem.Models.Authentication.AuthenticationRequest;
 import com.OrderManagementSystem.Models.Authentication.AuthenticationResponse;
 
 import com.OrderManagementSystem.Models.Authentication.RegisterRequest;
-import com.google.api.client.googleapis.auth.oauth2.GoogleIdToken;
-import com.google.api.client.googleapis.auth.oauth2.GoogleIdTokenVerifier;
-import com.google.api.client.http.javanet.NetHttpTransport;
-import com.google.api.client.json.gson.GsonFactory;
+
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;

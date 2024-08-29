@@ -23,22 +23,19 @@ import static com.OrderManagementSystem.Entities.Role.ADMIN;
 @EnableWebSecurity
 @RequiredArgsConstructor
 @EnableMethodSecurity
-
 public class MySecurityConfig {
     private final AuthenticationProvider authenticationProvider;
     private final JwtAuthenticationFilter jwtAuthFilter;
     @Bean
     public CorsConfigurationSource corsConfigurationSource() {
         CorsConfiguration configuration = new CorsConfiguration();
-        //configuration.addAllowedOrigin("http://localhost:8081"); // Add your frontend's origin        configuration.addAllowedOrigin("http://localhost:8081"); // Add your frontend's origin
-        configuration.addAllowedOriginPattern("**"); // Add your frontend's origin
-
-        configuration.addAllowedMethod("*"); // Allow all HTTP methods
-        configuration.addAllowedHeader("*"); // Allow all headers
+        configuration.addAllowedOriginPattern("*");
+        configuration.addAllowedMethod("*");
+        configuration.addAllowedHeader("*");
         configuration.setAllowCredentials(true);
 
         UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
-        source.registerCorsConfiguration("/**", configuration);
+        source.registerCorsConfiguration("*", configuration);
         return source;
     }
     @Bean
@@ -54,14 +51,18 @@ public class MySecurityConfig {
                                 "/api/register/**",
                                 "/api/register",
                                 "api/preview",
-                                "api/preview/**"
+                                "api/preview/**",
+                                "chat/**",
+                                "chat/**",
+                                "socket/**",
+                                "socket"
                         )
                         .permitAll()
                         .requestMatchers("/api/public/**").permitAll()
                         .requestMatchers("/api/admin/**").hasRole(ADMIN.name())
                         .requestMatchers("/api/seller/**").hasAnyRole(Role.SELLER.name(), Role.ADMIN.name())
                         .requestMatchers("/api/buyer/**").hasAnyRole(Role.BUYER.name(), ADMIN.name())
-                        .anyRequest().authenticated()
+                        .anyRequest().permitAll()
                 )
                 .sessionManagement()
                 .sessionCreationPolicy(SessionCreationPolicy.STATELESS)
