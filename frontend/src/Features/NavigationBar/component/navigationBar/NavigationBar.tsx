@@ -6,7 +6,7 @@ import { UserState } from "../../../../redux";
 
 export const NavigationBar = () => {
     const user: UserState = useSelector((state: any) => state.user);
-    useEffect(() => { console.log(user.role) }, [])
+
     if (user.role === 'ADMIN') {
         return <AdminSidebar />;
     } else if (user.role === 'SELLER') {
@@ -41,15 +41,15 @@ const AdminSidebar = () => {
 const SellerSideBar = () => {
     const [active, setActive] = useState('Home');
     return (
-        <div className="container">
-            <nav className="sidebar">
-                <div className="menu">
+        <div className="sidebar-container">
+            <nav >
+                <div className="sidebar-buttonsList">
                     <SideBarButton setActive={setActive} active={active} title={"Home"} navigateTo="/seller/home" />
                     <SideBarButton setActive={setActive} active={active} title={"Products"} navigateTo="/seller/products" />
                     <SideBarButton setActive={setActive} active={active} title={"Orders"} navigateTo="/seller/orders" />
                     <SideBarButton setActive={setActive} active={active} title={"Customers"} navigateTo="/seller/customers" />
                 </div>
-                <div className="user-menu">
+                <div >
                     <SideBarButton setActive={setActive} active={active} title={"User"} />
                 </div>
             </nav>
@@ -61,14 +61,14 @@ const BuyerSideBar = () => {
     const [active, setActive] = useState('Home');
     return (
         <div className="container">
-            <nav className="sidebar">
-                <div className="menu">
+            <nav>
+                <div >
                     <SideBarButton setActive={setActive} active={active} title={"Home"} />
                     <SideBarButton setActive={setActive} active={active} title={"Store"} />
                     <SideBarButton setActive={setActive} active={active} title={"Orders"} />
                     <SideBarButton setActive={setActive} active={active} title={"History"} />
                 </div>
-                <div className="user-menu">
+                <div >
                     <SideBarButton setActive={setActive} active={active} title={"User"} />
                 </div>
             </nav>

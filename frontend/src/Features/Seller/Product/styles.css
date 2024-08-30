@@ -1,0 +1,103 @@
+ .createProductBtn {
+     background-color: transparent;
+     border-style: solid;
+     border-width: 1px;
+     border-radius: 5px;
+     padding: 5px;
+     cursor: pointer;
+ }
+
+
+ .createproduct-modal {
+     position: absolute;
+     top: 0;
+     left: 0;
+     width: 100%;
+     height: 100%;
+     background-color: rgba(0, 0, 0, 0.5);
+     display: flex;
+     align-items: center;
+     justify-content: center;
+     
+ }
+
+
+ .createproduct-modal-content {
+     display: flex;
+     flex-direction: column;
+
+     background-color: white;
+     padding: 20px 20px;
+     border-radius: 8px;
+     width: 400px;
+     box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+ }
+
+
+ .createproduct-modal-form-group {
+     margin-bottom: 15px;
+
+ }
+
+ .createproduct-modal-form-group label {
+     display: block;
+     margin-bottom: 5px;
+     font-weight: bold;
+     color: #333;
+ }
+
+ .createproduct-modal-form-group input,
+ .createproduct-modal-form-group textarea {
+     width: 100%;
+     border: 1px solid #ccc;
+     border-radius: 4px;
+     font-size: 16px;
+     min-height: 10px;
+ }
+
+ .createproduct-modal-form-group textarea {
+     resize: vertical;
+     height: 100px;
+ }
+
+
+ .createproduct-modal-form-group input[type="checkbox"] {
+     width: auto;
+     margin-right: 5px;
+ }
+
+
+ .createproduct-modal-actions {
+     display: flex;
+     justify-content: flex-end;
+ }
+
+ .createproduct-modal-actions button {
+     background-color: #007bff;
+     color: white;
+     border: none;
+     padding: 10px 20px;
+     border-radius: 4px;
+     font-size: 16px;
+     cursor: pointer;
+     margin-left: 10px;
+ }
+
+ .createproduct-modal-actions button[type="button"] {
+     background-color: #6c757d;
+ }
+
+ .createproduct-modal-actions button:hover {
+     opacity: 0.9;
+ }
+
+ .createproduct-modal-VisibleCheck {
+     display: flex;
+     align-items: center;
+ }
+
+ @media (max-width: 500px) {
+     .modal-content {
+         width: 100%;
+     }
+ }

@@ -22,9 +22,24 @@ const persistedReducer = persistReducer(persistConfig, resettableRootReducer);
 const store = configureStore({
   reducer: persistedReducer,
   middleware: (getDefaultMiddleware) =>
-    getDefaultMiddleware().concat(authMessageMiddleware),
+    
+    getDefaultMiddleware({
+      serializableCheck: {
+        // Ignore the actions from redux-persist
+        ignoredActions: [
+          'persist/PERSIST',
+          'persist/REHYDRATE',
+          'persist/FLUSH',
+          'persist/PAUSE',
+          'persist/PURGE',
+          'persist/REGISTER'
+        ],
+        // Ignore the paths that may contain non-serializable data
+        ignoredActionPaths: ['meta.arg', 'payload.timestamp'],
+        ignoredPaths: ['items.dates']
+      }
+    }).concat(authMessageMiddleware),
 });
-
 const persistor = persistStore(store);
 
 export { store, persistor };

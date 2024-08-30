@@ -92,6 +92,7 @@ export const fetchWithRefresh = createAsyncThunk(
             ...config.headers,
             Authorization: `Bearer ${user?.access_token}`
         };
+        console.log('authorization::',user.access_token);
 
         try {
             // console.log(`🟣UserSlice - fetchWithRefresh calling originalRequest Method `);

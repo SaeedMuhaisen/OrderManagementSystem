@@ -1,0 +1,15 @@
+.navigation-container {
+    display: flex;
+    flex-direction: row;
+    height: 100vh;
+    width: 100vw;
+    background-color: whitesmoke;
+    z-index: -1;
+}
+
+.navigation-child {
+    display: flex;
+    flex: 1;
+    flex-direction: column;
+    
+}

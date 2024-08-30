@@ -3,7 +3,7 @@ import { CustomFetchResult, setUser } from '../../../redux';
 import { useDispatch } from 'react-redux';
 import { useNavigate, } from 'react-router-dom';
 import { host } from '../../Common/connectionConfig';
-
+import "./InitialScreen.css";
 //import { Alert, AlertDescription } from '@/components/ui/alert';
 
 async function originalRequest(endpoint, config) {
@@ -122,75 +122,60 @@ export const InitialScreen = () => {
     };
 
     return (
-        <div style={styles.container}>
-            <div style={styles.formContainer}>
-                <h2 >{isLogin ? 'Login' : 'Register'}</h2>
-                <form onSubmit={handleSubmit} style={styles.form}>
+
+        <div className="container">
+            <div className="form-container">
+                <h2 className="title">{isLogin ? 'Login' : 'Register'}</h2>
+                <form onSubmit={handleSubmit}>
                     <div>
-                        <label htmlFor="email" style={styles.label}>
-                            Email
-                        </label>
+                        <label htmlFor="email">Email</label>
                         <input
                             type="email"
                             id="email"
                             value={email}
                             onChange={(e) => setEmail(e.target.value)}
-                            style={{ ...styles.input }}
                             required
                         />
                     </div>
                     <div>
-                        <label htmlFor="password" style={styles.label}>
-                            Password
-                        </label>
+                        <label htmlFor="password">Password</label>
                         <input
                             type="password"
                             id="password"
                             value={password}
                             onChange={(e) => setPassword(e.target.value)}
-                            style={{ ...styles.input }}
                             required
                         />
                     </div>
+
                     {!isLogin && (
-                        <div>
-                            <label htmlFor="confirmPassword" style={styles.label}>
-                                Confirm Password
-                            </label>
+                        <div >
+                            <label htmlFor="confirmPassword">Confirm Password</label>
                             <input
                                 type="password"
                                 id="confirmPassword"
                                 value={confirmPassword}
                                 onChange={(e) => setConfirmPassword(e.target.value)}
-                                style={{ ...styles.input }}
                                 required
                             />
                         </div>
+
                     )}
-                    {error && (
-                        <span style={styles.error}>{error}</span>
-                    )}
-                    <button
-                        type="submit"
-                        style={styles.button}
-                        onMouseOver={(e) => {
-                            e.currentTarget.style.backgroundColor = styles.buttonHover.backgroundColor;
-                        }}
-                        onMouseOut={(e) => {
-                            e.currentTarget.style.backgroundColor = styles.button.backgroundColor;
-                        }}
-                    >
+
+                    {
+                        error &&
+                        <span className="error">{error}</span >
+                    }
+                    <button type="submit">
                         {isLogin ? 'Login' : 'Register'}
                     </button>
-                </form>
-                <div
-                    onClick={() => setIsLogin(!isLogin)}
-
-                >
+                </form >
+                <div className="switch-text" onClick={() => setIsLogin(!isLogin)}>
                     {isLogin ? 'Need an account? Register' : 'Already have an account? Login'}
                 </div>
-            </div>
+            </div >
         </div>
+
     );
 };
 
@@ -200,6 +185,7 @@ const styles = {
         justifyContent: 'center',
         alignItems: 'center',
         minHeight: '100vh',
+        width: '100%',
         backgroundColor: '#f7fafc',
     },
     formContainer: {

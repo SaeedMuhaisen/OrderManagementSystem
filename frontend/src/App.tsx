@@ -1,5 +1,3 @@
-// App.tsx
-import './App.css';
 import { Navigation } from './Navigation/Navigation';
 import { store, persistor } from './redux/store';
 import { Provider } from "react-redux";

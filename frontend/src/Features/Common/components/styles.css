@@ -1,0 +1,114 @@
+.tabCard-container {
+    display: flex;
+    flex-direction: column;
+    height: 100vh;
+    padding: 20px;
+    background-color: white;
+    margin: 20px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    border-radius: 20px;
+}
+
+.tabCard-body {
+    display: flex;
+    flex: 1;
+    justify-content: center;
+    align-items: center;
+}
+
+.tabCard-header {
+
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.product-table-container {
+    display: flex;
+    flex-direction: column;
+    flex: 1;
+    overflow: hidden;
+
+    border: solid 0.5px #333333;
+    border-radius: 10px;
+}
+
+.product-table {
+    display: flex;
+    flex-direction: column;
+    height: 500px;
+}
+
+.product-table-header {
+    background-color: #333333;
+    flex-shrink: 0;
+}
+
+.product-table-header-row {
+    display: table;
+    width: 98.5%;
+    table-layout: fixed;
+
+}
+
+.product-table-row {
+    display: table;
+    width: 100%;
+    table-layout: fixed;
+}
+
+.product-table-header-cell {
+    padding: 12px 15px;
+    text-align: left;
+    font-weight: bold;
+    color: white;
+}
+
+
+.product-table-body {
+    flex-grow: 1;
+    overflow-y: auto;
+    /* Enable horizontal scrolling if needed */
+    overflow-x: auto;
+}
+
+
+
+
+
+
+.product-table-cell {
+    padding: 10px 15px;
+    border-bottom: 1px solid #dee2e6;
+    text-align: left;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    overflow: hidden;
+}
+
+.product-table-row:hover {
+    background-color: #e9ecef;
+}
+
+.product-table-row:nth-child(even) {
+    background-color: #f8f9fa;
+}
+
+/* .product-table-cell:nth-child(even) {
+    background-color: black;
+}
+
+.product-table-header-cell:nth-child(even) {
+    background-color: black;
+} */
+
+/* Add some responsiveness
+@media (max-width: 768px) {
+
+
+    .product-table-header-cell,
+    .product-table-cell {
+        padding: 8px 10px;
+    }
+} */
