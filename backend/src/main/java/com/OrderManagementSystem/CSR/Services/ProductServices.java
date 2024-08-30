@@ -1,20 +1,25 @@
 package com.OrderManagementSystem.CSR.Services;
 
 
+import Mappers.ProductMapper;
 import com.OrderManagementSystem.CSR.Repositories.ProductRepository;
 import com.OrderManagementSystem.CSR.Repositories.UserRepository;
 import com.OrderManagementSystem.Entities.Product;
 import com.OrderManagementSystem.Entities.User;
 import com.OrderManagementSystem.Models.DTO.CreateProductDTO;
+import com.OrderManagementSystem.Models.DTO.ProductDTO;
+import com.OrderManagementSystem.Models.DTO.StoreProductDTO;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Component;
+import org.springframework.stereotype.Service;
 
 import java.time.Instant;
+import java.util.List;
 import java.util.UUID;
 
+@Service
 @RequiredArgsConstructor
-@Component
 public class ProductServices {
     private final UserRepository userRepository;
     private final ProductRepository productRepository;
@@ -36,5 +41,14 @@ public class ProductServices {
                 .build();
         productRepository.save(product);
 
+    }
+
+    public List<ProductDTO> getAllProductsBySeller(UserDetails userDetails) {
+        var user= userRepository.getReferenceById(((User) userDetails).getId());
+        return ProductMapper.INSTANCE.productListToProductDTOList(user.getProducts());
+    }
+
+    public List<StoreProductDTO> getAllProducts() {
+        return ProductMapper.INSTANCE.productListToStoreProductDTOList(productRepository.findAll());
     }
 }

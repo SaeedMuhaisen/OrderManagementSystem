@@ -3,6 +3,7 @@ package com.OrderManagementSystem.CSR.Controllers;
 import com.OrderManagementSystem.CSR.Services.ProductServices;
 import com.OrderManagementSystem.Models.DTO.CreateProductDTO;
 
+import lombok.AllArgsConstructor;
 import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -15,11 +16,11 @@ import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 
 @Controller
-@RequiredArgsConstructor
 @RequestMapping("/api/seller")
 @PreAuthorize("hasRole('SELLER')")
+@AllArgsConstructor
 public class SellerController {
-    @Autowired
+
     private final ProductServices productServices;
 
     private static final Logger logger = LoggerFactory.getLogger(SellerController.class);
@@ -46,8 +47,16 @@ public class SellerController {
     private ResponseEntity<?> deleteProduct(){
         return ResponseEntity.ok().build();
     }
-
-    private ResponseEntity<?> getAllProducts(){
-        return ResponseEntity.ok().build();
+    @GetMapping("/v1/products/all")
+    @PreAuthorize("hasAuthority('seller:read')")
+    public ResponseEntity<?> getAllProducts(@AuthenticationPrincipal UserDetails userDetails){
+        try{
+            logger.info("getAllProducts() - user fetching all products : ${}",userDetails.getUsername() );
+            var products=productServices.getAllProductsBySeller(userDetails);
+            return ResponseEntity.ok().body(products);
+        }catch (Exception e){
+            logger.info("getAllProducts() - failed error :{}", e.getMessage());
+            return ResponseEntity.ok().build();
+        }
     }
 }
