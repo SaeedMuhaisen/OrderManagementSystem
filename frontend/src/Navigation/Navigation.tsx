@@ -16,10 +16,12 @@ export const Navigation = () => {
   if (!user.signedIn) {
     return (
       <BrowserRouter>
-        <Routes>
-          <Route path="*" element={<Navigate to="/login" replace />} />
-          <Route path="/login" element={<InitialScreen />} />
-        </Routes>
+        
+          <Routes>
+            <Route path="*" element={<Navigate to="/login" replace />} />
+            <Route path="/login" element={<InitialScreen />} />
+          </Routes>
+        
       </BrowserRouter>
     );
   }
@@ -34,25 +36,7 @@ export const Navigation = () => {
   }
 };
 
-const AppRoutes = ({ user }: { user: UserState }) => {
-  if (!user.signedIn) {
-    return (
-      <Routes>
-        <Route path="*" element={<Navigate to="/login" replace />} />
-        <Route path="/login" element={<InitialScreen />} />
-      </Routes>
-    );
-  }
 
-  switch (user.role) {
-    case 'SELLER':
-      return <SellerRoutes />;
-    case 'ADMIN':
-      return <AdminRoutes />;
-    case 'BUYER':
-      return <BuyerRoutes />;
-  }
-};
 
 const BuyerRoutes = () => (
   <BrowserRouter>

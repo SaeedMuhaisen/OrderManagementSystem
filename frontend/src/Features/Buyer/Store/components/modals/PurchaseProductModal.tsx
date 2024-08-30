@@ -4,35 +4,32 @@ import { useDispatch } from 'react-redux';
 import { CustomFetchResult, fetchWithRefresh } from '../../../../../redux';
 import { uuidv7 } from 'uuidv7';
 import "./PurchaseProductModal.css";
-export const PurchaseProductModal = ({ onClose, name, description, price }) => {
+import { CreateOrderDTO } from '../../../../../Types/ProductTypes';
+export const PurchaseProductModal = ({ onClose, name, description, price, productId }) => {
 
-    const [availableQuantity, setAvailableQuantity] = useState('');
+    const [orderQuantity, setOrderQuantity] = useState(1);
     const [visible, setVisible] = useState(true);
     const dispatch = useDispatch<any>();
 
     const handleSubmit = async (e) => {
-        // e.preventDefault();
-        // let id = uuidv7();
-        // let product: purchaseproductDTO = {
-        //     id: uuidv7(),
-        //     name: name,
-        //     description: description,
-        //     price: parseFloat(price),
-        //     availableQuantity: parseFloat(availableQuantity),
-        //     visible: visible,
-        // }
-        // const config = {
-        //     method: 'POST',
-        //     headers: {
-        //         'Content-Type': 'application/json',
-        //     },
-        //     body: JSON.stringify(product),
-        // }
-        // const result: CustomFetchResult = await dispatch(fetchWithRefresh({ endpoint: "/api/seller/v1/create", config: config })).unwrap()
-        // if (result.status === 200) { onClose() }
-        // else {
-        //     alert(result.status);
-        // }
+        e.preventDefault();
+        
+        let product: CreateOrderDTO = {
+            productId: productId,
+            quantity: 1,
+        }
+        const config = {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify(product),
+        }
+        const result: CustomFetchResult = await dispatch(fetchWithRefresh({ endpoint: "/api/buyer/v1/store/order", config: config })).unwrap()
+        if (result.status === 200) { onClose() }
+        else {
+            alert(result.status);
+        }
 
     };
     const handleContentClick = (event) => {
@@ -42,8 +39,6 @@ export const PurchaseProductModal = ({ onClose, name, description, price }) => {
         event.stopPropagation();
         onClose();
     };
-
-
     return (
         <div className="purchaseproduct-modal" onClick={handleModalClick}>
             <div className="purchaseproduct-modal-content" onClick={handleContentClick}>

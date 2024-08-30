@@ -47,7 +47,7 @@ export const BuyerStoreScreen = () => {
     return (
         <TabCard title="Store">
             <GenericTable columns={columns} data={data} handleRowClick={(index) => { setUpModal(index) }} />
-            {purchaseModalVisible && <PurchaseProductModal onClose={() => setPurchaseModalVisible(false)} name={product.name} description={product.description} price={product.price} />}
+            {purchaseModalVisible && <PurchaseProductModal onClose={() => setPurchaseModalVisible(false)} name={product.name} description={product.description} price={product.price} productId={product.id} />}
         </TabCard >
     )
 }

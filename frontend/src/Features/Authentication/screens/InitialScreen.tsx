@@ -123,57 +123,61 @@ export const InitialScreen = () => {
 
     return (
 
-        <div className="container">
-            <div className="form-container">
-                <h2 className="title">{isLogin ? 'Login' : 'Register'}</h2>
-                <form onSubmit={handleSubmit}>
-                    <div>
-                        <label htmlFor="email">Email</label>
-                        <input
-                            type="email"
-                            id="email"
-                            value={email}
-                            onChange={(e) => setEmail(e.target.value)}
-                            required
-                        />
-                    </div>
-                    <div>
-                        <label htmlFor="password">Password</label>
-                        <input
-                            type="password"
-                            id="password"
-                            value={password}
-                            onChange={(e) => setPassword(e.target.value)}
-                            required
-                        />
-                    </div>
-
-                    {!isLogin && (
-                        <div >
-                            <label htmlFor="confirmPassword">Confirm Password</label>
+        <div className='test-login-main-frame'>
+           
+            <div className="login-container">
+                <div className="login-form-container">
+                    <h2 className="login-title">{isLogin ? 'Login' : 'Register'}</h2>
+                    <form className="login-form" onSubmit={handleSubmit}>
+                        <div>
+                            <label htmlFor="email">Email</label>
+                            <input
+                                type="email"
+                                id="email"
+                                value={email}
+                                onChange={(e) => setEmail(e.target.value)}
+                                required
+                            />
+                        </div>
+                        <div>
+                            <label htmlFor="password">Password</label>
                             <input
                                 type="password"
-                                id="confirmPassword"
-                                value={confirmPassword}
-                                onChange={(e) => setConfirmPassword(e.target.value)}
+                                id="password"
+                                value={password}
+                                onChange={(e) => setPassword(e.target.value)}
                                 required
                             />
                         </div>
 
-                    )}
+                        {!isLogin && (
+                            <div >
+                                <label htmlFor="confirmPassword">Confirm Password</label>
+                                <input
+                                    type="password"
+                                    id="confirmPassword"
+                                    value={confirmPassword}
+                                    onChange={(e) => setConfirmPassword(e.target.value)}
+                                    required
+                                />
+                            </div>
 
-                    {
-                        error &&
-                        <span className="error">{error}</span >
-                    }
-                    <button type="submit">
-                        {isLogin ? 'Login' : 'Register'}
-                    </button>
-                </form >
-                <div className="switch-text" onClick={() => setIsLogin(!isLogin)}>
-                    {isLogin ? 'Need an account? Register' : 'Already have an account? Login'}
-                </div>
-            </div >
+                        )}
+
+                        {
+                            error &&
+                            <span className="error">{error}</span >
+                        }
+                        <button type="submit">
+                            {isLogin ? 'Login' : 'Register'}
+                        </button>
+                    </form >
+                    <div className="login-switch-text" onClick={() => setIsLogin(!isLogin)}>
+                        {isLogin ? 'Need an account? Register' : 'Already have an account? Login'}
+                    </div>
+                </div >
+                
+            </div>
         </div>
 
     );
