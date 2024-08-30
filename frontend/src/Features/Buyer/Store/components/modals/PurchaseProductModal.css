@@ -1,0 +1,89 @@
+.purchaseproductBtn {
+    background-color: transparent;
+    border-style: solid;
+    border-width: 1px;
+    border-radius: 5px;
+    padding: 5px;
+    cursor: pointer;
+}
+
+
+.purchaseproduct-modal {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.5);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+}
+
+
+.purchaseproduct-modal-content {
+    display: flex;
+    flex-direction: column;
+
+    background-color: white;
+    padding: 20px 20px;
+    border-radius: 8px;
+    width: 400px;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+}
+
+
+.purchaseproduct-modal-form-group {
+    margin-bottom: 15px;
+
+}
+
+.purchaseproduct-modal-form-group label {
+    display: block;
+    margin-bottom: 5px;
+    font-weight: bold;
+    color: #333;
+}
+
+.purchaseproduct-modal-form-group input,
+.purchaseproduct-modal-form-group textarea {
+    width: 100%;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    font-size: 16px;
+    min-height: 10px;
+}
+
+.purchaseproduct-modal-form-group textarea {
+    resize: vertical;
+    height: 100px;
+}
+
+
+
+
+.purchaseproduct-modal-actions {
+    display: flex;
+    justify-content: flex-end;
+}
+
+.purchaseproduct-modal-actions button {
+    background-color: #007bff;
+    color: white;
+    border: none;
+    padding: 10px 20px;
+    border-radius: 4px;
+    font-size: 16px;
+    cursor: pointer;
+    margin-left: 10px;
+}
+
+.purchaseproduct-modal-actions button[type="button"] {
+    background-color: #6c757d;
+}
+
+.purchaseproduct-modal-actions button:hover {
+    opacity: 0.9;
+}
+

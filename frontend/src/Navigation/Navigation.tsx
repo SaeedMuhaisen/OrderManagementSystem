@@ -9,6 +9,7 @@ import { UserState } from '../redux';
 import { BuyerHomeScreen } from '../Features/Buyer/Home';
 import { ManageProducts } from '../Features/Seller/Product';
 import "./Navigation.css"
+import { BuyerStoreScreen } from '../Features/Buyer/Store';
 
 export const Navigation = () => {
   const user: UserState = useSelector((state: any) => state.user);
@@ -57,14 +58,16 @@ const BuyerRoutes = () => (
   <BrowserRouter>
     <div className="navigation-container">
       <NavigationBar />
-    </div>
-    <div className='navigation-child'>
-      <Routes>
-        <Route path="/home" element={<HomeScreen />} />
-        <Route path="*" element={<Navigate to="/home" replace />} />
-      </Routes>
-    </div>
 
+      <div className='navigation-child'>
+        <Routes>
+          <Route path="/store" element={< BuyerStoreScreen />} />
+          <Route path="/home" element={<HomeScreen />} />
+
+          <Route path="*" element={<Navigate to="/home" replace />} />
+        </Routes>
+      </div>
+    </div>
   </BrowserRouter >
 );
 
@@ -87,12 +90,13 @@ const AdminRoutes = () => (
   <BrowserRouter>
     <div className="navigation-container">
       <NavigationBar />
-    </div>
-    <div className='navigation-child'>
-      <Routes>
-        <Route path="/admin/home" element={<AdminHomeScreen />} />
-        <Route path="*" element={<Navigate to="/admin/home" replace />} />
-      </Routes>
+
+      <div className='navigation-child'>
+        <Routes>
+          <Route path="/admin/home" element={<AdminHomeScreen />} />
+          <Route path="*" element={<Navigate to="/admin/home" replace />} />
+        </Routes>
+      </div>
     </div>
   </BrowserRouter>
 );

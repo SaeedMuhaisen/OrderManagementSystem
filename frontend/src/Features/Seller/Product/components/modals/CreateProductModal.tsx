@@ -3,6 +3,7 @@ import "../../styles.css"
 import { useDispatch } from 'react-redux';
 import { CustomFetchResult, fetchWithRefresh } from '../../../../../redux';
 import { uuidv7 } from 'uuidv7';
+import { CreateProductDTO } from '../../../../../Types/ProductTypes';
 export const CreateProductModal = ({ onClose }) => {
     const [name, setName] = useState('');
     const [description, setDescription] = useState('');
@@ -14,20 +15,20 @@ export const CreateProductModal = ({ onClose }) => {
     const handleSubmit = async (e) => {
         e.preventDefault();
         let id = uuidv7();
-
+        let product: CreateProductDTO = {
+            id: uuidv7(),
+            name: name,
+            description: description,
+            price: parseFloat(price),
+            availableQuantity: parseFloat(availableQuantity),
+            visible: visible,
+        }
         const config = {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
             },
-            body: JSON.stringify({
-                id: uuidv7(),
-                name: name,
-                description: description,
-                price: price,
-                availableQuantity: availableQuantity,
-                visible: visible,
-            }),
+            body: JSON.stringify(product),
         }
         const result: CustomFetchResult = await dispatch(fetchWithRefresh({ endpoint: "/api/seller/v1/create", config: config })).unwrap()
         if (result.status === 200) { onClose() }

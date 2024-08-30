@@ -10,49 +10,9 @@ import { Stomp } from '@stomp/stompjs';
 import { useDispatch, useSelector } from "react-redux";
 import { CustomFetchResult, fetchWithRefresh } from "../../../../redux";
 
-
-// export const useWebSocket = () => {
-//     const [stompClient, setStompClient] = useState(null);
-
-//     useEffect(() => {
-//         const socket = new SockJS("http://localhost:8080/socket");
-//         const stompClient = Stomp.over(socket);
-//         setStompClient(stompClient);
-
-//         return () => {
-//             if (stompClient !== null) {
-//                 stompClient.disconnect();
-//             }
-//         };
-//     }, []);
-
-//     return stompClient;
-// };
 export const ManageProducts = () => {
     const [data, setData] = useState(['-', '-', '-', '-', '-', '-', '-', '-'],);
-
-
-    let token = useSelector((state: any) => state.user.access_token);
-
-
-    const [connected, setConnected] = useState(false);
-    const user = useSelector((state: any) => state.user);
-    const stompClientRef = useRef(null);
-
-    const [notifications, setNotifications] = useState(0);
-    // const stompClient = useWebSocket();
     const dispatch = useDispatch<any>();
-    // useEffect(() => {
-    //     if (stompClient !== null) {
-    //         stompClient.connect({}, (frame) => {
-    //             stompClient.subscribe("/topic/notification", (message) => {
-    //                 const body = JSON.parse(message.body);
-    //                 setNotifications(body);
-    //             });
-    //         });
-    //     }
-    // }, [stompClient]);
-
 
     useEffect(() => {
         const fetchAll = async () => {
@@ -85,7 +45,8 @@ export const ManageProducts = () => {
 
             <GenericTable columns={columns} data={data} />
             {
-                createProductModalVisible && <CreateProductModal onClose={() => setCreateProductModalVisible(false)} />}
+                createProductModalVisible && <CreateProductModal onClose={() => setCreateProductModalVisible(false)} />
+            }
 
         </TabCard >
     )

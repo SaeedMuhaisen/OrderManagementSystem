@@ -2,7 +2,7 @@ import { useEffect } from "react";
 import "../styles.css"
 import { useDispatch } from "react-redux";
 import { setUser } from "../../../../redux";
-export const GenericTable = ({ columns, data }) => {
+export const GenericTable = ({ columns, data, handleRowClick = (val) => { } }) => {
     const importData = (products) => {
         if (products.length === 0) {
             // If products array is empty, use the columns prop
@@ -43,7 +43,7 @@ export const GenericTable = ({ columns, data }) => {
                 </thead>
                 <tbody className="product-table-body">
                     {tableData.map((row, index) => (
-                        <tr className="product-table-row" key={index}>
+                        <tr className="product-table-row" key={index} onClick={() => handleRowClick(index)} >
                             {row.map((cell, cellIndex) => (
                                 <td className="product-table-cell" key={cellIndex}>{cell}</td>
                             ))}
