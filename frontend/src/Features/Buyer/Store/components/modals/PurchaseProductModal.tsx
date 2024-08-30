@@ -4,7 +4,7 @@ import { useDispatch } from 'react-redux';
 import { CustomFetchResult, fetchWithRefresh } from '../../../../../redux';
 import { uuidv7 } from 'uuidv7';
 import "./PurchaseProductModal.css";
-import { CreateOrderDTO } from '../../../../../Types/ProductTypes';
+import { CreateOrderDTO } from '../../../../../Types/OrderTypes';
 export const PurchaseProductModal = ({ onClose, name, description, price, productId }) => {
 
     const [orderQuantity, setOrderQuantity] = useState(1);
@@ -13,7 +13,7 @@ export const PurchaseProductModal = ({ onClose, name, description, price, produc
 
     const handleSubmit = async (e) => {
         e.preventDefault();
-        
+
         let product: CreateOrderDTO = {
             productId: productId,
             quantity: 1,

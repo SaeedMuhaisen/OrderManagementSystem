@@ -15,7 +15,3 @@ export interface StoreProduct {
     availableQuantity: number
 }
 
-export interface CreateOrderDTO {
-    productId: string,
-    quantity: number
-}

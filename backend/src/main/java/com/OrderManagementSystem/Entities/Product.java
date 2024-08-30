@@ -17,19 +17,19 @@ public class Product {
 
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
-    public UUID id;
+    private UUID id;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "owner_id")
-    public User user;
+    private User user;
 
-    public String name;
-    public String description;
-    public Double price;
-    public Instant created_t;
-    public Integer availableQuantity;
-    public Integer amountSold;
-    public Integer amountReturned;
-    public boolean visible;
+    private String name;
+    private String description;
+    private Double price;
+    private Instant created_t;
+    private Integer availableQuantity;
+    private Integer amountSold;
+    private Integer amountReturned;
+    private boolean visible;
 
 }

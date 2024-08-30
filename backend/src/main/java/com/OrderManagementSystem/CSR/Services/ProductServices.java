@@ -6,6 +6,7 @@ import com.OrderManagementSystem.CSR.Repositories.ProductRepository;
 import com.OrderManagementSystem.CSR.Repositories.UserRepository;
 import com.OrderManagementSystem.Entities.Product;
 import com.OrderManagementSystem.Entities.User;
+import com.OrderManagementSystem.Models.DTO.CreateOrderDTO;
 import com.OrderManagementSystem.Models.DTO.CreateProductDTO;
 import com.OrderManagementSystem.Models.DTO.ProductDTO;
 import com.OrderManagementSystem.Models.DTO.StoreProductDTO;
@@ -48,7 +49,13 @@ public class ProductServices {
         return ProductMapper.INSTANCE.productListToProductDTOList(user.getProducts());
     }
 
-    public List<StoreProductDTO> getAllProducts() {
-        return ProductMapper.INSTANCE.productListToStoreProductDTOList(productRepository.findAll());
+    public List<StoreProductDTO> getAllAvailableProducts() {
+        return ProductMapper.INSTANCE.productListToStoreProductDTOList(productRepository.findAllByVisibleIsTrueAndAvailableQuantityIsGreaterThanEqual(1));
+    }
+
+
+    public void getAllOrders(UserDetails userDetails) {
+        var user= userRepository.getReferenceById(((User) userDetails).getId());
+
     }
 }

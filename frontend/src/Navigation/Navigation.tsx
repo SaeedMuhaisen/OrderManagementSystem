@@ -10,18 +10,17 @@ import { BuyerHomeScreen } from '../Features/Buyer/Home';
 import { ManageProducts } from '../Features/Seller/Product';
 import "./Navigation.css"
 import { BuyerStoreScreen } from '../Features/Buyer/Store';
+import { SellerOdersScreen } from '../Features/Seller/Orders';
 
 export const Navigation = () => {
   const user: UserState = useSelector((state: any) => state.user);
   if (!user.signedIn) {
     return (
       <BrowserRouter>
-        
-          <Routes>
-            <Route path="*" element={<Navigate to="/login" replace />} />
-            <Route path="/login" element={<InitialScreen />} />
-          </Routes>
-        
+        <Routes>
+          <Route path="*" element={<Navigate to="/login" replace />} />
+          <Route path="/login" element={<InitialScreen />} />
+        </Routes>
       </BrowserRouter>
     );
   }
@@ -42,12 +41,10 @@ const BuyerRoutes = () => (
   <BrowserRouter>
     <div className="navigation-container">
       <NavigationBar />
-
       <div className='navigation-child'>
         <Routes>
           <Route path="/store" element={< BuyerStoreScreen />} />
           <Route path="/home" element={<HomeScreen />} />
-
           <Route path="*" element={<Navigate to="/home" replace />} />
         </Routes>
       </div>
@@ -61,6 +58,7 @@ const SellerRoutes = () => (
       <NavigationBar />
       <div className='navigation-child'>
         <Routes>
+          <Route path="/seller/orders" element={<SellerOdersScreen />} />
           <Route path="/seller/products" element={<ManageProducts />} />
           <Route path="/seller/home" element={<SellerHomeScreen />} />
           <Route path="*" element={<Navigate to="/seller/home" replace />} />
