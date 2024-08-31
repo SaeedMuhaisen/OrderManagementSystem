@@ -9,8 +9,9 @@ import com.OrderManagementSystem.Entities.User;
 import com.OrderManagementSystem.Entities.enums.StatusType;
 import com.OrderManagementSystem.Exceptions.OrderExceptions.OrderStatusIllegalTransitionException;
 import com.OrderManagementSystem.Exceptions.OrderExceptions.ProductQuantityNotEnoughException;
+import com.OrderManagementSystem.Models.DTO.BuyerOrderDTO;
 import com.OrderManagementSystem.Models.DTO.CreateOrderDTO;
-import com.OrderManagementSystem.Models.DTO.OrderDTO;
+import com.OrderManagementSystem.Models.DTO.SellerOrderDTO;
 import com.OrderManagementSystem.Models.DTO.UpdateOrderStatusDTO;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -53,11 +54,17 @@ public class OrderServices {
 
     }
 
-    public List<OrderDTO> getAllOrders(UserDetails userDetails) {
+    public List<SellerOrderDTO> getAllSellerOrders(UserDetails userDetails) {
         var user= userRepository.getReferenceById(((User) userDetails).getId());
         var orders=orderRepository.findAllByProduct_User_Id(user.getId());
 
-        return OrderMapper.INSTANCE.orderListToOrderDTOList(orders);
+        return OrderMapper.INSTANCE.orderListToSellerOrderDTOList(orders);
+
+    }
+
+    public List<BuyerOrderDTO> getAllBuyerOrders(UserDetails userDetails) {
+        var user= userRepository.getReferenceById(((User) userDetails).getId());
+        return OrderMapper.INSTANCE.orderListToBuyerOrderDTOList(user.getOrders());
 
     }
 

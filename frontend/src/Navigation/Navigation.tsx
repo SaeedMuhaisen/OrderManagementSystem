@@ -11,6 +11,7 @@ import { ManageProducts } from '../Features/Seller/Product';
 import "./Navigation.css"
 import { BuyerStoreScreen } from '../Features/Buyer/Store';
 import { SellerOdersScreen } from '../Features/Seller/Orders';
+import { BuyerOrderScreen } from '../Features/Buyer/Order';
 
 export const Navigation = () => {
   const user: UserState = useSelector((state: any) => state.user);
@@ -43,6 +44,7 @@ const BuyerRoutes = () => (
       <NavigationBar />
       <div className='navigation-child'>
         <Routes>
+          <Route path="/orders" element={< BuyerOrderScreen />} />
           <Route path="/store" element={< BuyerStoreScreen />} />
           <Route path="/home" element={<HomeScreen />} />
           <Route path="*" element={<Navigate to="/home" replace />} />

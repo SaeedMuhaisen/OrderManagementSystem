@@ -6,10 +6,8 @@ import com.OrderManagementSystem.Models.DTO.CreateProductDTO;
 
 import com.OrderManagementSystem.Models.DTO.UpdateOrderStatusDTO;
 import lombok.AllArgsConstructor;
-import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -68,7 +66,7 @@ public class SellerController {
     public ResponseEntity<?> getAllOrders(@AuthenticationPrincipal UserDetails userDetails){
         try{
             logger.info("getAllOrders() - Seller fetching all orders : ${}",userDetails.getUsername() );
-            var products=orderServices.getAllOrders(userDetails);
+            var products=orderServices.getAllSellerOrders(userDetails);
             return ResponseEntity.ok().body(products);
         }catch (Exception e){
             logger.info("getAllProducts() - failed error :{}", e.getMessage());

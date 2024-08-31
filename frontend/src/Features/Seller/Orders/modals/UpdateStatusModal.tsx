@@ -42,7 +42,7 @@ export const UpdateStatusModal = ({ onClose, orderId, currentStatus }) => {
 
     useEffect(() => {
         setStatusOptions(filterStatusOptions(currentStatus));
-        setNewStatus(filterStatusOptions(currentStatus)[0])
+        setNewStatus(filterStatusOptions(currentStatus)[0]);
     }, [])
     const filterStatusOptions = (currentStatus) => {
         if (currentStatus === 'PENDING') {
@@ -97,7 +97,7 @@ export const UpdateStatusModal = ({ onClose, orderId, currentStatus }) => {
                             ))}
                         </select>
                         {errorMessage && <p style={{ color: 'red' }}>{errorMessage}</p>}
-                        <button onClick={handleSubmit} disabled={newStatus !== ''}>Update Status</button>
+                        <button onClick={handleSubmit} disabled={newStatus === ''}>Update Status</button>
 
                     </>
                 }

@@ -69,8 +69,8 @@ const BuyerSideBar = ({ dispatch }) => {
                 <div className="sidebar-buttonsList">
                     <SideBarButton setActive={setActive} active={active} title={"Home"} navigateTo="/home" />
                     <SideBarButton setActive={setActive} active={active} title={"Store"} navigateTo="/store" />
-                    {/* <SideBarButton setActive={setActive} active={active} title={"Orders"} navigateTo="/store" />
-                    <SideBarButton setActive={setActive} active={active} title={"History"} navigateTo="/store" /> */}
+                     <SideBarButton setActive={setActive} active={active} title={"Orders"} navigateTo="/orders" />
+                   {/* <SideBarButton setActive={setActive} active={active} title={"History"} navigateTo="/store" /> */}
                 </div>
                 <div >
                     <SideBarButton setActive={setActive} active={active} title={"User"} />

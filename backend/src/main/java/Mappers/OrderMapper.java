@@ -2,7 +2,8 @@ package Mappers;
 
 
 import com.OrderManagementSystem.Entities.Order;
-import com.OrderManagementSystem.Models.DTO.OrderDTO;
+import com.OrderManagementSystem.Models.DTO.BuyerOrderDTO;
+import com.OrderManagementSystem.Models.DTO.SellerOrderDTO;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 import org.mapstruct.factory.Mappers;
@@ -18,12 +19,28 @@ public interface OrderMapper {
     @Mapping(source = "created_t", target = "orderDate")
     @Mapping(source = "statusType", target = "status")
     @Mapping(source = "id", target = "orderId")
-    List<OrderDTO> orderListToOrderDTOList(List<Order> orders);
+    List<SellerOrderDTO> orderListToSellerOrderDTOList(List<Order> orders);
 
     @Mapping(source = "buyer.firstname", target = "firstName")
     @Mapping(source = "product.id", target = "productId")
     @Mapping(source = "created_t", target = "orderDate")
     @Mapping(source = "statusType", target = "status")
     @Mapping(source = "id", target = "orderId")
-    OrderDTO orderToOrderDTO(Order orders);
+    SellerOrderDTO orderToSellerOrderDTO(Order orders);
+
+
+
+    @Mapping(source = "product.user.email", target = "sellerEmail")
+    @Mapping(source = "product.id", target = "productId")
+    @Mapping(source = "created_t", target = "orderDate")
+    @Mapping(source = "statusType", target = "status")
+    @Mapping(source = "id", target = "orderId")
+    List<BuyerOrderDTO> orderListToBuyerOrderDTOList(List<Order> orders);
+
+    @Mapping(source = "product.user.email", target = "sellerEmail")
+    @Mapping(source = "product.id", target = "productId")
+    @Mapping(source = "created_t", target = "orderDate")
+    @Mapping(source = "statusType", target = "status")
+    @Mapping(source = "id", target = "orderId")
+    BuyerOrderDTO orderToBuyerOrderDTO(Order orders);
 }

@@ -53,4 +53,17 @@ public class BuyerController {
             return ResponseEntity.status(HttpStatus.NOT_ACCEPTABLE).build();
         }
     }
+
+    @GetMapping("v1/orders")
+    @PreAuthorize("hasAuthority('buyer:read')")
+    public ResponseEntity<?> getAllBuyerOrders(@AuthenticationPrincipal UserDetails userDetails){
+        try{
+            logger.info("getAllBuyerOrders() - buyer fetching his orders ,username: {}",userDetails.getUsername());
+            var orders=orderServices.getAllBuyerOrders(userDetails);
+            return ResponseEntity.ok().body(orders);
+        }catch (Exception e){
+            logger.info("getAllBuyerOrders() - failed error :{}",e.getMessage());
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
+        }
+    }
 }
