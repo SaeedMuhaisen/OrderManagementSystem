@@ -16,11 +16,11 @@ public class NotificationController {
     private Notifications notifications = new Notifications(0);
 
     @GetMapping("/notify")
-    public String getNotification() {
+    public String getNotification(String id) {
 
         notifications.increment();
-        template.convertAndSend("/topic/notification", 100);
+        template.convertAndSend("/topic/notification/"+id, id);
 
-        return "Notifications successfully sent to Angular !";
+        return "gg";
     }
 }

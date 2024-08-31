@@ -6,13 +6,9 @@ import com.OrderManagementSystem.CSR.Repositories.ProductRepository;
 import com.OrderManagementSystem.CSR.Repositories.UserRepository;
 import com.OrderManagementSystem.Entities.Product;
 import com.OrderManagementSystem.Entities.User;
-import com.OrderManagementSystem.Models.DTO.CreateOrderDTO;
-import com.OrderManagementSystem.Models.DTO.CreateProductDTO;
-import com.OrderManagementSystem.Models.DTO.ProductDTO;
-import com.OrderManagementSystem.Models.DTO.StoreProductDTO;
+import com.OrderManagementSystem.Models.DTO.*;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.userdetails.UserDetails;
-import org.springframework.stereotype.Component;
 import org.springframework.stereotype.Service;
 
 import java.time.Instant;
@@ -44,6 +40,11 @@ public class ProductServices {
 
     }
 
+    public List<ProductDTO> getAllProductsBySellersId(String sellersId) {
+        var user= userRepository.getReferenceById(UUID.fromString(sellersId));
+        return ProductMapper.INSTANCE.productListToProductDTOList(user.getProducts());
+    }
+
     public List<ProductDTO> getAllProductsBySeller(UserDetails userDetails) {
         var user= userRepository.getReferenceById(((User) userDetails).getId());
         return ProductMapper.INSTANCE.productListToProductDTOList(user.getProducts());
@@ -58,4 +59,5 @@ public class ProductServices {
         var user= userRepository.getReferenceById(((User) userDetails).getId());
 
     }
+
 }

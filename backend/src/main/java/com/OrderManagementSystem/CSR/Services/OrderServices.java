@@ -14,6 +14,8 @@ import com.OrderManagementSystem.Models.DTO.CreateOrderDTO;
 import com.OrderManagementSystem.Models.DTO.SellerOrderDTO;
 import com.OrderManagementSystem.Models.DTO.UpdateOrderStatusDTO;
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
 
@@ -29,6 +31,7 @@ public class OrderServices {
     private final UserRepository userRepository;
     private final ProductRepository productRepository;
 
+    private final SimpMessagingTemplate template;
 
     public void createOrder(UserDetails userDetails, CreateOrderDTO createOrderDTO) {
         var user= userRepository.getReferenceById(((User) userDetails).getId());
@@ -48,7 +51,7 @@ public class OrderServices {
         product.setAmountSold(product.getAmountSold()+ createOrderDTO.getQuantity());
         product.setAvailableQuantity(product.getAvailableQuantity()- createOrderDTO.getQuantity());
         //todo send notification for owner and perhaps also seller to confirm order placed?
-
+        template.convertAndSend("/topic/notification/"+product.getUser().getId(), "New Order Received!");
         orderRepository.save(order);
         productRepository.save(product);
 
@@ -86,8 +89,9 @@ public class OrderServices {
 
         order.setStatusType(newStatus);
         orderRepository.save(order);
+        template.convertAndSend("/topic/notification/"+order.getBuyer().getId(), "Order Status updated!");
 
-        //todo send notification to buyer
+
 
     }
 }

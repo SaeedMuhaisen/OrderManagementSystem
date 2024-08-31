@@ -12,6 +12,10 @@ import "./Navigation.css"
 import { BuyerStoreScreen } from '../Features/Buyer/Store';
 import { SellerOdersScreen } from '../Features/Seller/Orders';
 import { BuyerOrderScreen } from '../Features/Buyer/Order';
+import { useEffect, useState } from 'react';
+import SockJS from 'sockjs-client';
+import { host } from '../Features/Common/connectionConfig';
+import { Stomp } from '@stomp/stompjs';
 
 export const Navigation = () => {
   const user: UserState = useSelector((state: any) => state.user);
@@ -25,7 +29,6 @@ export const Navigation = () => {
       </BrowserRouter>
     );
   }
-
   switch (user.role) {
     case 'SELLER':
       return <SellerRoutes />;
@@ -36,39 +39,86 @@ export const Navigation = () => {
   }
 };
 
+const BuyerRoutes = () => {
+  const user: UserState = useSelector((state: any) => state.user);
+  const stompClient = useWebSocket();
+  useEffect(() => {
+    if (stompClient !== null) {
+      stompClient.connect({}, (frame) => {
+        stompClient.subscribe(`/topic/notification/${user.userId}`, (message) => {
+          // const body = JSON.parse(message.body);
+          //setNotifications(body);
+          alert(message.body)
+        });
+      });
+    }
+  }, [stompClient]);
+  return (
 
-
-const BuyerRoutes = () => (
-  <BrowserRouter>
-    <div className="navigation-container">
-      <NavigationBar />
-      <div className='navigation-child'>
-        <Routes>
-          <Route path="/orders" element={< BuyerOrderScreen />} />
-          <Route path="/store" element={< BuyerStoreScreen />} />
-          <Route path="/home" element={<HomeScreen />} />
-          <Route path="*" element={<Navigate to="/home" replace />} />
-        </Routes>
+    <BrowserRouter>
+      <div className="navigation-container">
+        <NavigationBar />
+        <div className='navigation-child'>
+          <Routes>
+            <Route path="/orders" element={< BuyerOrderScreen />} />
+            <Route path="/store" element={< BuyerStoreScreen />} />
+            <Route path="/home" element={<HomeScreen />} />
+            <Route path="*" element={<Navigate to="/home" replace />} />
+          </Routes>
+        </div>
       </div>
-    </div>
-  </BrowserRouter >
-);
+    </BrowserRouter >
+  )
+}
 
-const SellerRoutes = () => (
-  <BrowserRouter>
-    <div className="navigation-container">
-      <NavigationBar />
-      <div className='navigation-child'>
-        <Routes>
-          <Route path="/seller/orders" element={<SellerOdersScreen />} />
-          <Route path="/seller/products" element={<ManageProducts />} />
-          <Route path="/seller/home" element={<SellerHomeScreen />} />
-          <Route path="*" element={<Navigate to="/seller/home" replace />} />
-        </Routes>
-      </div>
-    </div >
-  </BrowserRouter>
-);
+export const useWebSocket = () => {
+  const [stompClient, setStompClient] = useState(null);
+  useEffect(() => {
+    const socket = new SockJS(`${host}/socket`);
+    const stompClient = Stomp.over(socket);
+    setStompClient(stompClient);
+    return () => {
+      if (stompClient !== null) {
+        stompClient.disconnect();
+      }
+    };
+  }, []);
+  return stompClient;
+};
+
+
+const SellerRoutes = () => {
+  const user: UserState = useSelector((state: any) => state.user);
+  const stompClient = useWebSocket();
+  useEffect(() => {
+    if (stompClient !== null) {
+      stompClient.connect({}, (frame) => {
+        stompClient.subscribe(`/topic/notification/${user.userId}`, (message) => {
+          // const body = JSON.parse(message.body);
+          //setNotifications(body);
+          alert(message.body)
+        });
+      });
+    }
+  }, [stompClient]);
+  return (
+
+    <BrowserRouter>
+      <div className="navigation-container">
+        <NavigationBar />
+        <div className='navigation-child'>
+          <Routes>
+            <Route path="/seller/orders" element={<SellerOdersScreen />} />
+            <Route path="/seller/products" element={<ManageProducts />} />
+            <Route path="/seller/home" element={<SellerHomeScreen />} />
+            <Route path="*" element={<Navigate to="/seller/home" replace />} />
+          </Routes>
+        </div>
+      </div >
+    </BrowserRouter>
+  )
+
+}
 
 const AdminRoutes = () => (
   <BrowserRouter>

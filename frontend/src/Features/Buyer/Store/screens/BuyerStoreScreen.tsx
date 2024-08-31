@@ -8,15 +8,21 @@ import { GenericTable } from "../../../Common/components/cards/GenericTable";
 import { StoreProduct } from "../../../../Types/ProductTypes";
 import { PurchaseProductModal } from "../components/modals/PurchaseProductModal";
 export const BuyerStoreScreen = () => {
-    const initProduct: StoreProduct = {
+    const store = {
+        sellerId: "",
+        sellerName: "",
+    }
+    const storeProduct: StoreProduct = {
         id: "",
         name: "",
         description: "",
         price: 0,
         availableQuantity: 0
     }
-    const [product, setProduct] = useState(initProduct);
-    const [data, setData] = useState([initProduct]);
+    const [stores, setStores] = useState([store]);
+    const [product, setProduct] = useState(storeProduct);
+    const [storeProducts, setStoreProducts] = useState([storeProduct]);
+
     const [purchaseModalVisible, setPurchaseModalVisible] = useState(false);
     const dispatch = useDispatch<any>();
     useEffect(() => {
@@ -27,10 +33,10 @@ export const BuyerStoreScreen = () => {
                     'Content-Type': 'application/json',
                 },
             }
-            const result: CustomFetchResult = await dispatch(fetchWithRefresh({ endpoint: "/api/buyer/v1/store/products", config: config })).unwrap()
+            const result: CustomFetchResult = await dispatch(fetchWithRefresh({ endpoint: "/api/buyer/v1/stores", config: config })).unwrap()
             if (result.status === 200) {
                 console.log(JSON.stringify(result));
-                setData(result.data);
+                setStores(result.data);
             }
             else {
                 console.log(JSON.stringify(result))
@@ -41,13 +47,37 @@ export const BuyerStoreScreen = () => {
 
     const columns = ['Name', 'Description', 'Price', 'Available Quantity'];
     const setUpModal = (index) => {
-        setProduct(data[index]);
+        setProduct(storeProducts[index]);
         setPurchaseModalVisible(true)
+    }
+    const fetchProducts = async (id: string) => {
+        const config = {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: id
+        }
+        const result: CustomFetchResult = await dispatch(fetchWithRefresh({ endpoint: "/api/buyer/v1/store/products", config: config })).unwrap()
+        if (result.status === 200) {
+            console.log(JSON.stringify(result));
+            setStoreProducts(result.data);
+        }
+        else {
+            console.log(JSON.stringify(result))
+        }
+    }
+    const handleRowClicks = async (index) => {
+        console.log('seller id: ', stores[index].sellerId)
+        await fetchProducts(stores[index].sellerId);
+
     }
     return (
         <TabCard title="Store">
-            <GenericTable columns={columns} data={data} handleRowClick={(index) => { setUpModal(index) }} />
+            <GenericTable columns={columns} data={stores} handleRowClick={(index) => { handleRowClicks(index) }} />
+            <GenericTable columns={columns} data={storeProducts} handleRowClick={(index) => { setUpModal(index) }} />
             {purchaseModalVisible && <PurchaseProductModal onClose={() => setPurchaseModalVisible(false)} name={product.name} description={product.description} price={product.price} productId={product.id} />}
+
         </TabCard >
     )
 }

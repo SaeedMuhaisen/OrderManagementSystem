@@ -4,6 +4,12 @@ import { useDispatch } from "react-redux";
 import { setUser } from "../../../../redux";
 export const GenericTable = ({ columns, data, handleRowClick = (val) => { } }) => {
     const importData = (products) => {
+        if (products === null) {
+            return {
+                columns: columns,
+                data: []
+            }
+        }
         if (products.length === 0) {
             // If products array is empty, use the columns prop
             return {
