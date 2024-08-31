@@ -1,6 +1,7 @@
 package com.OrderManagementSystem.Entities;
 
 
+import com.OrderManagementSystem.Entities.enums.Role;
 import com.OrderManagementSystem.Entities.enums.UserStatus;
 import jakarta.persistence.*;
 import lombok.*;
@@ -39,7 +40,7 @@ public class User implements UserDetails {
 
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, fetch = FetchType.EAGER)
     private List<Product> products=new ArrayList<>();
-    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, fetch = FetchType.EAGER)
+    @OneToMany(mappedBy = "buyer", cascade = CascadeType.ALL, fetch = FetchType.EAGER)
     private List<Order> orders=new ArrayList<>();
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {

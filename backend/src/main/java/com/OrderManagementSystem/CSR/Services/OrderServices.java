@@ -1,21 +1,22 @@
 package com.OrderManagementSystem.CSR.Services;
 
 import Mappers.OrderMapper;
-import Mappers.ProductMapper;
 import com.OrderManagementSystem.CSR.Repositories.OrderRepository;
 import com.OrderManagementSystem.CSR.Repositories.ProductRepository;
 import com.OrderManagementSystem.CSR.Repositories.UserRepository;
 import com.OrderManagementSystem.Entities.Order;
 import com.OrderManagementSystem.Entities.User;
 import com.OrderManagementSystem.Entities.enums.StatusType;
+import com.OrderManagementSystem.Exceptions.OrderExceptions.OrderStatusIllegalTransitionException;
 import com.OrderManagementSystem.Exceptions.OrderExceptions.ProductQuantityNotEnoughException;
 import com.OrderManagementSystem.Models.DTO.CreateOrderDTO;
 import com.OrderManagementSystem.Models.DTO.OrderDTO;
+import com.OrderManagementSystem.Models.DTO.UpdateOrderStatusDTO;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
-import org.springframework.web.client.HttpClientErrorException;
 
+import java.nio.file.AccessDeniedException;
 import java.time.Instant;
 import java.util.List;
 import java.util.UUID;
@@ -38,7 +39,7 @@ public class OrderServices {
 
         var order =
                 Order.builder()
-                        .user(user)
+                        .buyer(user)
                         .created_t(Instant.now())
                         .statusType(StatusType.PENDING)
                         .product(product).build();
@@ -57,6 +58,29 @@ public class OrderServices {
         var orders=orderRepository.findAllByProduct_User_Id(user.getId());
 
         return OrderMapper.INSTANCE.orderListToOrderDTOList(orders);
+
+    }
+
+    public void updateOrderStatus(UserDetails userDetails, UpdateOrderStatusDTO updateOrderStatusDTO) throws AccessDeniedException {
+        var user = userRepository.getReferenceById(((User) userDetails).getId());
+        var order = orderRepository.getReferenceById(UUID.fromString(updateOrderStatusDTO.getOrderId()));
+
+        if (!order.getProduct().getUser().getId().equals(user.getId())) {
+            throw new AccessDeniedException("Buyer cannot update the status of an order with a product that doesn't belong to them.");
+        }
+
+        var oldStatus = order.getStatusType();
+        var newStatus = StatusType.valueOf(updateOrderStatusDTO.getStatus());
+
+
+        if (StatusType.ACCEPTED.isIllegalStatusTransition(oldStatus,newStatus)) {
+            throw new OrderStatusIllegalTransitionException("Invalid status transition. oldStatus: "+oldStatus+", newStatus: "+newStatus);
+        }
+
+        order.setStatusType(newStatus);
+        orderRepository.save(order);
+
+        //todo send notification to buyer
 
     }
 }

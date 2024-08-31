@@ -2,10 +2,7 @@ package com.OrderManagementSystem;
 
 import com.OrderManagementSystem.CSR.Controllers.AuthenticationController;
 import com.OrderManagementSystem.CSR.Repositories.UserRepository;
-import com.OrderManagementSystem.Entities.Role;
-import com.OrderManagementSystem.Entities.User;
-import com.OrderManagementSystem.Entities.enums.UserStatus;
-import com.OrderManagementSystem.Models.Authentication.AuthenticationRequest;
+import com.OrderManagementSystem.Entities.enums.Role;
 import com.OrderManagementSystem.Models.Authentication.RegisterRequest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.CommandLineRunner;

@@ -3,9 +3,12 @@ import { GenericTable } from "../../../Common/components/cards/GenericTable";
 import { TabCard } from "../../../Common/components/cards/TabCard"
 import { CustomFetchResult, fetchWithRefresh } from "../../../../redux";
 import { useDispatch } from "react-redux";
+import { UpdateStatusModal } from "../modals/UpdateStatusModal";
 
 export const SellerOdersScreen = () => {
     const [data, setData] = useState([]);
+    const [orderId, setOrderId] = useState(null)
+    const [currentStatus, setCurrentStatus] = useState(null)
     const dispatch = useDispatch<any>();
 
     useEffect(() => {
@@ -28,18 +31,21 @@ export const SellerOdersScreen = () => {
         fetchAll();
     }, [])
 
-
+    const setUpModal = (index) => {
+        setOrderId(data[index].orderId);
+        setCurrentStatus(data[index].status);
+        setUpdateStatusModalVisible(true)
+    }
 
 
     const columns = ['ID', 'Name', 'Description', 'Price', 'Available Quantity', 'Amount Sold', 'Amount Returned', 'Visible'];
 
-    const [createProductModalVisible, setCreateProductModalVisible] = useState(false)
+    const [updateStatusModalVisible, setUpdateStatusModalVisible] = useState(false)
     return (
         <TabCard title="Manage Products" >
 
-            <GenericTable columns={columns} data={data} />
-
-
+            <GenericTable columns={columns} data={data} handleRowClick={(row) => setUpModal(row)} />
+            {updateStatusModalVisible && <UpdateStatusModal onClose={() => setUpdateStatusModalVisible(false)} orderId={orderId} currentStatus={currentStatus} />}
         </TabCard >
     )
 }

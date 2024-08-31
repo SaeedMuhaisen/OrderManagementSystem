@@ -1,6 +1,6 @@
 package com.OrderManagementSystem.Configuration;
 
-import com.OrderManagementSystem.Entities.Role;
+import com.OrderManagementSystem.Entities.enums.Role;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -15,9 +15,7 @@ import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.CorsConfigurationSource;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 
-import java.util.Arrays;
-
-import static com.OrderManagementSystem.Entities.Role.ADMIN;
+import static com.OrderManagementSystem.Entities.enums.Role.ADMIN;
 
 @Configuration
 @EnableWebSecurity

@@ -2,7 +2,7 @@ package com.OrderManagementSystem.CSR.Services;
 
 import com.OrderManagementSystem.CSR.Repositories.TokenRepository;
 import com.OrderManagementSystem.CSR.Repositories.UserRepository;
-import com.OrderManagementSystem.Entities.Role;
+import com.OrderManagementSystem.Entities.enums.Role;
 import com.OrderManagementSystem.Entities.Token;
 import com.OrderManagementSystem.Entities.User;
 import com.OrderManagementSystem.Entities.enums.TokenType;
@@ -24,8 +24,6 @@ import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Component;
 
-import java.time.LocalDate;
-import java.util.Collections;
 import java.util.HashSet;
 
 

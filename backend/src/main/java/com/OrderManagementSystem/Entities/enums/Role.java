@@ -1,4 +1,4 @@
-package com.OrderManagementSystem.Entities;
+package com.OrderManagementSystem.Entities.enums;
 
 
 import lombok.Getter;

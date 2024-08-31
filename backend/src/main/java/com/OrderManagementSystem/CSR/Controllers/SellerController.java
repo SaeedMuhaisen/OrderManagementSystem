@@ -4,11 +4,13 @@ import com.OrderManagementSystem.CSR.Services.OrderServices;
 import com.OrderManagementSystem.CSR.Services.ProductServices;
 import com.OrderManagementSystem.Models.DTO.CreateProductDTO;
 
+import com.OrderManagementSystem.Models.DTO.UpdateOrderStatusDTO;
 import lombok.AllArgsConstructor;
 import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
@@ -27,7 +29,7 @@ public class SellerController {
 
     private static final Logger logger = LoggerFactory.getLogger(SellerController.class);
 
-    @PostMapping("/v1/create")
+    @PostMapping("/v1/products/create")
     @PreAuthorize("hasAuthority('seller:create')")
     public ResponseEntity<?> createProduct(@AuthenticationPrincipal UserDetails userDetails, @RequestBody CreateProductDTO createProductDTO){
         try{
@@ -71,6 +73,20 @@ public class SellerController {
         }catch (Exception e){
             logger.info("getAllProducts() - failed error :{}", e.getMessage());
             return ResponseEntity.ok().build();
+        }
+    }
+
+
+    @PutMapping("/v1/orders/status")
+    @PreAuthorize("hasAuthority('seller:update')")
+    public ResponseEntity<?> updateOrderStatus(@AuthenticationPrincipal UserDetails userDetails,@RequestBody UpdateOrderStatusDTO updateOrderStatusDTO){
+        try{
+            logger.info("updateOrderStatus() - Seller fetching all orders : ${}",userDetails.getUsername() );
+            orderServices.updateOrderStatus(userDetails,updateOrderStatusDTO);
+            return ResponseEntity.ok().build();
+        }catch (Exception e){
+            logger.info("updateOrderStatus() - failed error :{}", e.getMessage());
+            return ResponseEntity.status(HttpStatus.NOT_ACCEPTABLE).build();
         }
     }
 }

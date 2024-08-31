@@ -30,7 +30,7 @@ export const CreateProductModal = ({ onClose }) => {
             },
             body: JSON.stringify(product),
         }
-        const result: CustomFetchResult = await dispatch(fetchWithRefresh({ endpoint: "/api/seller/v1/create", config: config })).unwrap()
+        const result: CustomFetchResult = await dispatch(fetchWithRefresh({ endpoint: "/api/seller/v1/products/create", config: config })).unwrap()
         if (result.status === 200) { onClose() }
         else {
             alert(result.status);
