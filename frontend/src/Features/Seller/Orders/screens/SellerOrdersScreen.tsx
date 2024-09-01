@@ -8,6 +8,7 @@ import { UpdateStatusModal } from "../modals/UpdateStatusModal";
 export const SellerOdersScreen = () => {
     const [data, setData] = useState([]);
     const [orderId, setOrderId] = useState(null)
+    const [productId, setProductId] = useState(null)
     const [currentStatus, setCurrentStatus] = useState(null)
     const dispatch = useDispatch<any>();
 
@@ -32,8 +33,10 @@ export const SellerOdersScreen = () => {
     }, [])
 
     const setUpModal = (index) => {
-        setOrderId(data[index].orderId);
+        console.log(data[index])
+        setOrderId(data[index].orderItemId);
         setCurrentStatus(data[index].status);
+        setProductId(data[index].productId);
         setUpdateStatusModalVisible(true)
     }
 
@@ -45,7 +48,7 @@ export const SellerOdersScreen = () => {
         <TabCard title="Manage Products" >
 
             <GenericTable columns={columns} data={data} handleRowClick={(row) => setUpModal(row)} />
-            {updateStatusModalVisible && <UpdateStatusModal onClose={() => setUpdateStatusModalVisible(false)} orderId={orderId} currentStatus={currentStatus} />}
+            {updateStatusModalVisible && <UpdateStatusModal onClose={() => setUpdateStatusModalVisible(false)} orderItemId={orderId}  currentStatus={currentStatus} />}
         </TabCard >
     )
 }

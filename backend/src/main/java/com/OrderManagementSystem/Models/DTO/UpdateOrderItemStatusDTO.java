@@ -9,7 +9,7 @@ import lombok.Setter;
 @Getter
 @Setter
 @Builder
-public class UpdateOrderStatusDTO {
-    private String orderId;
+public class UpdateOrderItemStatusDTO {
+    private String orderItemId;
     private String status;
 }

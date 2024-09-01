@@ -27,7 +27,6 @@ public class User implements UserDetails {
     private String firstname;
     private String lastname;
     private String email;
-
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, fetch = FetchType.EAGER)
     private List<Token> tokens=new ArrayList<>();
     private String password;

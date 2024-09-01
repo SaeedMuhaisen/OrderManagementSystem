@@ -1,3 +1,82 @@
+ .buyer-sidebar-container {
+     width: 10%;
+     display: flex;
+     flex-direction: column;
+
+
+     overflow-x: visible;
+     background-color: 'transparent';
+     justify-content: center;
+     align-items: center;
+ }
+
+ .buyer-sidebar-container nav {
+     display: flex;
+     flex-direction: column;
+     gap: 10px;
+     padding: 15% 10%;
+     border-radius: 50px;
+     background-color: white;
+     box-shadow: 5px 2px 10px rgba(0, 0, 0, 0.1);
+ }
+
+ .buyer-sidebar-seperator {
+     display: flex;
+     flex-direction: row;
+     border-top-style: solid;
+     border-width: 1px;
+     border-top-color: silver;
+
+ }
+
+ .buyer-sidebar-buttonsList {
+     display: flex;
+     gap: 10px;
+     flex-direction: column;
+     gap: 5px;
+     flex: 1;
+ }
+
+ .buyer-sidebar-button {
+     display: flex;
+     align-items: center;
+
+     padding: 8px 16px;
+     background: none;
+     border: none;
+     text-align: left;
+     cursor: pointer;
+     font-size: 14px;
+     color: #333;
+     border-radius: 5px;
+     gap: 8px;
+     background-color: ghostwhite;
+     transition: background-color 0.1s, color 0.1s;
+ }
+
+ .buyer-sidebar-button-active {
+     background-color: #007bff;
+     border-radius: 5px;
+     color: #fff;
+ }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
  .sidebar-container {
      flex: 0.12;
      display: flex;

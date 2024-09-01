@@ -1,8 +1,8 @@
 import React, { useState } from 'react';
-import { CustomFetchResult, setUser } from '../../../redux';
+import { CustomFetchResult, setUser } from '../../../../redux';
 import { useDispatch } from 'react-redux';
 import { useNavigate, } from 'react-router-dom';
-import { host } from '../../Common/connectionConfig';
+import { host } from '../../connectionConfig';
 import "./InitialScreen.css";
 //import { Alert, AlertDescription } from '@/components/ui/alert';
 
@@ -124,7 +124,7 @@ export const InitialScreen = () => {
     return (
 
         <div className='test-login-main-frame'>
-           
+
             <div className="login-container">
                 <div className="login-form-container">
                     <h2 className="login-title">{isLogin ? 'Login' : 'Register'}</h2>
@@ -176,7 +176,7 @@ export const InitialScreen = () => {
                         {isLogin ? 'Need an account? Register' : 'Already have an account? Login'}
                     </div>
                 </div >
-                
+
             </div>
         </div>
 

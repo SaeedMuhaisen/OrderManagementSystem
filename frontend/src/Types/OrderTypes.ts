@@ -8,6 +8,6 @@ export interface OrderDTO {
 }
 
 export interface UpdateOrderStatusDTO {
-    orderId: string,
+    orderItemId: string,
     status: string
 }

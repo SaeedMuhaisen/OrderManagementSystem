@@ -4,7 +4,7 @@ import com.OrderManagementSystem.CSR.Services.OrderServices;
 import com.OrderManagementSystem.CSR.Services.ProductServices;
 import com.OrderManagementSystem.Models.DTO.CreateProductDTO;
 
-import com.OrderManagementSystem.Models.DTO.UpdateOrderStatusDTO;
+import com.OrderManagementSystem.Models.DTO.UpdateOrderItemStatusDTO;
 import lombok.AllArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -77,10 +77,10 @@ public class SellerController {
 
     @PutMapping("/v1/orders/status")
     @PreAuthorize("hasAuthority('seller:update')")
-    public ResponseEntity<?> updateOrderStatus(@AuthenticationPrincipal UserDetails userDetails,@RequestBody UpdateOrderStatusDTO updateOrderStatusDTO){
+    public ResponseEntity<?> updateOrderStatus(@AuthenticationPrincipal UserDetails userDetails,@RequestBody UpdateOrderItemStatusDTO updateOrderItemStatusDTO){
         try{
-            logger.info("updateOrderStatus() - Seller fetching all orders : ${}",userDetails.getUsername() );
-            orderServices.updateOrderStatus(userDetails,updateOrderStatusDTO);
+            logger.info("updateOrderStatus() - Seller updating order Status : ${}",userDetails.getUsername() );
+            orderServices.updateOrderItemStatus(userDetails, updateOrderItemStatusDTO);
             return ResponseEntity.ok().build();
         }catch (Exception e){
             logger.info("updateOrderStatus() - failed error :{}", e.getMessage());

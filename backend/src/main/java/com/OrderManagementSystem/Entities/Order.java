@@ -5,6 +5,8 @@ import jakarta.persistence.*;
 import lombok.*;
 
 import java.time.Instant;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.UUID;
 
 @Builder
@@ -20,15 +22,14 @@ public class Order {
     @GeneratedValue(strategy = GenerationType.AUTO)
     private UUID id;
 
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne(cascade =CascadeType.ALL,fetch = FetchType.EAGER)
     @JoinColumn(name = "buyer_id")
     private User buyer;
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "product_id")
-    private Product product;
+    @OneToMany(mappedBy = "order", cascade = CascadeType.ALL, fetch = FetchType.EAGER)
+    private List<OrderItem> orderItems=new ArrayList<>();
     private Instant created_t;
-    private StatusType statusType;
+
 
 
 }

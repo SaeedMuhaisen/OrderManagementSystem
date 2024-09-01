@@ -4,7 +4,7 @@ import "../styles.css"
 import { CreateProductButton } from "../components/buttons/CreateProductButton";
 import { useEffect, useRef, useState } from "react";
 import { CreateProductModal } from "../components/modals/CreateProductModal";
-import { WebSocketService } from "../../../Notifications";
+
 import SockJS from 'sockjs-client';
 import { Stomp } from '@stomp/stompjs';
 import { useDispatch, useSelector } from "react-redux";

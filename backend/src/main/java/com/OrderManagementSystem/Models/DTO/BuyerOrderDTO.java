@@ -1,10 +1,12 @@
 package com.OrderManagementSystem.Models.DTO;
 
+import com.OrderManagementSystem.Entities.OrderItem;
 import lombok.Data;
 import lombok.Getter;
 import lombok.Setter;
 
 import java.time.Instant;
+import java.util.List;
 
 @Data
 @Getter
@@ -12,8 +14,8 @@ import java.time.Instant;
 public class BuyerOrderDTO {
 
     private String orderId;
-    private String sellerEmail;
-    private String productId;
+    //private String sellerEmail;
+    //private List<OrderItem> orderItemsDTO;
     private Instant orderDate;
-    private String status;
+
 }

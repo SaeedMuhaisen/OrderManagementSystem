@@ -5,7 +5,7 @@ import { useDispatch } from 'react-redux';
 import { UpdateOrderStatusDTO } from '../../../../Types/OrderTypes';
 import { CustomFetchResult, fetchWithRefresh } from '../../../../redux';
 
-export const UpdateStatusModal = ({ onClose, orderId, currentStatus }) => {
+export const UpdateStatusModal = ({ onClose, orderItemId, currentStatus }) => {
     const [newStatus, setNewStatus] = useState(null);
     const [statusOptions, setStatusOptions] = useState([]);
     const [errorMessage, setErrorMessage] = useState('');
@@ -14,7 +14,7 @@ export const UpdateStatusModal = ({ onClose, orderId, currentStatus }) => {
         e.preventDefault();
 
         let updateOrderStatus: UpdateOrderStatusDTO = {
-            orderId: orderId,
+            orderItemId: orderItemId,
             status: newStatus
         }
         const config = {
@@ -79,7 +79,7 @@ export const UpdateStatusModal = ({ onClose, orderId, currentStatus }) => {
             <div className="createproduct-modal-content" onClick={handleContentClick}>
                 <h2>Update Order Status</h2>
                 <div>
-                    <p>Order ID: <span>{orderId}</span></p>
+                    <p>Order ID: <span>{orderItemId}</span></p>
                     <p>Current Status: <span>{currentStatus}</span></p>
                 </div>
                 {statusOptions !== null && statusOptions.length !== 0 &&

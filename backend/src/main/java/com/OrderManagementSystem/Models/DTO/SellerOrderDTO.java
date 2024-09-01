@@ -12,11 +12,9 @@ import java.time.Instant;
 @Setter
 public class SellerOrderDTO {
 
-    private String orderId;
+    private String orderItemId;
     private String firstName;
-
     private String productId;
     private Instant orderDate;
     private String status;
-
 }

@@ -1,0 +1,83 @@
+.stores-container {
+    display: flex;
+    flex: 1;
+    flex-wrap: wrap;
+    gap: 20px;
+
+    padding: 20px;
+    background-color: whitesmoke;
+
+}
+
+.stores-store-card {
+    box-shadow: rgba(0, 0, 0, 0.15) 1.95px 1.95px 2.6px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    width: 200px;
+    height: 200px;
+    background-color: white;
+    border-radius: 8px;
+    cursor: pointer;
+    overflow: hidden;
+}
+
+.stores-store-card-icon {
+    display: flex;
+
+    flex: 1;
+    justify-content: center;
+    align-items: center;
+}
+
+.stores-store-card-name {
+
+
+    text-align: center;
+    color: black;
+}
+
+
+
+.store-products-card-action {
+    background-color: #333333;
+    color: white;
+    padding: 5px
+}
+
+.store-products-card-label {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    padding: 0px 5px;
+
+
+}
+
+.store-products-card-button {
+    display: flex;
+    flex-direction: row;
+
+
+
+
+}
+
+.stores-store-card-icon {
+    justify-content: center;
+    align-items: center;
+}
+
+.quantity-control {
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+    align-items: center;
+
+}
+
+.quantity-control span {
+    color: white;
+    padding: 0 5px;
+    text-align: center;
+}

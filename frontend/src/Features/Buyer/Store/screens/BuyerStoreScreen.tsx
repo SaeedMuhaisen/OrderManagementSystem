@@ -1,83 +1,65 @@
 import { useEffect, useState } from "react";
-import { TabCard } from "../../../Common/components/cards/TabCard"
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { CustomFetchResult, fetchWithRefresh } from "../../../../redux";
-import "./BuyerStoreScreen.css";
-import FlatList from 'flatlist-react';
-import { GenericTable } from "../../../Common/components/cards/GenericTable";
 import { StoreProduct } from "../../../../Types/ProductTypes";
+import { GenericTable } from "../../../Common/components/cards/GenericTable";
+import { TabCard } from "../../../Common/components/cards/TabCard";
 import { PurchaseProductModal } from "../components/modals/PurchaseProductModal";
+import "./BuyerStoreScreen.css";
+import { Store } from "../../../../redux/buyerStoreSlice";
+import { useNavigate } from "react-router-dom";
 export const BuyerStoreScreen = () => {
     const store = {
         sellerId: "",
         sellerName: "",
     }
-    const storeProduct: StoreProduct = {
-        id: "",
-        name: "",
-        description: "",
-        price: 0,
-        availableQuantity: 0
-    }
-    const [stores, setStores] = useState([store]);
-    const [product, setProduct] = useState(storeProduct);
-    const [storeProducts, setStoreProducts] = useState([storeProduct]);
 
+    //const [stores, setStores] = useState([store]);
+    const stores: [Store] = useSelector((state: any) => state.buyerStore.stores)
     const [purchaseModalVisible, setPurchaseModalVisible] = useState(false);
     const dispatch = useDispatch<any>();
-    useEffect(() => {
-        const fetchAll = async () => {
-            const config = {
-                method: 'GET',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-            }
-            const result: CustomFetchResult = await dispatch(fetchWithRefresh({ endpoint: "/api/buyer/v1/stores", config: config })).unwrap()
-            if (result.status === 200) {
-                console.log(JSON.stringify(result));
-                setStores(result.data);
-            }
-            else {
-                console.log(JSON.stringify(result))
-            }
-        }
-        fetchAll();
-    }, []);
 
     const columns = ['Name', 'Description', 'Price', 'Available Quantity'];
-    const setUpModal = (index) => {
-        setProduct(storeProducts[index]);
-        setPurchaseModalVisible(true)
-    }
-    const fetchProducts = async (id: string) => {
-        const config = {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-            },
-            body: id
-        }
-        const result: CustomFetchResult = await dispatch(fetchWithRefresh({ endpoint: "/api/buyer/v1/store/products", config: config })).unwrap()
-        if (result.status === 200) {
-            console.log(JSON.stringify(result));
-            setStoreProducts(result.data);
-        }
-        else {
-            console.log(JSON.stringify(result))
-        }
-    }
-    const handleRowClicks = async (index) => {
-        console.log('seller id: ', stores[index].sellerId)
-        await fetchProducts(stores[index].sellerId);
 
-    }
+    const navigate = useNavigate()
     return (
-        <TabCard title="Store">
-            <GenericTable columns={columns} data={stores} handleRowClick={(index) => { handleRowClicks(index) }} />
-            <GenericTable columns={columns} data={storeProducts} handleRowClick={(index) => { setUpModal(index) }} />
-            {purchaseModalVisible && <PurchaseProductModal onClose={() => setPurchaseModalVisible(false)} name={product.name} description={product.description} price={product.price} productId={product.id} />}
+        <div>
+            <span>Shop By Store!</span>
+            <div className="stores-container">
+                {stores.map((row, index) => (
+                    <div
+                        key={index}
+                        className="stores-store-card"
+                        onClick={() => navigate(`/store/${row.sellerId}`, {
+                            state: { sellerName: row.sellerName, sellerId: row.sellerId }
+                        })}
+                    >
+                        <div className="stores-store-card-icon">
+                            <svg
+                                viewBox="0 0 640 512"
+                                fill="currentColor"
+                                height="3em"
+                                width="3em"
+                            >
+                                <path d="M36.8 192h566.4c20.3 0 36.8-16.5 36.8-36.8 0-7.3-2.2-14.4-6.2-20.4L558.2 21.4C549.3 8 534.4 0 518.3 0H121.7c-16 0-31 8-39.9 21.4L6.2 134.7c-4 6.1-6.2 13.2-6.2 20.4C0 175.5 16.5 192 36.8 192zM64 224v240c0 26.5 21.5 48 48 48h224c26.5 0 48-21.5 48-48V224h-64v160H128V224H64zm448 0v256c0 17.7 14.3 32 32 32s32-14.3 32-32V224h-64z" />
+                            </svg>
+                        </div>
+                        <div className="stores-store-card-name">
+                            {row.sellerName}
+                        </div>
+                    </div>
+                ))}
+            </div>
+        </div>
 
-        </TabCard >
+
+
+
+
+
     )
 }
+
+//  {/* <GenericTable columns={columns} data={stores} handleRowClick={(index) => { handleRowClicks(index) }} />
+//<GenericTable columns={columns} data={storeProducts} handleRowClick={(index) => { setUpModal(index) }} />
+//{purchaseModalVisible && <PurchaseProductModal onClose={() => setPurchaseModalVisible(false)} name={product.name} description={product.description} price={product.price} productId={product.id} />} */}

@@ -71,11 +71,11 @@ public class BuyerController {
     @PreAuthorize("hasAuthority('buyer:read')")
     public ResponseEntity<?> createOrder(@AuthenticationPrincipal UserDetails userDetails, @RequestBody CreateOrderDTO createOrderDTO){
         try{
-            logger.info("createOrder() - order received for item: {}",createOrderDTO.getProductId() );
+            logger.info("createOrder() - order received for items: {}",createOrderDTO.getProducts() );
             orderServices.createOrder(userDetails,createOrderDTO);
             return ResponseEntity.ok().build();
         }catch (Exception e){
-            logger.info("createOrder() - order for product: {} - failed error :{}", createOrderDTO.getProductId(),e.getMessage());
+            logger.info("createOrder() - order for product: {} - failed error :{}", createOrderDTO.getProducts(),e.getMessage());
             return ResponseEntity.status(HttpStatus.NOT_ACCEPTABLE).build();
         }
     }

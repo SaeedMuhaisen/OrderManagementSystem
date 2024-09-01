@@ -55,22 +55,22 @@ export const originalRequest = async (endpoint: any, config: any) => {
         customResponse.statusText = response.statusText;
         const text = await response.text();
         if (!text) {
-            console.log(`🟣UserSlice - originalRequest - response Received and body is empty!`);
+            //console.log(`🟣UserSlice - originalRequest - response Received and body is empty!`);
             customResponse.data = null
         } else {
-            console.log(`🟣UserSlice - originalRequest - response Received`);
+            //console.log(`🟣UserSlice - originalRequest - response Received`);
             try {
                 customResponse.data = JSON.parse(text);
-                console.log(`🟣UserSlice - originalRequest - response data: ${JSON.stringify(JSON.parse(text), null, 2)}`);
+                //console.log(`🟣UserSlice - originalRequest - response data: ${JSON.stringify(JSON.parse(text), null, 2)}`);
             } catch (error: any) {
-                console.log(`❗❗🟣UserSlice - originalRequest - Error caught while trying to parse response - error: ${error}`);
+                //console.log(`❗❗🟣UserSlice - originalRequest - Error caught while trying to parse response - error: ${error}`);
                 customResponse.data = null;
             }
         }
-        console.log(`🟣UserSlice - originalRequest - finished - returning : ${JSON.stringify(customResponse, null, 2)}`);
+        //console.log(`🟣UserSlice - originalRequest - finished - returning : ${JSON.stringify(customResponse, null, 2)}`);
         return customResponse
     } catch (error) {
-        console.log(`❗❗🟣UserSlice - originalRequest - Error Caucht while processing originalRequest - RETHROWING : ${error}`);
+        //console.log(`❗❗🟣UserSlice - originalRequest - Error Caucht while processing originalRequest - RETHROWING : ${error}`);
         throw error;
     }
 };
@@ -112,7 +112,7 @@ export const fetchWithRefresh = createAsyncThunk(
                 let refreshResponse: CustomFetchResult = await originalRequest(refreshEndpoint, refreshConfig);
                 // console.log(`🟣UserSlice - fetchWithRefresh - returned from orignalRequest method`);
                 if (refreshResponse.status === 200) {
-                    console.log(`🟣UserSlice - fetchWithRefresh | REFRESH TOKEN - status: ${refreshResponse.status}`);
+                    //console.log(`🟣UserSlice - fetchWithRefresh | REFRESH TOKEN - status: ${refreshResponse.status}`);
                     dispatch(updateTokenAndAccessToken({
                         access_token: refreshResponse.data.access_token,
                         refresh_token: refreshResponse.data.refresh_token
@@ -135,7 +135,7 @@ export const fetchWithRefresh = createAsyncThunk(
                 }
                 else {
                     //console.log(`❗❗❗❗🟣UserSlice - fetchWithRefresh | REFRESH TOKEN - failed to refresh token - throwing an error`);
-                    console.log("COULD'NT REFRESH TOKEN, MUST SIGN OUT!")
+                    //console.log("COULD'NT REFRESH TOKEN, MUST SIGN OUT!")
                     dispatch({ type: 'user/forceSignout' });
                 }
             }
