@@ -4,6 +4,7 @@ import "./sidebar.css"; // Import your CSS file
 import { SideBarButton } from "../buttons/SideBarButton";
 import { UserState } from "../../../../../redux";
 import { IconHome, IconLogout, IconProduct, IconReceipt, IconStore, IconUser } from "../../../components/svg/Icons";
+import { NotificationsState, removeNotification } from "../../../../../redux/notificationsSlice";
 
 export const NavigationBar = () => {
     const user: UserState = useSelector((state: any) => state.user);
@@ -64,13 +65,14 @@ const SellerSideBar = ({ dispatch }) => {
 
 const BuyerSideBar = ({ dispatch }) => {
     const [active, setActive] = useState('Home');
+    const notifications: NotificationsState = useSelector((state: any) => state.notifications);
     return (
         <div className="buyer-sidebar-container">
             <nav>
                 <div className="buyer-sidebar-buttonsList">
                     {/* <SideBarButton setActive={setActive} active={active} title={"Home"} navigateTo="/home" icon={<IconHome />} /> */}
                     <SideBarButton setActive={setActive} active={active} title={"Store"} navigateTo="/store" icon={<IconStore />} />
-                    <SideBarButton setActive={setActive} active={active} title={"Orders"} navigateTo="/orders" icon={<IconReceipt />} />
+                    <SideBarButton setActive={setActive} active={active} title={"Orders"} navigateTo="/orders" icon={<IconReceipt style={{ color: notifications.BUYER.Orders.notificationAvailable ? 'crimson' : undefined }} />} notificationReset={() => dispatch(removeNotification({ userType: 'BUYER', screen: 'Orders' }))} />
                     <SideBarButton setActive={setActive} active={active} title={"Cart"} navigateTo="/cart" icon={<IconProduct />} />
 
                 </div>

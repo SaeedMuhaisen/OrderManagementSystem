@@ -1,11 +1,10 @@
 import { useSelector } from 'react-redux';
 import { BrowserRouter, Navigate, Route, Routes } from 'react-router-dom';
 import { AdminHomeScreen } from '../Features/Admin/Home';
-import { BuyerOrderScreen } from '../Features/Buyer/Order';
+import { OrderHistoryScreen } from '../Features/Buyer/OrderHistory';
 import { BuyerStoreScreen } from '../Features/Buyer/Store';
 import { InitialScreen } from '../Features/Common/Authentication';
 import { NavigationBar } from '../Features/Common/NavigationBar';
-import { SellerHomeScreen } from '../Features/Seller/Home';
 import { SellerOdersScreen } from '../Features/Seller/Orders';
 import { ManageProducts } from '../Features/Seller/Product';
 import { UserState } from '../redux';
@@ -49,7 +48,7 @@ const BuyerRoutes = () => {
         <NavigationBar />
         <div className='navigation-child'>
           <Routes>
-            <Route path="/orders" element={< BuyerOrderScreen />} />
+            <Route path="/orders" element={< OrderHistoryScreen />} />
             <Route path="/store" element={< BuyerStoreScreen />} />
             <Route path="/store/:specificStore" element={<SpecificStoreScreen />} />
             <Route path="/cart" element={<ShoppingCartScreen />} />

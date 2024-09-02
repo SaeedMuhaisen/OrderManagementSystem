@@ -9,6 +9,7 @@ import org.mapstruct.Mapping;
 import org.mapstruct.factory.Mappers;
 
 import java.util.List;
+import java.util.Map;
 
 @Mapper
 public interface OrderItemMapper {
@@ -27,9 +28,8 @@ public interface OrderItemMapper {
     @Mapping(source = "order.created_t",target="orderDate" )
     @Mapping(source = "statusType",target="status" )
     @Mapping(source = "id", target = "orderItemId")
+
     SellerOrderDTO orderItemToSellerOrderDTO(OrderItem orderItem);
-
-
 
 
 }

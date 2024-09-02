@@ -1,19 +1,18 @@
-import { stat } from 'fs';
-import React, { useEffect, useState } from 'react';
-
+import { useEffect, useState } from 'react';
 import { useDispatch } from 'react-redux';
-import { UpdateOrderStatusDTO } from '../../../../Types/OrderTypes';
+import { UpdateOrderItemStatusDTO } from '../../../../Types';
 import { CustomFetchResult, fetchWithRefresh } from '../../../../redux';
+import { updateOrderItemStatus } from '../../../../redux/BuyerSlices/orderHistorySlice';
+import { updateSellerOrderItemStatus } from '../../../../redux/SellerSlices/sellerOrdersSlice';
 
-export const UpdateStatusModal = ({ onClose, orderItemId, currentStatus }) => {
+export const UpdateStatusModal = ({ onClose, orderItemId, currentStatus}) => {
     const [newStatus, setNewStatus] = useState(null);
     const [statusOptions, setStatusOptions] = useState([]);
     const [errorMessage, setErrorMessage] = useState('');
     const dispatch = useDispatch<any>();
     const handleSubmit = async (e) => {
         e.preventDefault();
-
-        let updateOrderStatus: UpdateOrderStatusDTO = {
+        let updateOrderStatus: UpdateOrderItemStatusDTO = {
             orderItemId: orderItemId,
             status: newStatus
         }
@@ -24,8 +23,11 @@ export const UpdateStatusModal = ({ onClose, orderItemId, currentStatus }) => {
             },
             body: JSON.stringify(updateOrderStatus),
         }
-        const result: CustomFetchResult = await dispatch(fetchWithRefresh({ endpoint: "/api/seller/v1/orders/status", config: config })).unwrap()
-        if (result.status === 200) { onClose() }
+        const result: CustomFetchResult = await dispatch(fetchWithRefresh({ endpoint: "/api/seller/v1/order/status", config: config })).unwrap()
+        if (result.status === 200) {
+            onClose();
+            dispatch(updateSellerOrderItemStatus({ orderItemId: orderItemId, status: newStatus }));
+        }
         else {
             setErrorMessage("something unexpected happened:" + result.status + " ," + result.statusText);
             alert(result.status);
@@ -44,6 +46,7 @@ export const UpdateStatusModal = ({ onClose, orderItemId, currentStatus }) => {
         setStatusOptions(filterStatusOptions(currentStatus));
         setNewStatus(filterStatusOptions(currentStatus)[0]);
     }, [])
+
     const filterStatusOptions = (currentStatus) => {
         if (currentStatus === 'PENDING') {
             return [
@@ -69,10 +72,6 @@ export const UpdateStatusModal = ({ onClose, orderItemId, currentStatus }) => {
             return []
         }
     };
-
-    // Example usage:
-
-
 
     return (
         <div className="createproduct-modal" onClick={handleModalClick}>

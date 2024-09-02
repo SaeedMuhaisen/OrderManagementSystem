@@ -27,7 +27,7 @@ public class SellerController {
 
     private static final Logger logger = LoggerFactory.getLogger(SellerController.class);
 
-    @PostMapping("/v1/products/create")
+    @PostMapping("/v1/product")
     @PreAuthorize("hasAuthority('seller:create')")
     public ResponseEntity<?> createProduct(@AuthenticationPrincipal UserDetails userDetails, @RequestBody CreateProductDTO createProductDTO){
         try{
@@ -42,14 +42,7 @@ public class SellerController {
 
     }
 
-    private ResponseEntity<?> updateProduct(){
-        return ResponseEntity.ok().build();
-    }
-
-    private ResponseEntity<?> deleteProduct(){
-        return ResponseEntity.ok().build();
-    }
-    @GetMapping("/v1/products/all")
+    @GetMapping("/v1/products")
     @PreAuthorize("hasAuthority('seller:read')")
     public ResponseEntity<?> getAllProducts(@AuthenticationPrincipal UserDetails userDetails){
         try{
@@ -61,7 +54,7 @@ public class SellerController {
             return ResponseEntity.ok().build();
         }
     }
-    @GetMapping("/v1/orders/all")
+    @GetMapping("/v1/orders")
     @PreAuthorize("hasAuthority('seller:read')")
     public ResponseEntity<?> getAllOrders(@AuthenticationPrincipal UserDetails userDetails){
         try{
@@ -74,8 +67,7 @@ public class SellerController {
         }
     }
 
-
-    @PutMapping("/v1/orders/status")
+    @PutMapping("/v1/order/status")
     @PreAuthorize("hasAuthority('seller:update')")
     public ResponseEntity<?> updateOrderStatus(@AuthenticationPrincipal UserDetails userDetails,@RequestBody UpdateOrderItemStatusDTO updateOrderItemStatusDTO){
         try{

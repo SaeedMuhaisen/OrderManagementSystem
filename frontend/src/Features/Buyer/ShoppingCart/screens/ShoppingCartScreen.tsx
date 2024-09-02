@@ -1,7 +1,6 @@
 import { useDispatch, useSelector } from "react-redux"
-import { confirmPurchase, ShoppingCartState } from "../../../../redux/shoppingCartSlice"
-import './CartTabStyles.css'
-import { CreateOrderDTO } from "../../../../Types/OrderTypes"
+import { confirmPurchase, ShoppingCartState } from "../../../../redux/BuyerSlices/shoppingCartSlice"
+
 import { IconProduct } from "../../../Common/components/svg/Icons"
 export const ShoppingCartScreen = () => {
     const shopingCart: ShoppingCartState = useSelector((state: any) => state.shoppingCart)

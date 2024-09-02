@@ -1,9 +1,10 @@
 import React, { useState } from 'react';
-import "../../styles.css"
 import { useDispatch } from 'react-redux';
 import { CustomFetchResult, fetchWithRefresh } from '../../../../../redux';
 import { uuidv7 } from 'uuidv7';
-import { CreateProductDTO } from '../../../../../Types/ProductTypes';
+import { CreateProductDTO } from '../../../../../Types';
+
+
 export const CreateProductModal = ({ onClose }) => {
     const [name, setName] = useState('');
     const [description, setDescription] = useState('');
@@ -30,7 +31,7 @@ export const CreateProductModal = ({ onClose }) => {
             },
             body: JSON.stringify(product),
         }
-        const result: CustomFetchResult = await dispatch(fetchWithRefresh({ endpoint: "/api/seller/v1/products/create", config: config })).unwrap()
+        const result: CustomFetchResult = await dispatch(fetchWithRefresh({ endpoint: "/api/seller/v1/product", config: config })).unwrap()
         if (result.status === 200) { onClose() }
         else {
             alert(result.status);

@@ -92,7 +92,6 @@ export const fetchWithRefresh = createAsyncThunk(
             ...config.headers,
             Authorization: `Bearer ${user?.access_token}`
         };
-        console.log('authorization::',user.access_token);
 
         try {
             // console.log(`🟣UserSlice - fetchWithRefresh calling originalRequest Method `);
@@ -199,12 +198,8 @@ export const userSlice = createSlice({
     }
 })
 
-// Update the user id
+
 export const { updateUserDetails, updateUserTokens, setSignedIn, setUser, updateTokenAndAccessToken } = userSlice.actions;
-// Update the access token
+
 export default userSlice.reducer;
-// Update the refresh token
-// Update the signed in status
-// Update the first name
-// Update the last name
-// Update the email
+

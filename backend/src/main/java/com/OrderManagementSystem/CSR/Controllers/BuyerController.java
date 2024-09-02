@@ -41,42 +41,16 @@ public class BuyerController {
         }
     }
 
-    @PostMapping("/v1/store/products")
+    @GetMapping("/v1/store/{sellerId}")
     @PreAuthorize("hasAuthority('buyer:read')")
-    public ResponseEntity<?> getSellerProducts(@RequestBody String sellerId){
+    public ResponseEntity<?> getStoreProducts(@PathVariable String sellerId){
         try{
             logger.info("getSellerStore() - init" );
-            var products=productServices.getAllProductsBySellersId(sellerId);
+            var products=productServices.getStoreProducts(sellerId);
             return ResponseEntity.ok().body(products);
         }catch (Exception e){
             logger.info("getAllAvailableSellers() - failed error :{}", e.getMessage());
             return ResponseEntity.ok().build();
-        }
-    }
-
-//    @GetMapping("/v1/store/products")
-//    @PreAuthorize("hasAuthority('buyer:read')")
-//    public ResponseEntity<?> getAllProducts(){
-//        try{
-//            logger.info("getAllProducts() - init" );
-//            var products=productServices.getAllAvailableProducts();
-//            return ResponseEntity.ok().body(products);
-//        }catch (Exception e){
-//            logger.info("getAllProducts() - failed error :{}", e.getMessage());
-//            return ResponseEntity.ok().build();
-//        }
-//    }
-
-    @PostMapping("/v1/store/order")
-    @PreAuthorize("hasAuthority('buyer:read')")
-    public ResponseEntity<?> createOrder(@AuthenticationPrincipal UserDetails userDetails, @RequestBody CreateOrderDTO createOrderDTO){
-        try{
-            logger.info("createOrder() - order received for items: {}",createOrderDTO.getProducts() );
-            orderServices.createOrder(userDetails,createOrderDTO);
-            return ResponseEntity.ok().build();
-        }catch (Exception e){
-            logger.info("createOrder() - order for product: {} - failed error :{}", createOrderDTO.getProducts(),e.getMessage());
-            return ResponseEntity.status(HttpStatus.NOT_ACCEPTABLE).build();
         }
     }
 
@@ -92,4 +66,19 @@ public class BuyerController {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
         }
     }
+
+    @PostMapping("v1/order")
+    @PreAuthorize("hasAuthority('buyer:create')")
+    public ResponseEntity<?> createOrder(@AuthenticationPrincipal UserDetails userDetails, @RequestBody CreateOrderDTO createOrderDTO){
+        try{
+            logger.info("createOrder() - order received for items: {}",createOrderDTO.getProducts() );
+            orderServices.createOrder(userDetails,createOrderDTO);
+            return ResponseEntity.ok().build();
+        }catch (Exception e){
+            logger.info("createOrder() - order for product: {} - failed error :{}", createOrderDTO.getProducts(),e.getMessage());
+            return ResponseEntity.status(HttpStatus.NOT_ACCEPTABLE).build();
+        }
+    }
+
+
 }

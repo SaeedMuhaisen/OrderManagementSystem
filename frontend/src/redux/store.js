@@ -2,14 +2,24 @@ import { configureStore, combineReducers } from '@reduxjs/toolkit';
 import { persistReducer, persistStore } from 'redux-persist';
 import storage from 'redux-persist/lib/storage'; // or whatever storage you want to use
 import userReducer from "./userSlice";
-import buyerReducer from "./buyerStoreSlice";
-import shoppingCartReducer from "./shoppingCartSlice";
+import buyerReducer from "./BuyerSlices/buyerStoreSlice";
+import shoppingCartReducer from "./BuyerSlices/shoppingCartSlice";
+import orderHistoryReducer from "./BuyerSlices/orderHistorySlice";
+import notificationsReducer from "./notificationsSlice";
+import sellerOrdersReducer from "./SellerSlices/sellerOrdersSlice";
+import sellerProductsReducer from "./SellerSlices/sellerProductsSlice";
+
 import { authMessageMiddleware } from './middleware/authMessageMiddleware';
 
 const rootReducer = combineReducers({
   user: userReducer,
   buyerStore: buyerReducer,
-  shoppingCart: shoppingCartReducer
+  shoppingCart: shoppingCartReducer,
+  orderHistory: orderHistoryReducer,
+  notifications: notificationsReducer,
+
+  sellerOrders: sellerOrdersReducer,
+  sellerProducts: sellerProductsReducer,
 });
 
 const persistConfig = {

@@ -40,7 +40,7 @@ public class ProductServices {
 
     }
 
-    public List<ProductDTO> getAllProductsBySellersId(String sellersId) {
+    public List<ProductDTO> getStoreProducts(String sellersId) {
         var user= userRepository.getReferenceById(UUID.fromString(sellersId));
         return ProductMapper.INSTANCE.productListToProductDTOList(user.getProducts());
     }

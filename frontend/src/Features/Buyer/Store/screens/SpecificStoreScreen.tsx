@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { useLocation, useParams } from 'react-router-dom';
 import { CartItem, CustomFetchResult, fetchWithRefresh, insertIntoShoppingCart, removeFromCart, ShoppingCartState, updateQuantity } from '../../../../redux';
 import { useDispatch, useSelector } from 'react-redux';
-import { CreateProductDTO, StoreProduct } from '../../../../Types/ProductTypes';
+import { CreateProductDTO,StoreProductDTO } from '../../../../Types';
 import { IconProduct } from '../../../Common/components/svg/Icons';
 
 export const SpecificStoreScreen = () => {
@@ -23,13 +23,12 @@ export const SpecificStoreScreen = () => {
     useEffect(() => {
         const fetchStoreProducts = async () => {
             const config = {
-                method: 'POST',
+                method: 'GET',
                 headers: {
                     'Content-Type': 'application/json',
                 },
-                body: sellerId
             }
-            const result: CustomFetchResult = await dispatch(fetchWithRefresh({ endpoint: "/api/buyer/v1/store/products", config: config })).unwrap()
+            const result: CustomFetchResult = await dispatch(fetchWithRefresh({ endpoint: `/api/buyer/v1/store/${sellerId}`, config: config })).unwrap()
             if (result.status === 200) {
                 console.log(JSON.stringify(result));
                 setProducts(result.data);
@@ -50,7 +49,7 @@ export const SpecificStoreScreen = () => {
         return item ? item.quantity : 0;
     };
 
-    const handleQuantityChange = (product: StoreProduct, newQuantity: number) => {
+    const handleQuantityChange = (product: StoreProductDTO, newQuantity: number) => {
         if (newQuantity === 0) {
             dispatch(removeFromCart(product.id));
         } else {

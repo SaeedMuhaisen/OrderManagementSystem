@@ -1,31 +1,16 @@
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { CustomFetchResult, fetchWithRefresh } from "../../../../redux";
-import { StoreProduct } from "../../../../Types/ProductTypes";
-import { GenericTable } from "../../../Common/components/cards/GenericTable";
-import { TabCard } from "../../../Common/components/cards/TabCard";
-import { PurchaseProductModal } from "../components/modals/PurchaseProductModal";
-import "./BuyerStoreScreen.css";
-import { Store } from "../../../../redux/buyerStoreSlice";
 import { useNavigate } from "react-router-dom";
+import { SellerDTO } from "../../../../Types";
+
 export const BuyerStoreScreen = () => {
-    const store = {
-        sellerId: "",
-        sellerName: "",
-    }
-
-    //const [stores, setStores] = useState([store]);
-    const stores: [Store] = useSelector((state: any) => state.buyerStore.stores)
-    const [purchaseModalVisible, setPurchaseModalVisible] = useState(false);
-    const dispatch = useDispatch<any>();
-
-    const columns = ['Name', 'Description', 'Price', 'Available Quantity'];
-
+    const stores: [SellerDTO] = useSelector((state: any) => state.buyerStore.stores)
     const navigate = useNavigate()
     return (
         <div>
             <span>Shop By Store!</span>
             <div className="stores-container">
+
                 {stores.map((row, index) => (
                     <div
                         key={index}
@@ -59,7 +44,3 @@ export const BuyerStoreScreen = () => {
 
     )
 }
-
-//  {/* <GenericTable columns={columns} data={stores} handleRowClick={(index) => { handleRowClicks(index) }} />
-//<GenericTable columns={columns} data={storeProducts} handleRowClick={(index) => { setUpModal(index) }} />
-//{purchaseModalVisible && <PurchaseProductModal onClose={() => setPurchaseModalVisible(false)} name={product.name} description={product.description} price={product.price} productId={product.id} />} */}

@@ -14,8 +14,7 @@ import java.util.List;
 public class BuyerOrderDTO {
 
     private String orderId;
-    //private String sellerEmail;
-    //private List<OrderItem> orderItemsDTO;
     private Instant orderDate;
+    private List<OrderItemDTO> orderItems;
 
 }

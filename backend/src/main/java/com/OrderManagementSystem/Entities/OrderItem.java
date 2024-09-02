@@ -25,4 +25,5 @@ public class OrderItem {
     @ManyToOne
     private Order order;
     private StatusType statusType;
+    private Double productPrice;
 }

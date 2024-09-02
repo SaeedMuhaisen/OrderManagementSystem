@@ -1,10 +1,12 @@
 import { createAsyncThunk, createSlice, PayloadAction } from '@reduxjs/toolkit';
-import { StoreProduct } from '../Types/ProductTypes';
-import { CustomFetchResult, fetchWithRefresh } from './userSlice';
+
+import { CustomFetchResult, fetchWithRefresh } from '../userSlice';
+import { StoreProductDTO } from '../../Types';
+import { fetchOrderHistory } from './orderHistorySlice';
 
 
 export interface CartItem {
-    product: StoreProduct,
+    product: StoreProductDTO,
     quantity: number
 }
 export interface ShoppingCartState {
@@ -30,10 +32,11 @@ export const confirmPurchase = createAsyncThunk(
                 products: orderProducts
             })
         }
-        const result: CustomFetchResult = await dispatch(fetchWithRefresh({ endpoint: "/api/buyer/v1/store/order", config: config })).unwrap()
+        const result: CustomFetchResult = await dispatch(fetchWithRefresh({ endpoint: "/api/buyer/v1/order", config: config })).unwrap()
         if (result.status === 200) {
             alert('order has been created!');
-            dispatch(clearCart())
+            dispatch(clearCart());
+            dispatch(fetchOrderHistory())
         }
         else {
             alert('something went wrong!');
@@ -48,7 +51,7 @@ export const shoppingCartSlice = createSlice({
 
     },
     reducers: {
-        insertIntoShoppingCart(state: ShoppingCartState, action: PayloadAction<StoreProduct>) {
+        insertIntoShoppingCart(state: ShoppingCartState, action: PayloadAction<StoreProductDTO>) {
             console.log('received something:::', action.payload);
             for (var product in state.products) {
                 if (state.products[product].product.id === action.payload.id) {

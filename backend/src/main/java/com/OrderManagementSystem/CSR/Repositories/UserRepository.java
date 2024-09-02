@@ -24,6 +24,6 @@ public interface UserRepository extends JpaRepository<User, UUID> {
                             "AND EXISTS (" +
                             "SELECT 1 " +
                             "FROM product p " +
-                            "WHERE p.owner_id = u.id AND p.visible = TRUE)")
+                            "WHERE p.owner_id = u.id AND p.visible = TRUE AND p.available_quantity>0)")
     List<User> findAvailableStores();
 }

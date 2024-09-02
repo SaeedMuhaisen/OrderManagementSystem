@@ -2,53 +2,32 @@ import { useEffect, useState } from "react";
 import { GenericTable } from "../../../Common/components/cards/GenericTable";
 import { TabCard } from "../../../Common/components/cards/TabCard"
 import { CustomFetchResult, fetchWithRefresh } from "../../../../redux";
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { UpdateStatusModal } from "../modals/UpdateStatusModal";
+import { SellerOrdersState } from "../../../../redux/SellerSlices/sellerOrdersSlice";
 
 export const SellerOdersScreen = () => {
-    const [data, setData] = useState([]);
-    const [orderId, setOrderId] = useState(null)
-    const [productId, setProductId] = useState(null)
+    const sellerOrders: SellerOrdersState = useSelector((state: any) => state.sellerOrders);
+    const [orderItemId, setOrderItemId] = useState(null)
     const [currentStatus, setCurrentStatus] = useState(null)
-    const dispatch = useDispatch<any>();
-
-    useEffect(() => {
-        const fetchAll = async () => {
-            const config = {
-                method: 'GET',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-            }
-            const result: CustomFetchResult = await dispatch(fetchWithRefresh({ endpoint: "/api/seller/v1/orders/all", config: config })).unwrap()
-            if (result.status === 200) {
-                console.log(JSON.stringify(result));
-                setData(result.data);
-            }
-            else {
-                console.log(JSON.stringify(result))
-            }
-        }
-        fetchAll();
-    }, [])
-
-    const setUpModal = (index) => {
-        console.log(data[index])
-        setOrderId(data[index].orderItemId);
-        setCurrentStatus(data[index].status);
-        setProductId(data[index].productId);
-        setUpdateStatusModalVisible(true)
-    }
-
 
     const columns = ['ID', 'Name', 'Description', 'Price', 'Available Quantity', 'Amount Sold', 'Amount Returned', 'Visible'];
+
+
+
+    const setUpModal = (index: number) => {
+        console.log(sellerOrders.orders[index])
+        setOrderItemId(sellerOrders.orders[index].orderItemId);
+        setCurrentStatus(sellerOrders.orders[index].status);
+        setUpdateStatusModalVisible(true)
+    }
 
     const [updateStatusModalVisible, setUpdateStatusModalVisible] = useState(false)
     return (
         <TabCard title="Manage Products" >
 
-            <GenericTable columns={columns} data={data} handleRowClick={(row) => setUpModal(row)} />
-            {updateStatusModalVisible && <UpdateStatusModal onClose={() => setUpdateStatusModalVisible(false)} orderItemId={orderId}  currentStatus={currentStatus} />}
+            <GenericTable columns={columns} data={sellerOrders.orders} handleRowClick={(row) => setUpModal(row)} />
+            {updateStatusModalVisible && <UpdateStatusModal onClose={() => setUpdateStatusModalVisible(false)} orderItemId={orderItemId} currentStatus={currentStatus} />}
         </TabCard >
     )
 }

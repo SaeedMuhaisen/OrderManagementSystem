@@ -16,6 +16,9 @@ import com.OrderManagementSystem.Exceptions.OrderExceptions.OrderContainsIllegal
 import com.OrderManagementSystem.Exceptions.OrderExceptions.OrderStatusIllegalTransitionException;
 import com.OrderManagementSystem.Exceptions.OrderExceptions.ProductQuantityNotEnoughException;
 import com.OrderManagementSystem.Models.DTO.*;
+import com.OrderManagementSystem.Models.Notifications.NotificationMessage;
+import com.OrderManagementSystem.Models.Notifications.NotificationType;
+import com.OrderManagementSystem.Models.Notifications.UpdateStatusNotification;
 import lombok.RequiredArgsConstructor;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -24,9 +27,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.nio.file.AccessDeniedException;
 import java.time.Instant;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.UUID;
+import java.util.*;
 
 @Service
 @RequiredArgsConstructor
@@ -49,7 +50,6 @@ public class OrderServices {
                 .buyer(user.get())
                 .created_t(Instant.now())
                 .orderItems(orderItems)
-
                 .build();
 
         var savedOrder=orderRepository.save(order);
@@ -75,6 +75,7 @@ public class OrderServices {
             var orderItem = OrderItem.builder()
                     .quantity(orderItemDTO.getQuantity())
                     .product(product.get())
+                    .productPrice(product.get().getPrice())
                     .statusType(StatusType.PENDING)
                     .order(savedOrder)
                     .build();
@@ -86,8 +87,20 @@ public class OrderServices {
         orderItemRepository.saveAll(orderItems);
 
         productRepository.saveAll(products);
+
+        Set<User> sellersOfProducts=new HashSet<>();
         for(var product: products){
-            template.convertAndSend("/topic/notification/"+product.getUser().getId(), "New Order Received!");
+            sellersOfProducts.add(product.getUser());
+
+        }
+        for(var seller:sellersOfProducts){
+            var newOrderItems =orderItems.stream().filter(orderItem -> {return orderItem.getProduct().getUser().getId()==seller.getId();}).toList();
+            template.convertAndSend("/topic/notification/"+seller.getId(),
+                    NotificationMessage.builder()
+                            .notificationType(NotificationType.SELLER_NEW_ORDER)
+                            .message(OrderItemMapper.INSTANCE.orderItemListToSellerOrderDTOList(newOrderItems))
+                            .build()
+            );
         }
     }
 
@@ -123,7 +136,20 @@ public class OrderServices {
         orderItem.get().setStatusType(newStatus);
         orderItemRepository.save(orderItem.get());
         var buyer=orderRepository.getReferenceById(orderItem.get().getOrder().getId()).getBuyer();
-        template.convertAndSend("/topic/notification/"+buyer.getId(), "Order Status updated!");
+
+
+        template.convertAndSend(
+                "/topic/notification/"+buyer.getId(),
+                NotificationMessage
+                        .builder()
+                        .notificationType(NotificationType.BUYER_UPDATE_ORDER_STATUS)
+                        .message(UpdateStatusNotification
+                                        .builder()
+                                        .orderId(String.valueOf(orderItem.get().getOrder().getId()))
+                                        .productId(String.valueOf(orderItem.get().getProduct().getId()))
+                                        .newStatus(newStatus.name()).build())
+                        .build()
+        );
 
     }
 }
