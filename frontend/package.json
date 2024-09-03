@@ -55,7 +55,6 @@
     "@types/module-alias": "^2.0.4",
     "@types/sockjs-client": "^1.5.4",
     "customize-cra": "^1.0.0",
-    "module-alias": "^2.2.3",
-    "react-app-rewired": "^2.2.1"
+    "module-alias": "^2.2.3"
   }
 }

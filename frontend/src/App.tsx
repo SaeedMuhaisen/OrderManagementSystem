@@ -1,13 +1,9 @@
-import { useEffect, useState } from 'react';
-import { Navigation } from './Navigation';
-import { store, persistor } from './redux/store';
 import { Provider } from "react-redux";
 import { PersistGate } from 'redux-persist/integration/react';
-import SockJS from 'sockjs-client';
-import { Stomp } from '@stomp/stompjs';
-import { host } from './Features/Common/connectionConfig';
 import { Notifications } from './Features/Common/Notifications';
+import { Navigation } from './Navigation';
 import { ReduxLoader } from './redux/hooks/ReduxLoader';
+import { persistor, store } from './redux/store';
 
 function App() {
 
