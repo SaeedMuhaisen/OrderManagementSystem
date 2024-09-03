@@ -30,6 +30,4 @@ public class Order {
     private List<OrderItem> orderItems=new ArrayList<>();
     private Instant created_t;
 
-
-
 }

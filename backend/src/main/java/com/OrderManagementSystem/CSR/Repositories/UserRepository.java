@@ -16,14 +16,14 @@ public interface UserRepository extends JpaRepository<User, UUID> {
     Optional<User> findByEmail(String email);
     Optional<User> findById(UUID id);
 
-    @Query(nativeQuery = true,
-            value =
-                    "SELECT * " +
-                            "FROM _user u " +
-                            "WHERE role = 'SELLER' " +
-                            "AND EXISTS (" +
-                            "SELECT 1 " +
-                            "FROM product p " +
-                            "WHERE p.owner_id = u.id AND p.visible = TRUE AND p.available_quantity>0)")
-    List<User> findAvailableStores();
+//    @Query(nativeQuery = true,
+//            value =
+//                    "SELECT * " +
+//                            "FROM _user u " +
+//                            "WHERE role = 'SELLER' " +
+//                            "AND EXISTS (" +
+//                            "SELECT 1 " +
+//                            "FROM product p " +
+//                            "WHERE p.owner_id = u.id AND p.visible = TRUE AND p.available_quantity>0)")
+//    List<User> findAvailableStores();
 }

@@ -21,7 +21,6 @@ import org.springframework.web.bind.annotation.*;
 @AllArgsConstructor
 public class BuyerController {
 
-    private final ProductServices productServices;
     private final StoreServices storeServices;
     private final OrderServices orderServices;
 
@@ -46,7 +45,7 @@ public class BuyerController {
     public ResponseEntity<?> getStoreProducts(@PathVariable String sellerId){
         try{
             logger.info("getSellerStore() - init" );
-            var products=productServices.getStoreProducts(sellerId);
+            var products=storeServices.getStoreProducts(sellerId);
             return ResponseEntity.ok().body(products);
         }catch (Exception e){
             logger.info("getAllAvailableSellers() - failed error :{}", e.getMessage());

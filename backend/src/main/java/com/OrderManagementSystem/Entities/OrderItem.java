@@ -24,6 +24,9 @@ public class OrderItem {
     private Integer quantity;
     @ManyToOne
     private Order order;
+    @ManyToOne
+    @JoinColumn(name="store_id")
+    private Store store;
     private StatusType statusType;
     private Double productPrice;
 }

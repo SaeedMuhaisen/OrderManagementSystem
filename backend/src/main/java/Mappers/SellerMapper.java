@@ -1,6 +1,7 @@
 package Mappers;
 
 import com.OrderManagementSystem.Entities.Order;
+import com.OrderManagementSystem.Entities.Store;
 import com.OrderManagementSystem.Entities.User;
 import com.OrderManagementSystem.Models.DTO.SellerOrderDTO;
 import com.OrderManagementSystem.Models.DTO.SellerDTO;
@@ -17,11 +18,11 @@ public interface SellerMapper {
 
 
     @Mapping(source = "id", target = "sellerId")
-    @Mapping(source = "firstname",target="sellerName")
-    List<SellerDTO> sellerListToSellerDTOList(List<User> sellers);
+    @Mapping(source = "name",target="sellerName")
+    List<SellerDTO> sellerListToSellerDTOList(List<Store> stores);
 
     @Mapping(source = "id", target = "sellerId")
-    @Mapping(source = "firstname",target="sellerName")
-    SellerDTO sellerToSellerDTO(User seller);
+    @Mapping(source = "name",target="sellerName")
+    SellerDTO sellerToSellerDTO(Store store);
 
 }

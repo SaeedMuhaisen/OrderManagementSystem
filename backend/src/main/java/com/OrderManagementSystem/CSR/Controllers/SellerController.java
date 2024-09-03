@@ -2,6 +2,7 @@ package com.OrderManagementSystem.CSR.Controllers;
 
 import com.OrderManagementSystem.CSR.Services.OrderServices;
 import com.OrderManagementSystem.CSR.Services.ProductServices;
+import com.OrderManagementSystem.CSR.Services.StoreServices;
 import com.OrderManagementSystem.Models.DTO.CreateProductDTO;
 
 import com.OrderManagementSystem.Models.DTO.UpdateOrderItemStatusDTO;
@@ -23,8 +24,7 @@ import org.springframework.web.bind.annotation.*;
 public class SellerController {
 
     private final ProductServices productServices;
-    private final OrderServices orderServices;
-
+    private final StoreServices storeServices;
     private static final Logger logger = LoggerFactory.getLogger(SellerController.class);
 
     @PostMapping("/v1/product")
@@ -44,10 +44,10 @@ public class SellerController {
 
     @GetMapping("/v1/products")
     @PreAuthorize("hasAuthority('seller:read')")
-    public ResponseEntity<?> getAllProducts(@AuthenticationPrincipal UserDetails userDetails){
+    public ResponseEntity<?> getStoreProductsByEmployee(@AuthenticationPrincipal UserDetails userDetails){
         try{
             logger.info("getAllProducts() - user fetching all products : ${}",userDetails.getUsername() );
-            var products=productServices.getAllProductsBySeller(userDetails);
+            var products=storeServices.getStoreProductsByEmployee(userDetails);
             return ResponseEntity.ok().body(products);
         }catch (Exception e){
             logger.info("getAllProducts() - failed error :{}", e.getMessage());
@@ -56,10 +56,10 @@ public class SellerController {
     }
     @GetMapping("/v1/orders")
     @PreAuthorize("hasAuthority('seller:read')")
-    public ResponseEntity<?> getAllOrders(@AuthenticationPrincipal UserDetails userDetails){
+    public ResponseEntity<?> getStoreOrders(@AuthenticationPrincipal UserDetails userDetails){
         try{
             logger.info("getAllOrders() - Seller fetching all orders : ${}",userDetails.getUsername() );
-            var products=orderServices.getAllSellerOrders(userDetails);
+            var products=storeServices.getAllStoreOrders(userDetails);
             return ResponseEntity.ok().body(products);
         }catch (Exception e){
             logger.info("getAllProducts() - failed error :{}", e.getMessage());
@@ -72,7 +72,7 @@ public class SellerController {
     public ResponseEntity<?> updateOrderStatus(@AuthenticationPrincipal UserDetails userDetails,@RequestBody UpdateOrderItemStatusDTO updateOrderItemStatusDTO){
         try{
             logger.info("updateOrderStatus() - Seller updating order Status : ${}",userDetails.getUsername() );
-            orderServices.updateOrderItemStatus(userDetails, updateOrderItemStatusDTO);
+            storeServices.updateOrderItemStatus(userDetails, updateOrderItemStatusDTO);
             return ResponseEntity.ok().build();
         }catch (Exception e){
             logger.info("updateOrderStatus() - failed error :{}", e.getMessage());

@@ -6,10 +6,8 @@ import com.OrderManagementSystem.CSR.Repositories.OrderItemRepository;
 import com.OrderManagementSystem.CSR.Repositories.OrderRepository;
 import com.OrderManagementSystem.CSR.Repositories.ProductRepository;
 import com.OrderManagementSystem.CSR.Repositories.UserRepository;
-import com.OrderManagementSystem.Entities.Order;
-import com.OrderManagementSystem.Entities.OrderItem;
-import com.OrderManagementSystem.Entities.Product;
-import com.OrderManagementSystem.Entities.User;
+import com.OrderManagementSystem.Entities.*;
+import com.OrderManagementSystem.Entities.enums.EmployeeRole;
 import com.OrderManagementSystem.Entities.enums.StatusType;
 import com.OrderManagementSystem.Exceptions.AuthExceptions.UserNotFoundException;
 import com.OrderManagementSystem.Exceptions.OrderExceptions.OrderContainsIllegalProduct;
@@ -37,13 +35,15 @@ public class OrderServices {
     private final ProductRepository productRepository;
     private final OrderItemRepository orderItemRepository;
     private final SimpMessagingTemplate template;
+
+
     @Transactional
     public void createOrder(UserDetails userDetails, CreateOrderDTO createOrderDTO) {
         var user= userRepository.findById(((User) userDetails).getId());
         if(!user.isPresent()){
             throw new UserNotFoundException("User couldn't be found");
         }
-        List<Product> products=new ArrayList<>();
+        List<Product> orderProducts=new ArrayList<>();
         List<OrderItem> orderItems=new ArrayList<>();
 
         var order = Order.builder()
@@ -63,7 +63,7 @@ public class OrderServices {
                 throw new ProductQuantityNotEnoughException("Product's available quantity is not enough to accept order");
             }
 
-            products.add(product.get());
+            orderProducts.add(product.get());
             product.get().setAvailableQuantity(product.get().getAvailableQuantity()-orderItemDTO.getQuantity());
             product.get().setAmountSold(product.get().getAmountSold()+orderItemDTO.getQuantity());
 
@@ -78,24 +78,29 @@ public class OrderServices {
                     .productPrice(product.get().getPrice())
                     .statusType(StatusType.PENDING)
                     .order(savedOrder)
+                    .store(product.get().getStore())
                     .build();
             orderItems.add(orderItem);
         }
 
-
-
+        productRepository.saveAll(orderProducts);
         orderItemRepository.saveAll(orderItems);
 
-        productRepository.saveAll(products);
-
-        Set<User> sellersOfProducts=new HashSet<>();
-        for(var product: products){
-            sellersOfProducts.add(product.getUser());
-
+        Set<Store> stores=new HashSet<>();
+        Set<StoreEmployee> admins = new HashSet<>();
+        for(var product: orderProducts){
+            stores.add(product.getStore());
         }
-        for(var seller:sellersOfProducts){
-            var newOrderItems =orderItems.stream().filter(orderItem -> {return orderItem.getProduct().getUser().getId()==seller.getId();}).toList();
-            template.convertAndSend("/topic/notification/"+seller.getId(),
+        for(var store:stores) {
+          for (var adminOfStore : store.getEmployees().stream().filter(storeEmployee -> storeEmployee.getEmployeeRole().equals(EmployeeRole.ADMIN)).toList()) {
+              admins.add(adminOfStore);
+          }
+        }
+        for (var admin : admins) {
+            var newOrderItems = orderItems.stream().filter(orderItem -> {
+                return orderItem.getProduct().getStore().getId() == admin.getStore().getId();
+            }).toList();
+            template.convertAndSend("/topic/notification/" + admin.getUser().getId(),
                     NotificationMessage.builder()
                             .notificationType(NotificationType.SELLER_NEW_ORDER)
                             .message(OrderItemMapper.INSTANCE.orderItemListToSellerOrderDTOList(newOrderItems))
@@ -104,52 +109,9 @@ public class OrderServices {
         }
     }
 
-    public List<SellerOrderDTO> getAllSellerOrders(UserDetails userDetails) {
-        var user= userRepository.getReferenceById(((User) userDetails).getId());
-        var orderItems=orderItemRepository.findAllByProduct_User_Id(user.getId());
-
-        return OrderItemMapper.INSTANCE.orderItemListToSellerOrderDTOList(orderItems);
-
-    }
-
     public List<BuyerOrderDTO> getAllBuyerOrders(UserDetails userDetails) {
         var user= userRepository.getReferenceById(((User) userDetails).getId());
         return OrderMapper.INSTANCE.orderListToBuyerOrderDTOList(user.getOrders());
-
     }
 
-    public void updateOrderItemStatus(UserDetails userDetails, UpdateOrderItemStatusDTO updateOrderItemStatusDTO) throws AccessDeniedException {
-        var user = userRepository.findById(((User) userDetails).getId());
-        var orderItem = orderItemRepository.findById(UUID.fromString(updateOrderItemStatusDTO.getOrderItemId()));
-        if (!orderItem.isPresent() || !orderItem.get().getProduct().getUser().getId().equals(user.get().getId()) || orderItem.get().getOrder().getBuyer().getId()==null) {
-            throw new AccessDeniedException("Buyer cannot update the status of orderItem that doesn't belong to them.");
-        }
-
-        var oldStatus = orderItem.get().getStatusType();
-        var newStatus = StatusType.valueOf(updateOrderItemStatusDTO.getStatus());
-
-
-        if (StatusType.ACCEPTED.isIllegalStatusTransition(oldStatus,newStatus)) {
-            throw new OrderStatusIllegalTransitionException("Invalid status transition. oldStatus: "+oldStatus+", newStatus: "+newStatus);
-        }
-
-        orderItem.get().setStatusType(newStatus);
-        orderItemRepository.save(orderItem.get());
-        var buyer=orderRepository.getReferenceById(orderItem.get().getOrder().getId()).getBuyer();
-
-
-        template.convertAndSend(
-                "/topic/notification/"+buyer.getId(),
-                NotificationMessage
-                        .builder()
-                        .notificationType(NotificationType.BUYER_UPDATE_ORDER_STATUS)
-                        .message(UpdateStatusNotification
-                                        .builder()
-                                        .orderId(String.valueOf(orderItem.get().getOrder().getId()))
-                                        .productId(String.valueOf(orderItem.get().getProduct().getId()))
-                                        .newStatus(newStatus.name()).build())
-                        .build()
-        );
-
-    }
 }

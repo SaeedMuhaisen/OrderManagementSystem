@@ -42,7 +42,7 @@ export const Notifications = ({ children }) => {
         if (!connected || !user.userId || !user.signedIn) return;
 
         stompClient.subscribe(`/topic/notification/${user.userId}`, (message) => {
-
+            alert('received something')
             let obj = JSON.parse(message.body);
             if (obj.notificationType === 'BUYER_UPDATE_ORDER_STATUS') {
                 let obj: UpdateStatusNotification = JSON.parse(message.body).message;

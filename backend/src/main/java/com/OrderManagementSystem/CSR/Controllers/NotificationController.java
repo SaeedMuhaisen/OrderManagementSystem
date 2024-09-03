@@ -12,15 +12,12 @@ public class NotificationController {
     @Autowired
     private SimpMessagingTemplate template;
 
-    // Initialize Notifications
     private Notifications notifications = new Notifications(0);
 
     @GetMapping("/notify")
     public String getNotification(String id) {
-
         notifications.increment();
         template.convertAndSend("/topic/notification/"+id, id);
-
-        return "gg";
+        return "testing";
     }
 }

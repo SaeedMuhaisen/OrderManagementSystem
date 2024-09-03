@@ -1,10 +1,9 @@
 package com.OrderManagementSystem.Entities;
 
-import com.OrderManagementSystem.Entities.enums.TokenType;
+import com.OrderManagementSystem.Entities.enums.EmployeeRole;
 import jakarta.persistence.*;
 import lombok.*;
 
-import java.time.Instant;
 import java.util.UUID;
 
 @Builder
@@ -13,24 +12,19 @@ import java.util.UUID;
 @Entity
 @Getter
 @Setter
-public class Product {
-
+public class StoreEmployee {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     private UUID id;
 
     @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "user_id")
+    public User user;
+
+    @ManyToOne
     @JoinColumn(name = "store_id")
     private Store store;
 
-    private String name;
-    private String description;
-    private Double price;
-    private Instant created_t;
-    private Integer availableQuantity;
-    private Integer amountSold;
-    private Integer amountReturned;
-    private boolean visible;
-
+    private EmployeeRole employeeRole;
 
 }
