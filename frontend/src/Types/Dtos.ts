@@ -4,12 +4,19 @@ export interface BuyerOrderDTO {
     orderItems: OrderItemDTO[],
 }
 
-
+export type OrderItemStatus =
+    | "PENDING"
+    | "ACCEPTED"
+    | "DISPATCHED"
+    | "DELIVERED"
+    | "CANCELED_BY_BUYER"
+    | "CANCELED_BY_SELLER"
+    | "CANCELED_BY_ADMIN_MANUALLY";
 export interface OrderItemDTO {
     productId: string,
     quantity: number,
     productPrice: number,
-    status: string
+    status: OrderItemStatus
 
 }
 

@@ -44,17 +44,15 @@ const BuyerRoutes = () => {
   return (
 
     <BrowserRouter>
-      <div className="navigation-container">
+      <div className="buyer-navigation-container">
         <NavigationBar />
-        <div className='navigation-child'>
-          <Routes>
-            <Route path="/orders" element={< OrderHistoryScreen />} />
-            <Route path="/store" element={< BuyerStoreScreen />} />
-            <Route path="/store/:specificStore" element={<SpecificStoreScreen />} />
-            <Route path="/cart" element={<ShoppingCartScreen />} />
-            <Route path="*" element={<Navigate to="/home" replace />} />
-          </Routes>
-        </div>
+        <Routes>
+          <Route path="/orders" element={< OrderHistoryScreen />} />
+          <Route path="/store" element={< BuyerStoreScreen />} />
+          <Route path="/store/:specificStore" element={<SpecificStoreScreen />} />
+          <Route path="/cart" element={<ShoppingCartScreen />} />
+          <Route path="*" element={<Navigate to="/home" replace />} />
+        </Routes>
       </div>
     </BrowserRouter >
   )

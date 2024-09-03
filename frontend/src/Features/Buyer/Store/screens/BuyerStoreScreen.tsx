@@ -7,14 +7,14 @@ export const BuyerStoreScreen = () => {
     const stores: [SellerDTO] = useSelector((state: any) => state.buyerStore.stores)
     const navigate = useNavigate()
     return (
-        <div>
-            <span>Shop By Store!</span>
-            <div className="stores-container">
+        <div className='store-container'>
+            <h1>Shop By Store!</h1>
 
+            <div className="store-list-container">
                 {stores.map((row, index) => (
                     <div
                         key={index}
-                        className="stores-store-card"
+                        className="store-item-card"
                         onClick={() => navigate(`/store/${row.sellerId}`, {
                             state: { sellerName: row.sellerName, sellerId: row.sellerId }
                         })}
@@ -35,6 +35,8 @@ export const BuyerStoreScreen = () => {
                     </div>
                 ))}
             </div>
+            
+
         </div>
 
 

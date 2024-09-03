@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { useLocation, useParams } from 'react-router-dom';
 import { CartItem, CustomFetchResult, fetchWithRefresh, insertIntoShoppingCart, removeFromCart, ShoppingCartState, updateQuantity } from '../../../../redux';
 import { useDispatch, useSelector } from 'react-redux';
-import { CreateProductDTO,StoreProductDTO } from '../../../../Types';
+import { CreateProductDTO, StoreProductDTO } from '../../../../Types';
 import { IconProduct } from '../../../Common/components/svg/Icons';
 
 export const SpecificStoreScreen = () => {
@@ -60,14 +60,16 @@ export const SpecificStoreScreen = () => {
         return <></>
     }
     return (
-        <div>
-            <h1>{sellerName}'s Store</h1>
 
-            <div className="stores-container">
+        <div className='store-container'>
+            <div>
+                <h1>{sellerName}'s Store</h1>
+            </div>
+            <div className='store-list-container'>
                 {products.map((product) => {
                     const quantity = getItemQuantity(product.id);
                     return (
-                        <div key={product.id} className="stores-store-card">
+                        <div key={product.id} className="store-item-card">
                             <div className='stores-store-card-icon'>
                                 <IconProduct width={'4rem'} height={'4rem'} />
                             </div>
@@ -94,7 +96,7 @@ export const SpecificStoreScreen = () => {
                         </div>
                     );
                 })}
-            </div >
+            </div>
         </div >
     );
 }

@@ -1,46 +1,66 @@
-.order-screen-container {
+.orders-container {
     display: flex;
+    flex: 1;
     flex-direction: column;
-    padding: 20px;
-    gap: 20px;
-    background-color: whitesmoke;
+    overflow: auto;
+
 }
 
-.order-row-container {
+
+.orders-header {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: center;
+    padding-top: 40px;
+    padding-left: 20px;
+
+}
+
+.orders-active-orders {
+    display: flex;
+    flex-direction: column;
+}
+
+
+.order-list-container {
     display: flex;
     flex-direction: column;
     background-color: white;
     padding: 20px;
-    border-radius: 20px;
-    box-shadow: 5px 2px 10px rgba(0, 0, 0, 0.1);
+    border-bottom: solid 1px silver;
+
 }
 
-.order-container {
+.order-list-container:nth-child(even) {
+    background-color: #f8f9fa;
+}
+
+.order-row-container {
     display: flex;
-    flex: 1;
     gap: 20px;
+    align-items: center;
 }
 
-
-
-
-.order-label {
+.order-row-label {
     display: flex;
     flex: 1;
     align-items: center;
     gap: 50px
 }
 
-.order-label-items {
+.order-row-label-productids {
     display: flex;
     flex: 1;
 }
 
-.order-details-button {
+.order-row-label-details-button {
     background-color: #333333;
 }
 
-.order-details {
+
+
+.order-extra-details-container {
     display: flex;
     flex-direction: column;
     border-top: solid whitesmoke 0.5px;
@@ -48,20 +68,35 @@
     padding: 20px;
 }
 
-.order-details-item {
+.order-extra-details-item {
     display: flex;
     flex-direction: row;
-    gap: 20px;
+
+
+}
+
+.order-extra-details-status {
+    display: flex;
+    flex-direction: row;
+    gap: 5px;
     align-items: center;
-    justify-content: center;
-    font-size: 20px;
+
+    width: 6rem;
+    font-size: small;
+    font-weight: 500;
+
+}
+
+.order-extra-details-productid-and-icon {
+    display: flex;
+    flex-direction: row;
+    flex: 1;
+    align-items: center;
+    gap: 5px
 }
 
 .order-details-total {
-    display: flex;
-    flex-direction: row;
-    gap: 20px;
-    border-top: solid whitesmoke 0.5px;
-    justify-content: flex-end;
-    font-size: 20px;
+    border-top: #333333 solid 0.5px;
+    align-self: flex-end;
 }
+

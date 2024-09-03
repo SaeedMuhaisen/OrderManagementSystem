@@ -1,8 +1,27 @@
 .cart-container {
     display: flex;
+    flex: 1;
     flex-direction: column;
+    overflow: auto;
+}
+
+.cart-header {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: center;
+    padding-top: 40px;
+    padding-left: 20px;
+
 
 }
+
+.cart-product-empty-container {
+    padding: 20px;
+    display: flex;
+    flex-direction: column;
+}
+
 
 .cart-product-list-container {
     display: flex;
@@ -55,5 +74,8 @@
 }
 
 .cart-purchase-button {
-    flex: 0.2
+    flex: 0.2;
+    background-color: #333333;
+
+
 }

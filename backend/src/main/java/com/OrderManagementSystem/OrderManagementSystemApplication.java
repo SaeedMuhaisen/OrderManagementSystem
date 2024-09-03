@@ -61,7 +61,7 @@ public class OrderManagementSystemApplication {
 
 		storeRepository.save(store);
 
-
+		for(int i=1;i<=20;i++){
 		var product = Product.builder()
 				.availableQuantity(100)
 				.amountSold(0)
@@ -70,10 +70,11 @@ public class OrderManagementSystemApplication {
 				.created_t(Instant.now())
 				.price(100.0)
 				.description("First Product ")
-				.name("Product 1")
+				.name("Product "+i)
 				.store(store).build();
+			productRepository.save(product);
+		}
 
-		productRepository.save(product);
 
 	}
 }

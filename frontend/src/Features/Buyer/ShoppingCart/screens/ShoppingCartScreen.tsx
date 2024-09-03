@@ -14,31 +14,39 @@ export const ShoppingCartScreen = () => {
         await dispatch(confirmPurchase())
     }
     return (
-        <div >
-            <h1 className="cart-title"> Your Shopping Cart</h1 >
-            <div className="cart-product-list-container">
-                your cart contains
-                {shopingCart.products !== null && shopingCart.products.map((row, index) => (
-                    <CartItem productName={row.product.name} price={row.product.price} quantity={row.quantity} key={index} />
-                ))
-                }
-
-                <div className="cart-product-list-item" style={{ border: "none" }}>
-
-                    <div className="cart-product-list-item-name"></div>
-                    <div className="cart-product-list-item-priceAndQuantity">Total Price</div>
-                    <div className="cart-product-list-item-priceAndQuantity">{total()} $</div>
-                </div>
-
-                <div className="cart-purchase-button-container">
-
-                    <button className="cart-purchase-button" onClick={hanleConfirmPurchase}>
-                        Place Order
-                    </button>
-                </div>
+        <div className="cart-container">
+            <div className="cart-header">
+                <h1 >Checkout</h1 >
             </div>
+            {shopingCart?.products?.length > 0 ?
+                <div className="cart-product-list-container">
+                    Checkout your {shopingCart.products.length} items
+                    {shopingCart.products !== null && shopingCart.products.map((row, index) => (
+                        <CartItem productName={row.product.name} price={row.product.price} quantity={row.quantity} key={index} />
+                    ))
+                    }
+                    <div className="cart-product-list-item" style={{ border: "none" }}>
+                        <div className="cart-product-list-item-name"></div>
+                        <div className="cart-product-list-item-priceAndQuantity">Total Price</div>
+                        <div className="cart-product-list-item-priceAndQuantity">{total()} $</div>
+                    </div>
 
-
+                    <div className="cart-purchase-button-container">
+                        <button className="cart-purchase-button" onClick={hanleConfirmPurchase}>
+                            Place Order
+                        </button>
+                    </div>
+                </div>
+                :
+                <div className="cart-product-empty-container">
+                    <span>
+                        Your Cart Is Empty!
+                    </span>
+                    <span>
+                        Add Some items to your cart
+                    </span>
+                </div>
+            }
         </div >
     )
 }
@@ -48,9 +56,9 @@ const CartItem = ({ productName, price, quantity }) => {
         <div className="cart-product-list-item">
             <IconProduct />
             <div className="cart-product-list-item-name">{productName}</div>
-            <div className="cart-product-list-item-priceAndQuantity">{quantity}x</div>
+            {quantity > 1 && < div className="cart-product-list-item-priceAndQuantity">{quantity}x</div>}
             <div className="cart-product-list-item-priceAndQuantity">{price} $</div>
-        </div>
+        </div >
 
     )
 }
