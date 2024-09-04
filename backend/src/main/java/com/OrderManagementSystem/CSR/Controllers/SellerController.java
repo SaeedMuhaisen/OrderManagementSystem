@@ -5,10 +5,12 @@ import com.OrderManagementSystem.CSR.Services.ProductServices;
 import com.OrderManagementSystem.CSR.Services.StoreServices;
 import com.OrderManagementSystem.Models.DTO.CreateProductDTO;
 
+import com.OrderManagementSystem.Models.DTO.SellerOrderDTO;
 import com.OrderManagementSystem.Models.DTO.UpdateOrderItemStatusDTO;
 import lombok.AllArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.data.domain.jaxb.SpringDataJaxb;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -16,6 +18,8 @@ import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 @Controller
 @RequestMapping("/api/seller")
@@ -67,6 +71,20 @@ public class SellerController {
         }
     }
 
+    @GetMapping("/v1/orders/{orderId}")
+    @PreAuthorize("hasAuthority('seller:read')")
+    public ResponseEntity<?> getOrderItemFromOrderId(@AuthenticationPrincipal UserDetails userDetails,@PathVariable String orderId){
+        try{
+            logger.info("getOrderItemFromOrderId() - employee fetching order details of order : ${}",orderId );
+            var products=storeServices.getOrderItemFromOrderId(userDetails,orderId);
+            return ResponseEntity.ok().body(products);
+        }catch (Exception e){
+            logger.info("getOrderItemFromOrderId() - failed error :{}", e.getMessage());
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
+        }
+    }
+
+
     @PutMapping("/v1/order/status")
     @PreAuthorize("hasAuthority('seller:update')")
     public ResponseEntity<?> updateOrderStatus(@AuthenticationPrincipal UserDetails userDetails,@RequestBody UpdateOrderItemStatusDTO updateOrderItemStatusDTO){
@@ -77,6 +95,19 @@ public class SellerController {
         }catch (Exception e){
             logger.info("updateOrderStatus() - failed error :{}", e.getMessage());
             return ResponseEntity.status(HttpStatus.NOT_ACCEPTABLE).build();
+        }
+    }
+
+    @GetMapping("/v1/orders/history")
+    @PreAuthorize("hasAuthority('seller:read')")
+    public ResponseEntity<?> getStoreOrderHistory(@AuthenticationPrincipal UserDetails userDetails){
+        try{
+            logger.info("getOrderHistory() - Seller fetching order history: ${}",userDetails.getUsername() );
+            var products=storeServices.getStoreOrderHistory(userDetails);
+            return ResponseEntity.ok().body(products);
+        }catch (Exception e){
+            logger.info("getOrderHistory() - failed error :{}", e.getMessage());
+            return ResponseEntity.ok().build();
         }
     }
 }

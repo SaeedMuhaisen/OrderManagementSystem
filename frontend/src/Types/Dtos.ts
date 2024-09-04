@@ -56,7 +56,7 @@ export interface SellerOrderDTO {
     firstName: string,
     productId: string,
     orderDate: string,
-    status: string
+    status: OrderItemStatus
 }
 
 
@@ -71,4 +71,11 @@ export interface StoreProductDTO {
 export interface UpdateOrderItemStatusDTO {
     orderItemId: string,
     status: string
+}
+
+export interface StoreOrderDTO {
+    orderId: string;
+    orderDate: string;
+    customerEmail: string;
+    
 }

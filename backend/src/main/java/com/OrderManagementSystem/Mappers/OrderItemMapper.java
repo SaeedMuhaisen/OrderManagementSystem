@@ -1,15 +1,12 @@
-package Mappers;
+package com.OrderManagementSystem.Mappers;
 
-import com.OrderManagementSystem.Entities.Order;
 import com.OrderManagementSystem.Entities.OrderItem;
-import com.OrderManagementSystem.Models.DTO.BuyerOrderDTO;
 import com.OrderManagementSystem.Models.DTO.SellerOrderDTO;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 import org.mapstruct.factory.Mappers;
 
 import java.util.List;
-import java.util.Map;
 
 @Mapper
 public interface OrderItemMapper {

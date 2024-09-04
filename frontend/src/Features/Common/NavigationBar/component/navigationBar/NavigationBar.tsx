@@ -52,8 +52,10 @@ const SellerSideBar = ({ dispatch }) => {
             </div>
             <nav>
                 <div className="buyer-sidebar-buttons-main">
+               
                     <BuyerSideBarButton setActive={setActive} active={active} title={"Products"} navigateTo="/seller/products" icon={<IconProduct />} />
                     <BuyerSideBarButton setActive={setActive} active={active} title={"Orders"} navigateTo="/seller/orders" icon={<IconReceipt />} />
+                    <BuyerSideBarButton setActive={setActive} active={active} title={"History"} navigateTo="/seller/orders/history" icon={<IconHome />} />
                 </div>
                 <div className="buyer-sidebar-buttons-secondary">
                     <BuyerSideBarButton setActive={setActive} active={active} title={"User"} icon={<IconUser />} />

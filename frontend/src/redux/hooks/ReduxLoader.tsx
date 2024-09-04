@@ -4,7 +4,7 @@ import { useEffect } from "react"
 import { fetchAvailableStores } from "../BuyerSlices/buyerStoreSlice"
 import { fetchOrderHistory } from "../BuyerSlices/orderHistorySlice"
 import { fetchAllProductsForSeller } from "../SellerSlices/sellerProductsSlice"
-import { fetchAllSellerOrders } from "../SellerSlices/sellerOrdersSlice"
+import { fetchAllSellerHistoryOrders, fetchAllSellerOrders } from "../SellerSlices/sellerOrdersSlice"
 
 
 export const ReduxLoader = ({ children }) => {
@@ -18,6 +18,7 @@ export const ReduxLoader = ({ children }) => {
         console.log('fetching all for seller!!')
         await dispatch(fetchAllProductsForSeller()).unwrap();
         await dispatch(fetchAllSellerOrders()).unwrap();
+        await dispatch(fetchAllSellerHistoryOrders()).unwrap();
 
     }
     useEffect(() => {

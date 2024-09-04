@@ -8,7 +8,7 @@ import { Stomp } from "@stomp/stompjs";
 import { host } from "../../connectionConfig";
 import { insertNotification } from "../../../../redux/notificationsSlice";
 import { insertIntoSellerOrders } from "../../../../redux/SellerSlices/sellerOrdersSlice";
-import { OrderItemDTO, SellerOrderDTO } from "../../../../Types";
+import { OrderItemDTO, SellerOrderDTO, StoreOrderDTO } from "../../../../Types";
 
 const useWebSocket = () => {
     const [stompClient, setStompClient] = useState(null);
@@ -50,7 +50,7 @@ export const Notifications = ({ children }) => {
                 dispatch(insertNotification({ userType: 'BUYER', screen: 'Orders' }))
             }
             else if(obj.notificationType==='SELLER_NEW_ORDER'){
-                let obj: SellerOrderDTO[] = JSON.parse(message.body).message;
+                let obj: StoreOrderDTO[] = JSON.parse(message.body).message;
                 dispatch(insertIntoSellerOrders(obj))
                 dispatch(insertNotification({ userType: 'SELLER', screen: 'Orders' }))
                 alert(JSON.parse(message.body).notificationType)

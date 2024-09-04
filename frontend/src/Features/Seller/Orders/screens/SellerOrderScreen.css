@@ -1,0 +1,181 @@
+.active-orders-container {
+    display: flex;
+    flex: 1;
+    flex-direction: column;
+    overflow: auto;
+
+}
+
+.active-orders-header {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: center;
+    padding-top: 40px;
+    padding-left: 20px;
+}
+
+.active-orders-details {
+    display: flex;
+    flex-direction: row;
+    padding: 20px;
+    gap: 20px;
+    justify-content: space-between;
+
+}
+
+.active-orders-buttons button {
+    color: white;
+    background-color: #333333;
+    border: none;
+    border-radius: 0px;
+}
+
+
+
+.rwd-active-orders-table-container {
+    display: flex;
+    flex-direction: column;
+    flex-wrap: wrap;
+    flex: 0.1;
+    padding: 50px;
+    font-size: 10px;
+
+
+}
+
+.rwd-active-orders-table {
+    margin: 1em 0;
+    min-width: 400px;
+    border: solid 1px #e0e0e0;
+}
+
+.rwd-active-orders-table tr {
+    border-top: 1px solid #ddd;
+    border-bottom: 1px solid #ddd;
+}
+
+.rwd-active-orders-table th {
+    display: block;
+    padding: 1em;
+}
+
+.rwd-active-orders-table td {
+    display: block;
+    padding: 1em;
+    /* inline-size: 150px;
+    overflow-wrap: break-word; */
+    max-width: 100px;
+    overflow: hidden;
+
+}
+
+.active-orders-both-tables-container {
+    display: flex;
+    flex: 1;
+    justify-content: center;
+}
+
+.rwd-active-orders-table td:last-child {
+    padding-bottom: .5em;
+}
+
+.rwd-active-orders-table td:before {
+    content: attr(data-th)": ";
+    font-weight: bold;
+    width: 6.5em;
+    display: inline-block;
+}
+
+.rwd-active-orders-table td:first-child {
+    cursor: pointer;
+
+
+}
+
+.edit-icon-container {
+    display: flex;
+
+    flex: 1;
+}
+
+@media (min-width:780px) {
+
+
+    .rwd-active-orders-table td {
+        display: table-cell;
+    }
+
+    .rwd-active-orders-table td:last-child {
+        padding-right: 0;
+    }
+
+    .rwd-active-orders-table td:before {
+        display: none;
+    }
+
+    .rwd-active-orders-table th {
+        display: table-cell;
+        text-align: left;
+        padding: 1em;
+        background-color: #333333;
+        color: white;
+    }
+
+    .rwd-active-orders-table th,
+    .rwd-active-orders-table td {
+        text-align: left;
+        text-overflow: ellipsis;
+
+    }
+}
+
+
+
+.rwd-table tr:nth-child(odd) {
+    background-color: whitesmoke;
+}
+
+
+
+.status-indicator {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+}
+
+.status-indicator.visible {
+    background-color: green;
+}
+
+.status-indicator.hidden {
+    background-color: red;
+}
+
+.status-container {
+    display: flex;
+    align-items: center;
+    gap: 5px;
+}
+
+.orderItem-status {
+    display: flex;
+    flex-direction: row;
+    gap: 5px;
+    align-items: center;
+
+}
+
+.orderItem-status-settings-btn {
+    background-color: rgb(60, 60, 255);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    
+
+}
+
+.orderItem-status-container {
+    display: flex;
+    gap: 5px;
+}

@@ -1,4 +1,4 @@
-package Mappers;
+package com.OrderManagementSystem.Mappers;
 
 import com.OrderManagementSystem.Entities.Product;
 import com.OrderManagementSystem.Models.DTO.ProductDTO;

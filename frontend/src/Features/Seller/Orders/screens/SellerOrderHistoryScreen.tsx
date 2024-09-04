@@ -8,18 +8,15 @@ import { fetchOrderItemsByOrderId, SellerOrdersState } from "../../../../redux/S
 import "./SellerOrderScreen.css"
 import { IconSettings } from "../../../Common/components/svg/Icons";
 import { statusColor, statusMapping } from "../../../../Types/Mappers";
-export const SellerOdersScreen = () => {
+export const SellerOrderHistoryScreen = () => {
     const sellerOrders: SellerOrdersState = useSelector((state: any) => state.sellerOrders);
     const [orderItemId, setOrderItemId] = useState(null)
     const [currentStatus, setCurrentStatus] = useState(null)
 
-    const columns = ['ID', 'Name', 'Description', 'Price', 'Available Quantity', 'Amount Sold', 'Amount Returned', 'Visible'];
-
     const setUpModal = (orderItemId, currentStatus) => {
-
         setOrderItemId(orderItemId);
         setCurrentStatus(currentStatus);
-        setUpdateStatusModalVisible(true)
+        setUpdateStatusModalVisible(true);
     }
 
     const [updateStatusModalVisible, setUpdateStatusModalVisible] = useState(false);
@@ -34,22 +31,22 @@ export const SellerOdersScreen = () => {
                 <h1>Manage Products</h1>
             </div>
             <div className="active-orders-details">
-                <h2>You have {sellerOrders?.orders?.length} active orders</h2>
+                <h2>You have {sellerOrders?.historyOrders?.length} active orders</h2>
             </div>
-            {sellerOrders?.orders?.length === 0 && <div className="active-orders-details">
+            {sellerOrders?.historyOrders?.length === 0 && <div className="active-orders-details">
                 <h4>Click on the button below to create a new product</h4>
             </div>}
             <div className="active-orders-both-tables-container">
 
                 <div className="rwd-active-orders-table-container">
-                    {sellerOrders?.orders?.length > 0 &&
+                    {sellerOrders?.historyOrders?.length > 0 &&
                         <table className="rwd-active-orders-table">
                             <tr>
                                 <th>Date</th>
                                 <th>Id</th>
                                 <th>Client Email</th>
                             </tr>
-                            {sellerOrders.orders.slice().sort((a, b) => new Date(b.orderDate).getTime() - new Date(a.orderDate).getTime()).map((row, index) => (
+                            {sellerOrders.historyOrders.slice().sort((a, b) => new Date(b.orderDate).getTime() - new Date(a.orderDate).getTime()).map((row, index) => (
                                 <tr key={index} onClick={() => dispatch(fetchOrderItemsByOrderId({ orderId: row.orderId }))} >
                                     <td data-th="Date">{formatDate(row.orderDate)}</td>
                                     <td data-th="Id">{row.orderId.slice(0, 6)}</td>
@@ -60,7 +57,7 @@ export const SellerOdersScreen = () => {
                     }
                 </div>
                 <div className="rwd-table-container">
-                    {sellerOrders?.orderItems?.length > 0 &&
+                    {/* {sellerOrders?.orderItems?.length > 0 &&
                         <table className="rwd-table">
                             <tr>
                                 <th>Date</th>
@@ -111,7 +108,7 @@ export const SellerOdersScreen = () => {
                                 </tr>
                             ))}
                         </table>
-                    }
+                    } */}
                 </div>
             </div>
             {updateStatusModalVisible && <UpdateStatusModal onClose={() => setUpdateStatusModalVisible(false)} orderItemId={orderItemId} currentStatus={currentStatus} />}

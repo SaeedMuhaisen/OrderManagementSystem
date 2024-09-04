@@ -11,6 +11,7 @@ import { UserState } from '../redux';
 import "./Navigation.css";
 import { SpecificStoreScreen } from '../Features/Buyer/Store/screens/SpecificStoreScreen';
 import { ShoppingCartScreen } from '../Features/Buyer/ShoppingCart';
+import { SellerOrderHistoryScreen } from '../Features/Seller/Orders/screens/SellerOrderHistoryScreen';
 
 export const Navigation = () => {
   const user: UserState = useSelector((state: any) => state.user);
@@ -37,8 +38,6 @@ export const Navigation = () => {
 
 const BuyerRoutes = () => {
   const user: UserState = useSelector((state: any) => state.user);
-
-
 
 
   return (
@@ -69,6 +68,7 @@ const SellerRoutes = () => {
         <NavigationBar />
         <Routes>
           <Route path="/seller/orders" element={<SellerOdersScreen />} />
+          <Route path="/seller/orders/history" element={<SellerOrderHistoryScreen />} />
           <Route path="/seller/products" element={<ManageProducts />} />
           <Route path="*" element={<Navigate to="/seller/products" replace />} />
         </Routes>

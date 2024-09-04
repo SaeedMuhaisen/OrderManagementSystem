@@ -1,5 +1,5 @@
 import { createAsyncThunk, createSlice, PayloadAction } from '@reduxjs/toolkit';
-import { SellerOrderDTO } from '../../Types';
+import { OrderItemDTO, OrderItemStatus, SellerOrderDTO, StoreOrderDTO } from '../../Types';
 import { CustomFetchResult, fetchWithRefresh } from '../userSlice';
 
 
@@ -22,16 +22,77 @@ export const fetchAllSellerOrders = createAsyncThunk(
         }
     }
 );
-
+export const fetchAllSellerHistoryOrders = createAsyncThunk(
+    'sellerOrders/fetchAllSellerHistoryOrders',
+    async (worklet, { getState, dispatch }) => {
+        const config = {
+            method: 'GET',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+        }
+        const result: CustomFetchResult = await dispatch(fetchWithRefresh({ endpoint: "/api/seller/v1/orders/history", config: config })).unwrap()
+        if (result.status === 200) {
+            // console.log(JSON.stringify(result));
+            dispatch(setUpSellerHistoryOrders(result.data));
+        }
+        else {
+            // console.log(JSON.stringify(result))
+        }
+    }
+);
+export const fetchOrderItemsByOrderId = createAsyncThunk(
+    'sellerOrders/fetchOrderItemsByOrderId',
+    async ({ orderId, }: { orderId: string, }, { getState, dispatch }) => {
+        const config = {
+            method: 'GET',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+        }
+        const result: CustomFetchResult = await dispatch(fetchWithRefresh({ endpoint: `/api/seller/v1/orders/${orderId}`, config: config })).unwrap()
+        if (result.status === 200) {
+            // console.log(JSON.stringify(result));
+            dispatch(setUpSellerOrderItems(result.data));
+        }
+        else {
+            // console.log(JSON.stringify(result))
+        }
+    }
+);
+export const fetchHistoryOrderItemsByOrderId = createAsyncThunk(
+    'sellerOrders/fetchOrderItemsByOrderId',
+    async ({ orderId, }: { orderId: string, }, { getState, dispatch }) => {
+        const config = {
+            method: 'GET',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+        }
+        const result: CustomFetchResult = await dispatch(fetchWithRefresh({ endpoint: `/api/seller/v1/orders/history/${orderId}`, config: config })).unwrap()
+        if (result.status === 200) {
+            // console.log(JSON.stringify(result));
+            dispatch(setUpSellerOrderItems(result.data));
+        }
+        else {
+            // console.log(JSON.stringify(result))
+        }
+    }
+);
 
 export interface SellerOrdersState {
-    orders: SellerOrderDTO[]
+    orders: StoreOrderDTO[];
+    orderItems: SellerOrderDTO[];
+    historyOrders: StoreOrderDTO[];
+    historyOrderItems: SellerOrderDTO[];
 }
 
 const initialState: SellerOrdersState = {
-    orders: []
+    orders: [],
+    orderItems: [],
+    historyOrders: [],
+    historyOrderItems: []
 }
-
 
 
 export const sellerOrdersSlice = createSlice({
@@ -39,21 +100,30 @@ export const sellerOrdersSlice = createSlice({
     initialState,
     reducers: {
 
-        setUpSellerOrders: (state, action: PayloadAction<SellerOrderDTO[]>) => {
+        setUpSellerOrders: (state, action: PayloadAction<StoreOrderDTO[]>) => {
             state.orders = action.payload
         },
-        insertIntoSellerOrders: (state, action: PayloadAction<SellerOrderDTO[]>) => {
+        setUpSellerHistoryOrders: (state, action: PayloadAction<StoreOrderDTO[]>) => {
+            state.historyOrders = action.payload
+        },
+        setUpSellerOrderItems: (state, action: PayloadAction<SellerOrderDTO[]>) => {
+            state.orderItems = action.payload;
+        },
+        setUpSellerHistoryOrderItems: (state, action: PayloadAction<SellerOrderDTO[]>) => {
+            state.historyOrderItems = action.payload;
+        },
+        insertIntoSellerOrders: (state, action: PayloadAction<StoreOrderDTO[]>) => {
             state.orders = state.orders.concat(action.payload);
         },
-        updateSellerOrderItemStatus(state, action: PayloadAction<{ orderItemId: string, status: string }>) {
-            let index = state.orders.findIndex(item => item.orderItemId === action.payload.orderItemId);
-            state.orders[index].status = action.payload.status;
+        updateSellerOrderItemStatus(state, action: PayloadAction<{ orderItemId: string, status: OrderItemStatus }>) {
+            let index = state.orderItems.findIndex(item => item.orderItemId === action.payload.orderItemId);
+            state.orderItems[index].status = action.payload.status;
         }
 
     }
 })
 
 
-export const { setUpSellerOrders, insertIntoSellerOrders, updateSellerOrderItemStatus } = sellerOrdersSlice.actions;
+export const { setUpSellerOrders, insertIntoSellerOrders, updateSellerOrderItemStatus, setUpSellerOrderItems, setUpSellerHistoryOrders, setUpSellerHistoryOrderItems } = sellerOrdersSlice.actions;
 export default sellerOrdersSlice.reducer;
 

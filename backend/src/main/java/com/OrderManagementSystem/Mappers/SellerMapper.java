@@ -1,9 +1,6 @@
-package Mappers;
+package com.OrderManagementSystem.Mappers;
 
-import com.OrderManagementSystem.Entities.Order;
 import com.OrderManagementSystem.Entities.Store;
-import com.OrderManagementSystem.Entities.User;
-import com.OrderManagementSystem.Models.DTO.SellerOrderDTO;
 import com.OrderManagementSystem.Models.DTO.SellerDTO;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;

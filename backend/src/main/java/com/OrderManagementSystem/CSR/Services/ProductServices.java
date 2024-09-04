@@ -1,10 +1,8 @@
 package com.OrderManagementSystem.CSR.Services;
 
 
-import Mappers.ProductMapper;
 import com.OrderManagementSystem.CSR.Repositories.ProductRepository;
 import com.OrderManagementSystem.CSR.Repositories.StoreEmployeeRepository;
-import com.OrderManagementSystem.CSR.Repositories.StoreRepository;
 import com.OrderManagementSystem.CSR.Repositories.UserRepository;
 import com.OrderManagementSystem.Entities.Product;
 import com.OrderManagementSystem.Entities.User;
@@ -16,7 +14,6 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
 
 import java.time.Instant;
-import java.util.List;
 import java.util.UUID;
 
 @Service
