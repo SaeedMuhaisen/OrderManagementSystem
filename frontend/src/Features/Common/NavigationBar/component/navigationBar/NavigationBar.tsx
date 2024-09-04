@@ -45,18 +45,19 @@ const AdminSidebar = ({ dispatch }) => {
 const SellerSideBar = ({ dispatch }) => {
     const [active, setActive] = useState('Home');
     return (
-        <div className="seller-sidebar-container">
-            <nav >
-                <div className="seller-sidebar-buttonsList">
-                    {/* <SideBarButton setActive={setActive} active={active} title={"Home"} navigateTo="/seller/home" /> */}
-                    <SideBarButton setActive={setActive} active={active} title={"Products"} navigateTo="/seller/products" icon={<IconProduct />} />
-                    <SideBarButton setActive={setActive} active={active} title={"Orders"} navigateTo="/seller/orders" icon={<IconReceipt />} />
-                    {/* <SideBarButton setActive={setActive} active={active} title={"Customers"} navigateTo="/seller/customers" /> */}
+        <div className="buyer-sidebar-container">
+            <div className="buyer-sidebar-header">
+                <IconStore />
+                <h1 >MarketPlace</h1>
+            </div>
+            <nav>
+                <div className="buyer-sidebar-buttons-main">
+                    <BuyerSideBarButton setActive={setActive} active={active} title={"Products"} navigateTo="/seller/products" icon={<IconProduct />} />
+                    <BuyerSideBarButton setActive={setActive} active={active} title={"Orders"} navigateTo="/seller/orders" icon={<IconReceipt />} />
                 </div>
-                <div className="seller-sidebar-seperator" />
-                <div className="seller-sidebar-buttonsList">
-                    <SideBarButton setActive={setActive} active={active} title={"User"} icon={<IconUser />} />
-                    <SideBarButton setActive={(value) => { setActive(value); dispatch({ type: "store/reset" }) }} active={active} title={"Logout"} icon={<IconLogout />} />
+                <div className="buyer-sidebar-buttons-secondary">
+                    <BuyerSideBarButton setActive={setActive} active={active} title={"User"} icon={<IconUser />} />
+                    <BuyerSideBarButton setActive={(value) => { setActive(value); dispatch({ type: "store/reset" }) }} active={active} title={"Logout"} icon={<IconLogout />} />
 
                 </div>
             </nav>
