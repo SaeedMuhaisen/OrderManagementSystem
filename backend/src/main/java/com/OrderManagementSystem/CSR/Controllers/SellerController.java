@@ -37,11 +37,10 @@ public class SellerController {
         try{
             logger.info("createProduct() - seller creating new product : ${}", createProductDTO);
             productServices.createProduct(userDetails,createProductDTO);
-
             return ResponseEntity.ok().build();
         }catch (Exception e){
             logger.info("createProduct() - failed error :{}", e.getMessage());
-            return ResponseEntity.ok().build();
+            return ResponseEntity.status(HttpStatus.NOT_ACCEPTABLE).build();
         }
 
     }
@@ -55,7 +54,7 @@ public class SellerController {
             return ResponseEntity.ok().body(products);
         }catch (Exception e){
             logger.info("getAllProducts() - failed error :{}", e.getMessage());
-            return ResponseEntity.ok().build();
+            return ResponseEntity.status(HttpStatus.NOT_ACCEPTABLE).build();
         }
     }
     @GetMapping("/v1/orders")
@@ -67,7 +66,7 @@ public class SellerController {
             return ResponseEntity.ok().body(products);
         }catch (Exception e){
             logger.info("getAllProducts() - failed error :{}", e.getMessage());
-            return ResponseEntity.ok().build();
+            return ResponseEntity.status(HttpStatus.NOT_ACCEPTABLE).build();
         }
     }
 
@@ -80,7 +79,7 @@ public class SellerController {
             return ResponseEntity.ok().body(products);
         }catch (Exception e){
             logger.info("getOrderItemFromOrderId() - failed error :{}", e.getMessage());
-            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
+            return ResponseEntity.status(HttpStatus.NOT_ACCEPTABLE).build();
         }
     }
 
@@ -107,7 +106,16 @@ public class SellerController {
             return ResponseEntity.ok().body(products);
         }catch (Exception e){
             logger.info("getOrderHistory() - failed error :{}", e.getMessage());
-            return ResponseEntity.ok().build();
+            return ResponseEntity.status(HttpStatus.NOT_ACCEPTABLE).build();
         }
     }
+
+    @GetMapping("v1/orders/delete/{orderId}")
+    public ResponseEntity<?> deleteOrderById(@PathVariable String orderId){
+
+        storeServices.deleteOrder(orderId);
+        return ResponseEntity.ok().build();
+
+    }
+
 }

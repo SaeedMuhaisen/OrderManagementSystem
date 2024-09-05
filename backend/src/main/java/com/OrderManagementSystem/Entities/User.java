@@ -37,7 +37,7 @@ public class User implements UserDetails {
     @Enumerated(EnumType.STRING)
     private Role role;
 
-    @OneToMany(mappedBy = "buyer", cascade = CascadeType.ALL, fetch = FetchType.EAGER)
+    @OneToMany(mappedBy = "buyer", fetch = FetchType.EAGER)
     private List<Order> orders=new ArrayList<>();
 
     @Override

@@ -11,7 +11,7 @@ import { UserState } from '../redux';
 import "./Navigation.css";
 import { SpecificStoreScreen } from '../Features/Buyer/Store/screens/SpecificStoreScreen';
 import { ShoppingCartScreen } from '../Features/Buyer/ShoppingCart';
-import { SellerOrderHistoryScreen } from '../Features/Seller/Orders/screens/SellerOrderHistoryScreen';
+import { Notifications } from '../Features/Common/Notifications';
 
 export const Navigation = () => {
   const user: UserState = useSelector((state: any) => state.user);
@@ -19,6 +19,7 @@ export const Navigation = () => {
     return (
       <BrowserRouter>
         <Routes>
+
           <Route path="*" element={<Navigate to="/login" replace />} />
           <Route path="/login" element={<InitialScreen />} />
         </Routes>
@@ -38,48 +39,74 @@ export const Navigation = () => {
 
 const BuyerRoutes = () => {
   const user: UserState = useSelector((state: any) => state.user);
-
+  const sellerOrders = useSelector((state: any) => state.sellerOrders)
 
   return (
+    <Notifications>
 
-    <BrowserRouter>
-      <div className="buyer-navigation-container">
-        <NavigationBar />
-        <Routes>
-          <Route path="/orders" element={< OrderHistoryScreen />} />
-          <Route path="/store" element={< BuyerStoreScreen />} />
-          <Route path="/store/:specificStore" element={<SpecificStoreScreen />} />
-          <Route path="/cart" element={<ShoppingCartScreen />} />
-          <Route path="*" element={<Navigate to="/home" replace />} />
-        </Routes>
-      </div>
-    </BrowserRouter >
+      <BrowserRouter>
+
+        <div className="buyer-navigation-container">
+          <NavigationBar />
+          <div style={{ width: '10%' }}>
+
+
+            <div>
+              {JSON.stringify(user)}
+            </div>
+            <div>
+              {JSON.stringify(sellerOrders)}
+            </div>
+          </div>
+          <Routes>
+            <Route path="/orders" element={< OrderHistoryScreen />} />
+            <Route path="/store" element={< BuyerStoreScreen />} />
+            <Route path="/store/:specificStore" element={<SpecificStoreScreen />} />
+            <Route path="/cart" element={<ShoppingCartScreen />} />
+            <Route path="*" element={<Navigate to="/home" replace />} />
+          </Routes>
+        </div>
+      </BrowserRouter >
+    </Notifications>
   )
 }
 
 
 const SellerRoutes = () => {
   const user: UserState = useSelector((state: any) => state.user);
+  const sellerOrders = useSelector((state: any) => state.sellerOrders)
 
   return (
+    <Notifications>
+      <BrowserRouter>
 
-    <BrowserRouter>
-      <div className="buyer-navigation-container">
-        <NavigationBar />
-        <Routes>
-          <Route path="/seller/orders" element={<SellerOdersScreen />} />
-          <Route path="/seller/orders/history" element={<SellerOrderHistoryScreen />} />
-          <Route path="/seller/products" element={<ManageProducts />} />
-          <Route path="*" element={<Navigate to="/seller/products" replace />} />
-        </Routes>
+        <div className="buyer-navigation-container">
+          <div style={{ width: '10%' }}>
 
-      </div >
-    </BrowserRouter>
+
+            <div>
+              {JSON.stringify(user)}
+            </div>
+            <div>
+              {JSON.stringify(sellerOrders)}
+            </div>
+          </div>
+          <NavigationBar />
+          <Routes>
+            <Route path="/seller/orders" element={<SellerOdersScreen />} />
+            <Route path="/seller/products" element={<ManageProducts />} />
+            <Route path="*" element={<Navigate to="/seller/products" replace />} />
+          </Routes>
+
+        </div >
+      </BrowserRouter>
+    </Notifications>
   )
 
 }
 
 const AdminRoutes = () => (
+  // <Notifications>
   <BrowserRouter>
     <div className="navigation-container">
       <NavigationBar />
@@ -92,4 +119,5 @@ const AdminRoutes = () => (
       </div>
     </div>
   </BrowserRouter>
+  // </Notifications>
 );

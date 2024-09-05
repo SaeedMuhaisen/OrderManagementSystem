@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { CustomFetchResult, setUser } from '../../../../redux';
-import { useDispatch } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import { useNavigate, } from 'react-router-dom';
 import { host } from '../../connectionConfig';
 import "./InitialScreen.css";
@@ -39,6 +39,9 @@ export const InitialScreen = () => {
     const [error, setError] = useState('');
     const dispatch = useDispatch<any>();
     const navigate = useNavigate();
+    const user = useSelector((state: any) => state.user)
+    const sellerOrders = useSelector((state: any) => state.sellerOrders)
+
     const handleSubmit = async (e: any) => {
         e.preventDefault();
         setError('');
@@ -124,7 +127,12 @@ export const InitialScreen = () => {
     return (
 
         <div className='test-login-main-frame'>
-
+            <div>
+                {JSON.stringify(user)}
+            </div>
+            <div>
+                {JSON.stringify(sellerOrders)}
+            </div>
             <div className="login-container">
                 <div className="login-form-container">
                     <h2 className="login-title">{isLogin ? 'Login' : 'Register'}</h2>

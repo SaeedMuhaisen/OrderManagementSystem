@@ -7,6 +7,7 @@ import lombok.*;
 import java.time.Instant;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Set;
 import java.util.UUID;
 
 @Builder
@@ -21,13 +22,16 @@ public class Order {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     private UUID id;
-
-    @ManyToOne(cascade =CascadeType.ALL,fetch = FetchType.EAGER)
+    @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "buyer_id")
     private User buyer;
-
-    @OneToMany(mappedBy = "order", cascade = CascadeType.ALL, fetch = FetchType.EAGER)
-    private List<OrderItem> orderItems=new ArrayList<>();
     private Instant created_t;
+
+
+    @OneToMany(mappedBy = "order",fetch = FetchType.LAZY,cascade = CascadeType.ALL)
+    private Set<OrderStore> orderStores;
+
+    @OneToMany(mappedBy = "order" ,fetch = FetchType.LAZY,cascade = CascadeType.ALL)
+    private List<OrderItem> orderItems=new ArrayList<>();
 
 }

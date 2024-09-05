@@ -14,8 +14,16 @@ export const fetchAllSellerOrders = createAsyncThunk(
         }
         const result: CustomFetchResult = await dispatch(fetchWithRefresh({ endpoint: "/api/seller/v1/orders", config: config })).unwrap()
         if (result.status === 200) {
-            // console.log(JSON.stringify(result));
-            dispatch(setUpSellerOrders(result.data));
+            // alert(JSON.stringify(result));
+            if (result.data !== null && result.data.length > 0 && result.data[0] !== null) {
+                alert("received something from backend:" + JSON.stringify(result.data))
+                dispatch(setUpSellerOrders(result.data));
+                dispatch(setUpSellerOrderItems([]))
+            } else {
+                dispatch(setUpSellerOrders([]));
+                dispatch(setUpSellerOrderItems([]))
+            }
+
         }
         else {
             // console.log(JSON.stringify(result))
@@ -54,6 +62,7 @@ export const fetchOrderItemsByOrderId = createAsyncThunk(
         if (result.status === 200) {
             // console.log(JSON.stringify(result));
             dispatch(setUpSellerOrderItems(result.data));
+
         }
         else {
             // console.log(JSON.stringify(result))
@@ -95,6 +104,7 @@ const initialState: SellerOrdersState = {
 }
 
 
+
 export const sellerOrdersSlice = createSlice({
     name: "sellerOrders",
     initialState,
@@ -112,8 +122,14 @@ export const sellerOrdersSlice = createSlice({
         setUpSellerHistoryOrderItems: (state, action: PayloadAction<SellerOrderDTO[]>) => {
             state.historyOrderItems = action.payload;
         },
-        insertIntoSellerOrders: (state, action: PayloadAction<StoreOrderDTO[]>) => {
-            state.orders = state.orders.concat(action.payload);
+        insertIntoSellerOrders: (state, action: PayloadAction<StoreOrderDTO>) => {
+            let newOrder = state.orders.filter(item => item.orderId === action.payload.orderId);
+            if (newOrder.length === 0) {
+                state.orders.push(action.payload);
+            } else {
+                let index = state.orders.findIndex(item => item.orderId === action.payload.orderId);
+                state.orders[index] = action.payload
+            }
         },
         updateSellerOrderItemStatus(state, action: PayloadAction<{ orderItemId: string, status: OrderItemStatus }>) {
             let index = state.orderItems.findIndex(item => item.orderItemId === action.payload.orderItemId);

@@ -5,6 +5,7 @@ import jakarta.persistence.*;
 import lombok.*;
 
 import java.time.Instant;
+import java.util.Set;
 import java.util.UUID;
 
 @Builder
@@ -32,5 +33,7 @@ public class Product {
     private Integer amountReturned;
     private boolean visible;
 
+    @OneToMany(mappedBy = "product")
+    private Set<OrderItem> OrderItems;
 
 }

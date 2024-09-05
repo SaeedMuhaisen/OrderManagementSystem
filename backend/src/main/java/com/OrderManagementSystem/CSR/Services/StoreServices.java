@@ -1,5 +1,6 @@
 package com.OrderManagementSystem.CSR.Services;
 
+import com.OrderManagementSystem.CSR.Controllers.SellerController;
 import com.OrderManagementSystem.Entities.*;
 import com.OrderManagementSystem.Exceptions.StoreExceptions.UnAuthorizedEmployeeException;
 import com.OrderManagementSystem.Mappers.OrderItemMapper;
@@ -15,14 +16,18 @@ import com.OrderManagementSystem.Models.Notifications.NotificationMessage;
 import com.OrderManagementSystem.Models.Notifications.NotificationType;
 import com.OrderManagementSystem.Models.Notifications.UpdateStatusNotification;
 import lombok.RequiredArgsConstructor;
+import org.aspectj.weaver.ast.Or;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Propagation;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.nio.file.AccessDeniedException;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.UUID;
+import java.util.*;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -33,19 +38,26 @@ public class StoreServices {
     private final OrderItemRepository orderItemRepository;
     private final SimpMessagingTemplate template;
     private final OrderRepository orderRepository;
+    private final OrderStoreRepository orderStoreRepository;
+    private static final Logger logger = LoggerFactory.getLogger(SellerController.class);
+
     private final OrderHistoryRepository orderHistoryRepository;
-    private final OrderItemHistoryRepository orderItemHistoryRepository;
+    //private final OrderItemHistoryRepository orderItemHistoryRepository;
 
     public List<SellerDTO> getAllAvailableStores() {
         var stores=storeRepository.findAll();
         return SellerMapper.INSTANCE.sellerListToSellerDTOList(stores.stream().filter(store -> store.getProducts().size()>0).toList());
     }
 
+    //todo this is actually bad impl, a seller account can call a buyer endpoint to get competitor products i believe
+    //productDTO should change to something else.
+    //for buyer
     public List<ProductDTO> getStoreProducts(String sellersId) {
         var store   = storeRepository.getReferenceById(UUID.fromString(sellersId));
         return ProductMapper.INSTANCE.productListToProductDTOList(store.getProducts().stream().filter(product -> product.isVisible()).toList());
     }
 
+    //for storeEmployee
     public List<ProductDTO> getStoreProductsByEmployee(UserDetails userDetails) {
         var user= userRepository.getReferenceById(((User) userDetails).getId());
         var storeEmployee= storeEmployeeRepository.findByUser(user);
@@ -56,17 +68,20 @@ public class StoreServices {
         return ProductMapper.INSTANCE.productListToProductDTOList(storeEmployee.get().getStore().getProducts());
     }
 
+    //todo: refactor user
     public List<StoreOrderDTO> getAllStoreOrders(UserDetails userDetails) {
-        var user= userRepository.getReferenceById(((User) userDetails).getId());
-        var storeEmployee= storeEmployeeRepository.findByUser(user);
+        var user= userRepository.findById(((User) userDetails).getId());
+        if(!user.isPresent()){
+            throw new UserNotFoundException("Couldn't find the user");
+        }
+        var storeEmployee= storeEmployeeRepository.findByUser(user.get());
 
         if(storeEmployee.isEmpty()){
             throw new UserNotFoundException("User is not connected with any store");
         }
+        var orderStores=orderStoreRepository.findAllByStore(storeEmployee.get().getStore());
 
-        var orders=orderRepository.findAllByStoreId(storeEmployee.get().getStore().getId());
-        return StoreMapper.INSTANCE.orderListToStoreOrderDTOList(orders);
-
+        return StoreMapper.INSTANCE.orderListToStoreOrderDTOList(orderStores.stream().map(OrderStore::getOrder).toList());
     }
 
     public List<SellerOrderDTO> getOrderItemFromOrderId(UserDetails userDetails, String orderId) {
@@ -83,87 +98,120 @@ public class StoreServices {
         }
         return OrderItemMapper.INSTANCE.orderItemListToSellerOrderDTOList(orderItems);
     }
+    @Transactional
+    public void updateOrderItemStatus(UserDetails userDetails, UpdateOrderItemStatusDTO updateOrderItemStatusDTO) throws Exception {
+        User user = userRepository.getReferenceById(((User) userDetails).getId());
+        StoreEmployee storeEmployee = storeEmployeeRepository.findByUser(user)
+                .orElseThrow(() -> new UserNotFoundException("User is not connected with any store"));
 
-    public void updateOrderItemStatus(UserDetails userDetails, UpdateOrderItemStatusDTO updateOrderItemStatusDTO) throws AccessDeniedException {
-        var user = userRepository.getReferenceById(((User) userDetails).getId());
-        var storeEmployee = storeEmployeeRepository.findByUser(user);
+        OrderItem orderItem = orderItemRepository.findById(UUID.fromString(updateOrderItemStatusDTO.getOrderItemId()))
+                .orElseThrow(() -> new AccessDeniedException("Order item doesn't exist or doesn't belong to employee's store"));
 
-        if (storeEmployee.isEmpty()) {
-            throw new UserNotFoundException("User is not connected with any store");
+        if (!orderItem.getProduct().getStore().getId().equals(storeEmployee.getStore().getId())) {
+            throw new AccessDeniedException("Order item doesn't belong to employee's store");
         }
 
-        var orderItem = orderItemRepository.findById(UUID.fromString(updateOrderItemStatusDTO.getOrderItemId()));
-        if (!orderItem.isPresent() || !orderItem.get().getStore().getId().equals(storeEmployee.get().getStore().getId())) {
-            throw new AccessDeniedException("Oder item doesnt exist or doesnt belong to employee's store");
-        }
-
-        var oldStatus = orderItem.get().getStatusType();
-        var newStatus = StatusType.valueOf(updateOrderItemStatusDTO.getStatus());
-
+        StatusType oldStatus = orderItem.getStatusType();
+        StatusType newStatus = StatusType.valueOf(updateOrderItemStatusDTO.getStatus());
 
         if (StatusType.ACCEPTED.isIllegalStatusTransition(oldStatus, newStatus)) {
             throw new OrderStatusIllegalTransitionException("Invalid status transition. oldStatus: " + oldStatus + ", newStatus: " + newStatus);
         }
 
-        orderItem.get().setStatusType(newStatus);
-        orderItemRepository.save(orderItem.get());
+        orderItem.setStatusType(newStatus);
+        orderItemRepository.saveAndFlush(orderItem);
 
-        var buyerId=orderItem.get().getOrder().getBuyer().getId();
-        checkOrderCompleted(orderItem.get());
+        UUID buyerId = orderItem.getOrder().getBuyer().getId();
 
+        sendNotification(buyerId, orderItem, newStatus);
+
+        checkStoreOrderItemsCompleted(orderItem.getOrder(), orderItem.getProduct().getStore());
+
+    }
+
+    private void checkStoreOrderItemsCompleted(Order order, Store store) throws Exception {
+        List<OrderItem> orderItemsFromStore = order.getOrderItems().stream()
+                .filter(item -> item.getProduct().getStore().equals(store))
+                .collect(Collectors.toList());
+
+        boolean allCompleted = orderItemsFromStore.stream()
+                .allMatch(item -> !item.getStatusType().equals(StatusType.ACCEPTED) &&
+                        !item.getStatusType().equals(StatusType.PENDING) &&
+                        !item.getStatusType().equals(StatusType.DISPATCHED));
+
+        if (allCompleted) {
+            OrderStore orderStore = orderStoreRepository.findByOrderAndStore(order, store)
+                    .orElseThrow(() -> new RuntimeException("Couldn't find order_store for an active order"));
+            orderStore.setFinished(true);
+            orderStoreRepository.save(orderStore);
+
+            checkFullOrderCompleted(order);
+        }
+    }
+
+    private void checkFullOrderCompleted(Order order) throws Exception {
+        boolean allStoresFinished = orderStoreRepository.findAllByOrder(order).stream()
+                .allMatch(OrderStore::isFinished);
+
+        if (allStoresFinished) {
+            createOrderHistory(order);
+            deleteOrder(order);
+        }
+    }
+
+    private void createOrderHistory(Order order) {
+        OrderHistory orderHistory = OrderHistory.builder()
+                .orderItemHistories(new ArrayList<>())
+                .stores(order.getOrderStores().stream().map(OrderStore::getStore).collect(Collectors.toSet()))
+                .created_t(order.getCreated_t())
+                .buyer(order.getBuyer())
+                .build();
+
+        for (OrderItem orderItem : order.getOrderItems()) {
+            OrderItemHistory orderItemHistory = OrderItemHistory.builder()
+                    .orderHistory(orderHistory)
+                    .statusType(orderItem.getStatusType())
+                    .quantity(orderItem.getQuantity())
+                    .productId(orderItem.getProduct().getId())
+                    .productPrice(orderItem.getProductPrice())
+                    .build();
+            orderHistory.getOrderItemHistories().add(orderItemHistory);
+        }
+
+        orderHistoryRepository.save(orderHistory);
+    }
+
+
+    private void deleteOrder(Order order) throws Exception {
+
+        for(var orderItem:order.getOrderItems()){
+            orderItem.setOrder(null);
+
+        }
+
+        for(var orderStore:order.getOrderStores()){
+            orderStore.setOrder(null);
+            orderStore.getStore().getOrderStores().remove(orderStore);
+            orderStore.setStore(null);
+            orderStoreRepository.delete(orderStore);
+        }
+
+        orderRepository.delete(order);
+    }
+    private void sendNotification(UUID buyerId, OrderItem orderItem, StatusType newStatus) {
         template.convertAndSend(
                 "/topic/notification/" + buyerId,
-                NotificationMessage
-                        .builder()
+                NotificationMessage.builder()
                         .notificationType(NotificationType.BUYER_UPDATE_ORDER_STATUS)
-                        .message(UpdateStatusNotification
-                                .builder()
-                                .orderId(String.valueOf(orderItem.get().getOrder().getId()))
-                                .productId(String.valueOf(orderItem.get().getProduct().getId()))
-                                .newStatus(newStatus.name()).build())
+                        .message(UpdateStatusNotification.builder()
+                                .orderId(String.valueOf(orderItem.getOrder().getId()))
+                                .productId(String.valueOf(orderItem.getProduct().getId()))
+                                .newStatus(newStatus.name())
+                                .build())
                         .build()
         );
     }
 
-    private void checkOrderCompleted(OrderItem orderItem) {
-        var orderItems=orderItemRepository.findAllByOrderAndProduct_Store(orderItem.getOrder(),orderItem.getStore());
-
-        for(OrderItem item:orderItems){
-            if(item.getStatusType().equals(StatusType.ACCEPTED) ||
-                    item.getStatusType().equals(StatusType.PENDING) ||
-                    item.getStatusType().equals(StatusType.DISPATCHED)
-            ){
-                return;
-            }
-        }
-
-        List<OrderItemHistory> orderItemHistories=new ArrayList<>();
-        OrderHistory orderHistory= OrderHistory.builder()
-                .id(orderItem.getOrder().getId())
-                .buyer(orderItem.getOrder().getBuyer())
-                .orderDate(orderItem.getOrder().getCreated_t())
-                .orderItemHistories(orderItemHistories)
-                .build();
-
-        for(OrderItem item:orderItems) {
-            var orderItemHistory = OrderItemHistory.builder()
-                    .id(item.getId())
-                    .productId(item.getProduct().getId())
-                    .quantity(item.getQuantity())
-                    .orderHistory(orderHistory)
-                    .store(item.getStore())
-                    .statusType(item.getStatusType())
-                    .productPrice(item.getProductPrice())
-                    .build();
-            orderItemHistories.add(orderItemHistory);
-
-        }
-
-        orderHistoryRepository.save(orderHistory);
-
-        orderItemRepository.deleteAll(orderItems);
-        orderRepository.delete(orderItem.getOrder());
-    }
 
     public List<StoreOrderDTO> getStoreOrderHistory(UserDetails userDetails) {
         var user= userRepository.getReferenceById(((User) userDetails).getId());
@@ -173,7 +221,12 @@ public class StoreServices {
             throw new UserNotFoundException("User is not connected with any store");
         }
 
-        var ordersHistory=orderHistoryRepository.findAllByStoreId(storeEmployee.get().getStore().getId());
+        var ordersHistory=orderHistoryRepository.findAllByStores(storeEmployee.get().getStore());
         return StoreMapper.INSTANCE.orderHistoryListToStoreOrderDTOList(ordersHistory);
+    }
+
+
+    public void deleteOrder(String orderId) {
+        orderRepository.deleteById(UUID.fromString(orderId));
     }
 }

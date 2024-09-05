@@ -7,6 +7,7 @@ import lombok.Setter;
 
 import java.time.Instant;
 import java.util.List;
+import java.util.Set;
 
 @Data
 @Getter
@@ -15,6 +16,6 @@ public class BuyerOrderDTO {
 
     private String orderId;
     private Instant orderDate;
-    private List<OrderItemDTO> orderItems;
+    private Set<OrderItemDTO> orderItems;
 
 }

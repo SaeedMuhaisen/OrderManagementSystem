@@ -1,6 +1,7 @@
 package com.OrderManagementSystem.Mappers;
 
 import com.OrderManagementSystem.Entities.Order;
+
 import com.OrderManagementSystem.Entities.OrderHistory;
 import com.OrderManagementSystem.Entities.OrderItem;
 import com.OrderManagementSystem.Entities.Store;
@@ -27,7 +28,7 @@ public interface StoreMapper {
     List<StoreOrderDTO> orderListToStoreOrderDTOList(List<Order> orders);
 
     @Mapping(source = "orderHistory.id", target = "orderId")
-    @Mapping(source = "orderHistory.orderDate", target = "orderDate")
+    @Mapping(source = "orderHistory.created_t", target = "orderDate")
     @Mapping(source = "orderHistory.buyer.email", target = "customerEmail")
     StoreOrderDTO orderHistoryToStoreOrderDTO(OrderHistory orderHistory);
 

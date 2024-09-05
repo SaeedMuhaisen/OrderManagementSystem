@@ -26,8 +26,8 @@ public class ProductServices {
 
 
     public void createProduct(UserDetails userDetails,CreateProductDTO createProductDTO) {
-        var user= userRepository.getReferenceById(((User) userDetails).getId());
-        var storeEmployee = storeEmployeeRepository.findByUser(user);
+        var user= userRepository.findById(((User) userDetails).getId());
+        var storeEmployee = storeEmployeeRepository.findByUser(user.get());
 
         if(storeEmployee.isEmpty() || !storeEmployee.get().getEmployeeRole().equals(EmployeeRole.ADMIN)){
             throw new UnAuthorizedEmployeeException("User has no Authorization to do this operation");

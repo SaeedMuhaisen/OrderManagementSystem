@@ -10,6 +10,8 @@ import java.util.List;
 import java.util.UUID;
 
 public interface OrderRepository extends JpaRepository<Order, UUID> {
-    @Query("SELECT DISTINCT o FROM Order o JOIN o.orderItems oi WHERE oi.store.id = :storeId")
-    List<Order> findAllByStoreId(UUID storeId);
+//    @Query("SELECT DISTINCT o FROM Order o JOIN o.orderItems oi WHERE oi.store.id = :storeId")
+//    List<Order> findAllByStoreId(UUID storeId);
+        @Query("Delete from Order o where o.id=:orderId")
+        void deleteOrderById(UUID orderId);
 }

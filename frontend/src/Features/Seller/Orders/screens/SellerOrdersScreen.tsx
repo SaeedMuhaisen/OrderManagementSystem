@@ -16,7 +16,6 @@ export const SellerOdersScreen = () => {
     const columns = ['ID', 'Name', 'Description', 'Price', 'Available Quantity', 'Amount Sold', 'Amount Returned', 'Visible'];
 
     const setUpModal = (orderItemId, currentStatus) => {
-
         setOrderItemId(orderItemId);
         setCurrentStatus(currentStatus);
         setUpdateStatusModalVisible(true)
@@ -34,7 +33,8 @@ export const SellerOdersScreen = () => {
                 <h1>Manage Products</h1>
             </div>
             <div className="active-orders-details">
-                <h2>You have {sellerOrders?.orders?.length} active orders</h2>
+                <h2>You have {sellerOrders?.orders !== null &&
+                    sellerOrders?.orders.length !== null ? sellerOrders?.orders.length : 0} active orders</h2>
             </div>
             {sellerOrders?.orders?.length === 0 && <div className="active-orders-details">
                 <h4>Click on the button below to create a new product</h4>
@@ -49,13 +49,14 @@ export const SellerOdersScreen = () => {
                                 <th>Id</th>
                                 <th>Client Email</th>
                             </tr>
-                            {sellerOrders.orders.slice().sort((a, b) => new Date(b.orderDate).getTime() - new Date(a.orderDate).getTime()).map((row, index) => (
-                                <tr key={index} onClick={() => dispatch(fetchOrderItemsByOrderId({ orderId: row.orderId }))} >
-                                    <td data-th="Date">{formatDate(row.orderDate)}</td>
-                                    <td data-th="Id">{row.orderId.slice(0, 6)}</td>
-                                    <td data-th="Client Email">{row.customerEmail}</td>
-                                </tr>
-                            ))}
+                            {sellerOrders?.orders?.length > 0 && sellerOrders.orders.slice().sort(
+                                (a, b) => new Date(b?.orderDate ?? 0).getTime() - new Date(a?.orderDate ?? 0).getTime()).map((row, index) => (
+                                    <tr key={index} onClick={() => dispatch(fetchOrderItemsByOrderId({ orderId: row.orderId }))} >
+                                        <td data-th="Date">{formatDate(row.orderDate)}</td>
+                                        <td data-th="Id">{row.orderId.slice(0, 6)}</td>
+                                        <td data-th="Client Email">{row.customerEmail}</td>
+                                    </tr>
+                                ))}
                         </table>
                     }
                 </div>

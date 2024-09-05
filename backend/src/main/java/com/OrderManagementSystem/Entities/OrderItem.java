@@ -12,21 +12,22 @@ import java.util.UUID;
 @Entity
 @Getter
 @Setter
-@Table(name = "order_items")
+@Table(name = "order_item")
 public class OrderItem {
 
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     private UUID id;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "order_id")
+    private Order order;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.EAGER)
+    @JoinColumn(name = "product_id")
     private Product product;
     private Integer quantity;
-    @ManyToOne
-    private Order order;
-    @ManyToOne
-    @JoinColumn(name="store_id")
-    private Store store;
+
     private StatusType statusType;
     private Double productPrice;
+
 }

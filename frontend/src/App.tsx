@@ -10,10 +10,10 @@ function App() {
   return (
     <Provider store={store}>
       <PersistGate persistor={persistor}>
+        
         <ReduxLoader>
-          <Notifications>
-            <Navigation />
-          </Notifications>
+          
+          <Navigation />
         </ReduxLoader>
       </PersistGate>
     </Provider >

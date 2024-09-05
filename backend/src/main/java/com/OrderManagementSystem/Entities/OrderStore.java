@@ -1,9 +1,13 @@
 package com.OrderManagementSystem.Entities;
 
-import com.OrderManagementSystem.Entities.enums.EmployeeRole;
 import jakarta.persistence.*;
 import lombok.*;
 
+
+import java.time.Instant;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Set;
 import java.util.UUID;
 
 @Builder
@@ -12,19 +16,21 @@ import java.util.UUID;
 @Entity
 @Getter
 @Setter
-public class StoreEmployee {
+public class OrderStore {
+
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     private UUID id;
 
-    @ManyToOne(fetch = FetchType.EAGER)
-    @JoinColumn(name = "user_id")
-    public User user;
 
-    @ManyToOne(cascade=CascadeType.ALL,fetch=FetchType.EAGER)
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "store_id")
     private Store store;
 
-    private EmployeeRole employeeRole;
 
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "order_id")
+    private Order order;
+
+    private boolean finished;
 }

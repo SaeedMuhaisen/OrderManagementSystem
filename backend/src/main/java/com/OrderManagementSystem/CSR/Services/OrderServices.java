@@ -12,6 +12,7 @@ import com.OrderManagementSystem.Entities.enums.StatusType;
 import com.OrderManagementSystem.Exceptions.AuthExceptions.UserNotFoundException;
 import com.OrderManagementSystem.Exceptions.OrderExceptions.OrderContainsIllegalProduct;
 import com.OrderManagementSystem.Exceptions.OrderExceptions.ProductQuantityNotEnoughException;
+import com.OrderManagementSystem.Mappers.StoreMapper;
 import com.OrderManagementSystem.Models.DTO.*;
 import com.OrderManagementSystem.Models.Notifications.NotificationMessage;
 import com.OrderManagementSystem.Models.Notifications.NotificationType;
@@ -43,16 +44,20 @@ public class OrderServices {
         List<Product> orderProducts=new ArrayList<>();
         List<OrderItem> orderItems=new ArrayList<>();
 
+        Set<OrderStore> orderStores=new HashSet<>();
+
         var order = Order.builder()
                 .buyer(user.get())
                 .created_t(Instant.now())
+                .orderStores(orderStores)
                 .orderItems(orderItems)
                 .build();
 
-        var savedOrder=orderRepository.save(order);
+//        var savedOrder=orderRepository.save(order);
 
         for(OrderItemDTO orderItemDTO: createOrderDTO.getProducts()){
             var product= productRepository.findById(UUID.fromString(orderItemDTO.getProductId()));
+
             if(!product.isPresent() || !product.get().isVisible() ){
                 throw new OrderContainsIllegalProduct("Product doesn't Exists");
             }
@@ -63,7 +68,6 @@ public class OrderServices {
             orderProducts.add(product.get());
             product.get().setAvailableQuantity(product.get().getAvailableQuantity()-orderItemDTO.getQuantity());
             product.get().setAmountSold(product.get().getAmountSold()+orderItemDTO.getQuantity());
-
             var newAvailableQuantity= product.get().getAvailableQuantity()-orderItemDTO.getQuantity();
             if(newAvailableQuantity==0){
                 product.get().setVisible(false);
@@ -74,41 +78,49 @@ public class OrderServices {
                     .product(product.get())
                     .productPrice(product.get().getPrice())
                     .statusType(StatusType.PENDING)
-                    .order(savedOrder)
-                    .store(product.get().getStore())
+                    .order(order)
                     .build();
             orderItems.add(orderItem);
+
+            if(order.getOrderStores().stream().filter(item->item.getStore().getId().equals(product.get().getStore().getId())).toList().isEmpty()){
+                var orderStore=OrderStore.builder()
+                        .store(product.get().getStore())
+                        .order(order)
+                        .finished(false)
+                        .build();
+
+                orderStores.add(orderStore);
+            }
+
         }
 
         productRepository.saveAll(orderProducts);
-        orderItemRepository.saveAll(orderItems);
-
-        Set<Store> stores=new HashSet<>();
-        Set<StoreEmployee> admins = new HashSet<>();
-        for(var product: orderProducts){
-            stores.add(product.getStore());
-        }
-        for(var store:stores) {
-          for (var adminOfStore : store.getEmployees().stream().filter(storeEmployee -> storeEmployee.getEmployeeRole().equals(EmployeeRole.ADMIN)).toList()) {
+        orderRepository.save(order);
+        //orderItemRepository.saveAll(orderItems);
+        //O(n^2) nested todo:Get rid of the nested forloop..
+        Set<StoreEmployee> admins=new HashSet<>();
+        for(var orderStore:orderStores) {
+          for (var adminOfStore : orderStore.getStore().getEmployees().stream().filter(storeEmployee -> storeEmployee.getEmployeeRole().equals(EmployeeRole.ADMIN)).toList()) {
               admins.add(adminOfStore);
           }
         }
         for (var admin : admins) {
-            var newOrderItems = orderItems.stream().filter(orderItem -> {
-                return orderItem.getProduct().getStore().getId() == admin.getStore().getId();
-            }).toList();
+//            var newOrderItems = orderItems.stream().filter(orderItem -> {
+//                return orderItem.getProduct().getStore().getId() == admin.getStore().getId();
+//            }).toList();
+
             template.convertAndSend("/topic/notification/" + admin.getUser().getId(),
                     NotificationMessage.builder()
-                            .notificationType(NotificationType.SELLER_NEW_ORDER)
-                            .message(OrderItemMapper.INSTANCE.orderItemListToSellerOrderDTOList(newOrderItems))
+                            .notificationType(NotificationType.SELLER_ORDER)
+                            .message(StoreMapper.INSTANCE.orderToStoreOrderDTO(order))
                             .build()
             );
         }
     }
 
     public List<BuyerOrderDTO> getAllBuyerOrders(UserDetails userDetails) {
-        var user= userRepository.getReferenceById(((User) userDetails).getId());
-        return OrderMapper.INSTANCE.orderListToBuyerOrderDTOList(user.getOrders());
+        var user= userRepository.findById(((User) userDetails).getId());
+        return OrderMapper.INSTANCE.orderListToBuyerOrderDTOList(user.get().getOrders());
     }
 
 }
