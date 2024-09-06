@@ -1,25 +1,22 @@
+import { insertIntoSellerOrders, insertNotification, updateOrderItemStatus, UserState } from "@/Redux";
+import { StoreOrderDTO, UpdateStatusNotification } from "@/Types";
+import { Stomp } from "@stomp/stompjs";
 import { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { UserState } from "../../../../redux";
-import { updateOrderItemStatus } from "../../../../redux/BuyerSlices/buyerOrdersSlice";
-import { UpdateStatusNotification } from "../../../../Types/Notifications";
 import SockJS from "sockjs-client";
-import { Stomp } from "@stomp/stompjs";
 import { host } from "../../connectionConfig";
-import { insertNotification } from "../../../../redux/notificationsSlice";
-import { insertIntoSellerOrders } from "../../../../redux/SellerSlices/sellerOrdersSlice";
-import { OrderItemDTO, SellerOrderDTO, StoreOrderDTO } from "../../../../Types";
 
 const useWebSocket = () => {
     const [stompClient, setStompClient] = useState(null);
-    const [connected, setConnected] = useState(false); 
-
+    const [connected, setConnected] = useState(false);
+    
     useEffect(() => {
         const socket = new SockJS(`${host}/socket`);
         const client = Stomp.over(socket);
 
         client.connect({}, () => {
-            setConnected(true); 
+            setConnected(true);
+            alert("COnnected")
         });
 
         setStompClient(client);
@@ -40,10 +37,10 @@ export const Notifications = ({ children }) => {
 
     useEffect(() => {
         if (!connected || !user.userId || !user.signedIn) {
-            //alert('websocket not going to connect')
+            alert('websocket not going to connect')
             return;
         }
-        //alert('subscribing now')
+        alert('subscribing now')
         const subscription = stompClient.subscribe(`/topic/notification/${user.userId}`, (message) => {
             alert('websocket connected')
             let obj = JSON.parse(message.body);

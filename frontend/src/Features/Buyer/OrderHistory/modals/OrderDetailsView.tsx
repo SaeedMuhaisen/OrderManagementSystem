@@ -1,4 +1,4 @@
-import { OrderItemDTO } from "../../../../Types"
+import { OrderItemDTO } from "@/Types"
 
 export const OrderDetailsView = (orderItem: OrderItemDTO) => {
     return (

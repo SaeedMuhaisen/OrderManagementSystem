@@ -1,9 +1,9 @@
-import React, { useState, useEffect } from 'react';
-import { useLocation, useParams } from 'react-router-dom';
-import { CartItem, CustomFetchResult, fetchWithRefresh, insertIntoShoppingCart, removeFromCart, ShoppingCartState, updateQuantity } from '../../../../redux';
+import { IconProduct } from '@/Features/Common/Componenets';
+import { CartItem, CustomFetchResult, fetchWithRefresh, insertIntoShoppingCart, removeFromCart, ShoppingCartState, updateQuantity } from '@/Redux';
+import { CreateProductDTO, StoreProductDTO } from '@/Types';
+import { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import { CreateProductDTO, StoreProductDTO } from '../../../../Types';
-import { IconProduct } from '../../../Common/components/svg/Icons';
+import { useLocation } from 'react-router-dom';
 
 export const SpecificStoreScreen = () => {
     const location = useLocation();

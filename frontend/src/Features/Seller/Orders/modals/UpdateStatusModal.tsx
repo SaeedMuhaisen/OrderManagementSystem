@@ -1,11 +1,9 @@
+import { CustomFetchResult, fetchWithRefresh, updateSellerOrderItemStatus } from '@/Redux';
+import { UpdateOrderItemStatusDTO } from '@/Types';
 import { useEffect, useState } from 'react';
 import { useDispatch } from 'react-redux';
-import { UpdateOrderItemStatusDTO } from '../../../../Types';
-import { CustomFetchResult, fetchWithRefresh } from '../../../../redux';
-import { updateOrderItemStatus } from '../../../../redux/BuyerSlices/buyerOrdersSlice';
-import { updateSellerOrderItemStatus } from '../../../../redux/SellerSlices/sellerOrdersSlice';
 
-export const UpdateStatusModal = ({ onClose, orderItemId, currentStatus}) => {
+export const UpdateStatusModal = ({ onClose, orderItemId, currentStatus }) => {
     const [newStatus, setNewStatus] = useState(null);
     const [statusOptions, setStatusOptions] = useState([]);
     const [errorMessage, setErrorMessage] = useState('');

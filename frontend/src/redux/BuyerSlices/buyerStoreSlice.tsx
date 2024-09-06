@@ -1,6 +1,6 @@
 import { createAsyncThunk, createSlice, PayloadAction } from '@reduxjs/toolkit';
 import { CustomFetchResult, fetchWithRefresh } from '../userSlice';
-import { SellerDTO } from '../../Types';
+import { SellerDTO } from '@/Types';
 
 export interface BuyerStoreState {
     stores: [SellerDTO],

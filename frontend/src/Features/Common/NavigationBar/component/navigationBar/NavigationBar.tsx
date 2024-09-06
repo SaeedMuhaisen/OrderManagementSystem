@@ -2,9 +2,9 @@ import React, { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import "./sidebar.css"; // Import your CSS file
 import { SideBarButton } from "../buttons/SideBarButton";
-import { UserState } from "../../../../../redux";
-import { IconCart, IconHome, IconLogout, IconProduct, IconReceipt, IconStore, IconUser } from "../../../components/svg/Icons";
-import { NotificationsState, removeNotification } from "../../../../../redux/notificationsSlice";
+import { UserState } from "@/Redux";
+import { IconCart, IconHome, IconLogout, IconProduct, IconReceipt, IconStore, IconUser } from "@/Features/Common/Componenets";
+import { NotificationsState, removeNotification } from "@/Redux";
 import { useNavigate } from "react-router-dom";
 
 export const NavigationBar = () => {

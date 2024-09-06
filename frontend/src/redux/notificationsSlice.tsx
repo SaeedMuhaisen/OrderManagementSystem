@@ -1,5 +1,5 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
-import { BuyerOrderDTO } from '../Types';
+import { BuyerOrderDTO } from '@/Types';
 
 export interface NotificationsState {
     BUYER: {

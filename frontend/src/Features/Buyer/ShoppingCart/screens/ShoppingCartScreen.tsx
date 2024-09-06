@@ -1,7 +1,7 @@
+import { confirmPurchase, ShoppingCartState } from "@/Redux"
 import { useDispatch, useSelector } from "react-redux"
-import { confirmPurchase, ShoppingCartState } from "../../../../redux/BuyerSlices/shoppingCartSlice"
 
-import { IconProduct } from "../../../Common/components/svg/Icons"
+import { IconProduct } from "@/Features/Common/Componenets"
 export const ShoppingCartScreen = () => {
     const shopingCart: ShoppingCartState = useSelector((state: any) => state.shoppingCart)
     const dispatch = useDispatch<any>()

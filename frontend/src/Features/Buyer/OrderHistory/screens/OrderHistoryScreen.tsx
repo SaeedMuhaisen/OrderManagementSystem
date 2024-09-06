@@ -1,10 +1,10 @@
 import { useState } from "react";
 
 
-import { useDispatch, useSelector } from "react-redux";
-import { BuyerOrdersState } from "../../../../redux/BuyerSlices/buyerOrdersSlice";
-import { IconProduct } from "../../../Common/components/svg/Icons";
-import { statusColor, statusMapping } from "../../../../Types/Mappers";
+import { useSelector } from "react-redux";
+import { BuyerOrdersState } from "@/Redux";
+import { statusColor, statusMapping } from "@/Types";
+import { IconProduct } from "@/Features/Common/Componenets";
 
 
 export const OrderHistoryScreen = () => {

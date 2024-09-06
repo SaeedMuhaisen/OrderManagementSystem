@@ -1,7 +1,7 @@
 import { createAsyncThunk, createSlice, PayloadAction } from '@reduxjs/toolkit';
 
 import { CustomFetchResult, fetchWithRefresh } from '../userSlice';
-import { StoreProductDTO } from '../../Types';
+import { StoreProductDTO } from  '@/Types';
 import { fetchOrders } from './buyerOrdersSlice';
 
 

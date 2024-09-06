@@ -1,14 +1,10 @@
-import "./ManageProducts.css"
-import { GenericTable } from "../../../Common/components/cards/GenericTable";
-import { TabCard } from "../../../Common/components/cards/TabCard";
-import { useEffect, useState } from "react";
+import { useState } from "react";
+import "./ManageProducts.css";
 
-import { CreateProductModal } from "../components/modals/CreateProductModal";
 import { useDispatch, useSelector } from "react-redux";
-import { CustomFetchResult, fetchWithRefresh } from "../../../../redux";
-import { SellerProductsState } from "../../../../redux/SellerSlices/sellerProductsSlice";
-import { IconReceipt, IconSettings } from "../../../Common/components/svg/Icons";
-import { flattenDiagnosticMessageText } from "typescript";
+import { SellerProductsState } from "@/Redux";
+import { IconSettings } from "@/Features/Common/Componenets";
+import { CreateProductModal } from "../components/modals/CreateProductModal";
 export const ManageProducts = () => {
 
     const dispatch = useDispatch<any>();

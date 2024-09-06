@@ -28,9 +28,9 @@
     "websocket": "^1.0.35"
   },
   "scripts": {
-    "start": "react-scripts start",
-    "build": "react-scripts build",
-    "test": "react-scripts test",
+    "start": "craco start",
+    "build": "craco build",
+    "test": "craco test",
     "eject": "react-scripts eject"
   },
   "eslintConfig": {
@@ -52,9 +52,8 @@
     ]
   },
   "devDependencies": {
-    "@types/module-alias": "^2.0.4",
+    "@craco/craco": "^7.1.0",
     "@types/sockjs-client": "^1.5.4",
-    "customize-cra": "^1.0.0",
-    "module-alias": "^2.2.3"
+    "customize-cra": "^1.0.0"
   }
 }

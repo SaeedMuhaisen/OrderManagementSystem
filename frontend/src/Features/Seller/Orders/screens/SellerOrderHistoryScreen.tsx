@@ -1,13 +1,8 @@
-import { useEffect, useState } from "react";
-import { GenericTable } from "../../../Common/components/cards/GenericTable";
-import { TabCard } from "../../../Common/components/cards/TabCard"
-import { CustomFetchResult, fetchWithRefresh } from "../../../../redux";
+import { fetchHistoryOrderItemsByOrderId, SellerOrdersState } from "@/Redux";
+import { statusColor, statusMapping } from "@/Types";
+import { useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { UpdateStatusModal } from "../modals/UpdateStatusModal";
-import { fetchHistoryOrderItemsByOrderId, fetchOrderItemsByOrderId, SellerOrdersState } from "../../../../redux/SellerSlices/sellerOrdersSlice";
-import "./SellerOrderScreen.css"
-import { IconSettings } from "../../../Common/components/svg/Icons";
-import { statusColor, statusMapping } from "../../../../Types/Mappers";
+import "./SellerOrderScreen.css";
 export const SellerOrderHistoryScreen = () => {
     const sellerOrders: SellerOrdersState = useSelector((state: any) => state.sellerOrders);
     const [orderItemId, setOrderItemId] = useState(null)

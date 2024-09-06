@@ -1,7 +1,6 @@
-import { useState } from "react";
-import { useDispatch, useSelector } from "react-redux";
+import { SellerDTO } from "@/Types";
+import { useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
-import { SellerDTO } from "../../../../Types";
 
 export const BuyerStoreScreen = () => {
     const stores: [SellerDTO] = useSelector((state: any) => state.buyerStore.stores)
@@ -35,7 +34,7 @@ export const BuyerStoreScreen = () => {
                     </div>
                 ))}
             </div>
-            
+
 
         </div>
 

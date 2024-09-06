@@ -1,18 +1,16 @@
+import { InitialScreen } from '@/Authentication';
+import { NavigationBar } from '@/Features/Common/NavigationBar';
+import { OrderHistoryScreen } from '@/Features/Customer/OrderHistory';
+import { ShoppingCartScreen } from '@/Features/Customer/ShoppingCart';
+import { BuyerStoreScreen, SpecificStoreScreen } from '@/Features/Customer/Store';
+import { SellerOdersScreen, SellerOrderHistoryScreen } from '@/Features/Seller/Orders';
+import { ManageProducts } from "@/Features/Seller/Product";
+import { Notifications } from "../Features/Common/Notifications/hooks/Notifications"
+import { UserState } from '@/Redux';
 import { useSelector } from 'react-redux';
 import { BrowserRouter, Navigate, Route, Routes } from 'react-router-dom';
 import { AdminHomeScreen } from '../Features/Admin/Home';
-import { OrderHistoryScreen } from '../Features/Buyer/OrderHistory';
-import { BuyerStoreScreen } from '../Features/Buyer/Store';
-import { InitialScreen } from '../Features/Common/Authentication';
-import { NavigationBar } from '../Features/Common/NavigationBar';
-import { SellerOdersScreen } from '../Features/Seller/Orders';
-import { ManageProducts } from '../Features/Seller/Product';
-import { UserState } from '../redux';
 import "./Navigation.css";
-import { SpecificStoreScreen } from '../Features/Buyer/Store/screens/SpecificStoreScreen';
-import { ShoppingCartScreen } from '../Features/Buyer/ShoppingCart';
-import { Notifications } from '../Features/Common/Notifications';
-import { SellerOrderHistoryScreen } from '../Features/Seller/Orders/screens/SellerOrderHistoryScreen';
 
 export const Navigation = () => {
   const user: UserState = useSelector((state: any) => state.user);
@@ -71,7 +69,7 @@ const SellerRoutes = () => {
   return (
     <Notifications>
       <BrowserRouter>
-        
+
         <div className="buyer-navigation-container">
 
           <NavigationBar />

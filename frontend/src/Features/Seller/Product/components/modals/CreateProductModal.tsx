@@ -1,8 +1,8 @@
-import React, { useState } from 'react';
+import { CustomFetchResult, fetchWithRefresh } from '@/Redux';
+import { CreateProductDTO } from '@/Types';
+import { useState } from 'react';
 import { useDispatch } from 'react-redux';
-import { CustomFetchResult, fetchWithRefresh } from '../../../../../redux';
 import { uuidv7 } from 'uuidv7';
-import { CreateProductDTO } from '../../../../../Types';
 
 
 export const CreateProductModal = ({ onClose }) => {

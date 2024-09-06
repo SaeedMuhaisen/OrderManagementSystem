@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { CustomFetchResult, setUser } from '../../../../redux';
+import { CustomFetchResult, setUser } from '@/Redux';
 import { useDispatch, useSelector } from 'react-redux';
 import { useNavigate, } from 'react-router-dom';
 import { host } from '../../connectionConfig';

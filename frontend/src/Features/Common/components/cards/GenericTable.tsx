@@ -1,7 +1,5 @@
-import { useEffect } from "react";
-import "../styles.css"
+import "../styles.css";
 import { useDispatch } from "react-redux";
-import { setUser } from "../../../../redux";
 export const GenericTable = ({ columns, data, handleRowClick = (val) => { } }) => {
     const importData = (products) => {
         if (products === null) {
