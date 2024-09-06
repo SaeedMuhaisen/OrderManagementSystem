@@ -2,7 +2,9 @@ package com.OrderManagementSystem.Mappers;
 
 
 import com.OrderManagementSystem.Entities.Order;
+import com.OrderManagementSystem.Entities.OrderHistory;
 import com.OrderManagementSystem.Entities.OrderItem;
+import com.OrderManagementSystem.Entities.OrderItemHistory;
 import com.OrderManagementSystem.Models.DTO.BuyerOrderDTO;
 import com.OrderManagementSystem.Models.DTO.OrderItemDTO;
 import org.mapstruct.Mapper;
@@ -21,6 +23,8 @@ public interface OrderMapper {
     @Mapping(source = "orderItems" ,target="orderItems")
     List<BuyerOrderDTO> orderListToBuyerOrderDTOList(List<Order> orders);
 
+
+    List<BuyerOrderDTO> orderHistoryListToBuyerOrderDTOList(List<OrderHistory> orders);
     @Mapping(source = "created_t", target = "orderDate")
     @Mapping(source = "id", target = "orderId")
     @Mapping(source = "orderItems" ,target="orderItems")
@@ -31,4 +35,16 @@ public interface OrderMapper {
     @Mapping(source="productPrice", target = "productPrice")
     @Mapping(source = "statusType",target = "status")
     OrderItemDTO orderItemToOrderItemDTO(OrderItem orderItem);
+
+    @Mapping(source = "quantity",target="quantity" )
+    @Mapping(source = "productId",target="productId" )
+    @Mapping(source="productPrice", target = "productPrice")
+    @Mapping(source = "statusType",target = "status")
+    OrderItemDTO orderItemHistoryToOrderItemDTO(OrderItemHistory orderItemHistory);
+
+
+    @Mapping(source = "created_t", target = "orderDate")
+    @Mapping(source = "id", target = "orderId")
+    @Mapping(source = "orderItemHistories" ,target="orderItems")
+    BuyerOrderDTO orderToBuyerOrderDTO(OrderHistory orderHistory);
 }

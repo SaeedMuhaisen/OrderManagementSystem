@@ -12,6 +12,7 @@ import "./Navigation.css";
 import { SpecificStoreScreen } from '../Features/Buyer/Store/screens/SpecificStoreScreen';
 import { ShoppingCartScreen } from '../Features/Buyer/ShoppingCart';
 import { Notifications } from '../Features/Common/Notifications';
+import { SellerOrderHistoryScreen } from '../Features/Seller/Orders/screens/SellerOrderHistoryScreen';
 
 export const Navigation = () => {
   const user: UserState = useSelector((state: any) => state.user);
@@ -48,16 +49,7 @@ const BuyerRoutes = () => {
 
         <div className="buyer-navigation-container">
           <NavigationBar />
-          <div style={{ width: '10%' }}>
 
-
-            <div>
-              {JSON.stringify(user)}
-            </div>
-            <div>
-              {JSON.stringify(sellerOrders)}
-            </div>
-          </div>
           <Routes>
             <Route path="/orders" element={< OrderHistoryScreen />} />
             <Route path="/store" element={< BuyerStoreScreen />} />
@@ -75,25 +67,17 @@ const BuyerRoutes = () => {
 const SellerRoutes = () => {
   const user: UserState = useSelector((state: any) => state.user);
   const sellerOrders = useSelector((state: any) => state.sellerOrders)
-
+  const buyerOrders = useSelector((state: any) => state.orderHistory)
   return (
     <Notifications>
       <BrowserRouter>
-
+        
         <div className="buyer-navigation-container">
-          <div style={{ width: '10%' }}>
 
-
-            <div>
-              {JSON.stringify(user)}
-            </div>
-            <div>
-              {JSON.stringify(sellerOrders)}
-            </div>
-          </div>
           <NavigationBar />
           <Routes>
             <Route path="/seller/orders" element={<SellerOdersScreen />} />
+            <Route path="/seller/orders/history" element={<SellerOrderHistoryScreen />} />
             <Route path="/seller/products" element={<ManageProducts />} />
             <Route path="*" element={<Navigate to="/seller/products" replace />} />
           </Routes>

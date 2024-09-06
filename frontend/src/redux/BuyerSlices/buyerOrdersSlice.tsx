@@ -4,7 +4,7 @@ import { BuyerOrderDTO } from '../../Types';
 
 
 
-export const fetchOrderHistory = createAsyncThunk(
+export const fetchOrders = createAsyncThunk(
     'buyer/orderHistory',
     async (worklet, { getState, dispatch }) => {
         const config = {
@@ -16,27 +16,46 @@ export const fetchOrderHistory = createAsyncThunk(
         const result: CustomFetchResult = await dispatch(fetchWithRefresh({ endpoint: "/api/buyer/v1/orders", config: config })).unwrap()
         if (result.status === 200) {
             // console.log(JSON.stringify(result));
-            dispatch(setUpOrders(result.data as BuyerOrderDTO));
+            dispatch(setUpOrders(result.data as BuyerOrderDTO[]));
         }
         else {
             // console.log(JSON.stringify(result))
         }
     }
 );
-
-export interface OrderHistoryState {
+export const fetchOrderHistory = createAsyncThunk(
+    'buyer/orderHistory',
+    async (worklet, { getState, dispatch }) => {
+        const config = {
+            method: 'GET',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+        }
+        const result: CustomFetchResult = await dispatch(fetchWithRefresh({ endpoint: "/api/buyer/v1/orders/history", config: config })).unwrap()
+        if (result.status === 200) {
+            // console.log(JSON.stringify(result));
+            dispatch(setUpOrderHistory(result.data as BuyerOrderDTO[]));
+        }
+        else {
+            // console.log(JSON.stringify(result))
+        }
+    }
+);
+export interface BuyerOrdersState {
     orders: BuyerOrderDTO[];
-    
+    orderHistory: BuyerOrderDTO[];
 }
-const initialState: OrderHistoryState = {
+const initialState: BuyerOrdersState = {
     orders: [],
-    
+    orderHistory: [],
+
 }
-export const orderHistorySlice = createSlice({
-    name: "orderHistory",
+export const buyerOrdersSlice = createSlice({
+    name: "buyerOrders",
     initialState,
     reducers: {
-        setUpOrders: (state, action: PayloadAction<any>) => {
+        setUpOrders: (state, action: PayloadAction<BuyerOrderDTO[]>) => {
             state.orders = action.payload
         },
 
@@ -48,18 +67,21 @@ export const orderHistorySlice = createSlice({
                         if (state.orders[order].orderItems[item].productId === action.payload.productId) {
                             state.orders[order].orderItems[item].status = action.payload.newStatus
                             console.log('finished!');
-                            
+
                             return;
                         }
                     }
                 }
             }
 
+        },
+        setUpOrderHistory(state, action: PayloadAction<BuyerOrderDTO[]>) {
+            state.orderHistory = action.payload
         }
     }
 })
 
 
-export const { setUpOrders, updateOrderItemStatus } = orderHistorySlice.actions;
-export default orderHistorySlice.reducer;
+export const { setUpOrders, updateOrderItemStatus, setUpOrderHistory } = buyerOrdersSlice.actions;
+export default buyerOrdersSlice.reducer;
 

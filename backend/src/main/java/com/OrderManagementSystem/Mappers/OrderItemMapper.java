@@ -1,6 +1,7 @@
 package com.OrderManagementSystem.Mappers;
 
 import com.OrderManagementSystem.Entities.OrderItem;
+import com.OrderManagementSystem.Entities.OrderItemHistory;
 import com.OrderManagementSystem.Models.DTO.SellerOrderDTO;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
@@ -28,5 +29,19 @@ public interface OrderItemMapper {
 
     SellerOrderDTO orderItemToSellerOrderDTO(OrderItem orderItem);
 
+
+    @Mapping(source = "orderHistory.buyer.firstname",target="firstName" )
+    @Mapping(source = "productId",target="productId" )
+    @Mapping(source = "orderHistory.created_t",target="orderDate" )
+    @Mapping(source = "statusType",target="status" )
+    @Mapping(source = "id", target = "orderItemId")
+    List<SellerOrderDTO> orderItemHistoryListToSellerOrderDTOList(List<OrderItemHistory> orderItemHistories);
+
+    @Mapping(source = "orderHistory.buyer.firstname",target="firstName" )
+    @Mapping(source = "productId",target="productId" )
+    @Mapping(source = "orderHistory.created_t",target="orderDate" )
+    @Mapping(source = "statusType",target="status" )
+    @Mapping(source = "id", target = "orderItemId")
+    SellerOrderDTO orderItemHistoryToSellerOrderDTO(OrderItemHistory orderItemHistory);
 
 }

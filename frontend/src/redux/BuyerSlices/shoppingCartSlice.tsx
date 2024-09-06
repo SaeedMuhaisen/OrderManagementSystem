@@ -2,7 +2,7 @@ import { createAsyncThunk, createSlice, PayloadAction } from '@reduxjs/toolkit';
 
 import { CustomFetchResult, fetchWithRefresh } from '../userSlice';
 import { StoreProductDTO } from '../../Types';
-import { fetchOrderHistory } from './orderHistorySlice';
+import { fetchOrders } from './buyerOrdersSlice';
 
 
 export interface CartItem {
@@ -36,7 +36,7 @@ export const confirmPurchase = createAsyncThunk(
         if (result.status === 200) {
             alert('order has been created!');
             dispatch(clearCart());
-            dispatch(fetchOrderHistory())
+            dispatch(fetchOrders())
         }
         else {
             alert('something went wrong!');

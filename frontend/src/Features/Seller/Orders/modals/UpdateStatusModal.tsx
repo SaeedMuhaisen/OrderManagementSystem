@@ -2,7 +2,7 @@ import { useEffect, useState } from 'react';
 import { useDispatch } from 'react-redux';
 import { UpdateOrderItemStatusDTO } from '../../../../Types';
 import { CustomFetchResult, fetchWithRefresh } from '../../../../redux';
-import { updateOrderItemStatus } from '../../../../redux/BuyerSlices/orderHistorySlice';
+import { updateOrderItemStatus } from '../../../../redux/BuyerSlices/buyerOrdersSlice';
 import { updateSellerOrderItemStatus } from '../../../../redux/SellerSlices/sellerOrdersSlice';
 
 export const UpdateStatusModal = ({ onClose, orderItemId, currentStatus}) => {

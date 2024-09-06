@@ -25,6 +25,9 @@ public class OrderItemHistory {
     private OrderHistory orderHistory;
 
     private UUID productId;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "store_id")
+    private Store store;
     private Integer quantity;
 
     private StatusType statusType;

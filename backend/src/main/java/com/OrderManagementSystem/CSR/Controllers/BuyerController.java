@@ -65,7 +65,18 @@ public class BuyerController {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
         }
     }
-
+    @GetMapping("v1/orders/history")
+    @PreAuthorize("hasAuthority('buyer:read')")
+    public ResponseEntity<?> getAllBuyerHistoryOrderHistory(@AuthenticationPrincipal UserDetails userDetails){
+        try{
+            logger.info("getAllBuyerOrders() - buyer fetching his orders ,username: {}",userDetails.getUsername());
+            var orders=orderServices.getAllBuyerOrderHistory(userDetails);
+            return ResponseEntity.ok().body(orders);
+        }catch (Exception e){
+            logger.info("getAllBuyerOrders() - failed error :{}",e.getMessage());
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
+        }
+    }
     @PostMapping("v1/order")
     @PreAuthorize("hasAuthority('buyer:create')")
     public ResponseEntity<?> createOrder(@AuthenticationPrincipal UserDetails userDetails, @RequestBody CreateOrderDTO createOrderDTO){

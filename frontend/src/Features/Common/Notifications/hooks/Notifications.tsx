@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { UserState } from "../../../../redux";
-import { updateOrderItemStatus } from "../../../../redux/BuyerSlices/orderHistorySlice";
+import { updateOrderItemStatus } from "../../../../redux/BuyerSlices/buyerOrdersSlice";
 import { UpdateStatusNotification } from "../../../../Types/Notifications";
 import SockJS from "sockjs-client";
 import { Stomp } from "@stomp/stompjs";
@@ -40,10 +40,10 @@ export const Notifications = ({ children }) => {
 
     useEffect(() => {
         if (!connected || !user.userId || !user.signedIn) {
-            alert('websocket not going to connect')
+            //alert('websocket not going to connect')
             return;
         }
-        alert('subscribing now')
+        //alert('subscribing now')
         const subscription = stompClient.subscribe(`/topic/notification/${user.userId}`, (message) => {
             alert('websocket connected')
             let obj = JSON.parse(message.body);

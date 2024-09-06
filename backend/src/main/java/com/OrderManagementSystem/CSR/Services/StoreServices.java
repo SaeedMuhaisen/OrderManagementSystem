@@ -40,9 +40,9 @@ public class StoreServices {
     private final OrderRepository orderRepository;
     private final OrderStoreRepository orderStoreRepository;
     private static final Logger logger = LoggerFactory.getLogger(SellerController.class);
-
+    private final OrderItemHistoryRepository orderItemHistoryRepository;
     private final OrderHistoryRepository orderHistoryRepository;
-    //private final OrderItemHistoryRepository orderItemHistoryRepository;
+
 
     public List<SellerDTO> getAllAvailableStores() {
         var stores=storeRepository.findAll();
@@ -80,8 +80,8 @@ public class StoreServices {
             throw new UserNotFoundException("User is not connected with any store");
         }
         var orderStores=orderStoreRepository.findAllByStore(storeEmployee.get().getStore());
-
-        return StoreMapper.INSTANCE.orderListToStoreOrderDTOList(orderStores.stream().map(OrderStore::getOrder).toList());
+        var filteredFinishedOrders= orderStores.stream().filter(item -> !item.isFinished()).map(OrderStore::getOrder).toList();
+        return StoreMapper.INSTANCE.orderListToStoreOrderDTOList(filteredFinishedOrders);
     }
 
     public List<SellerOrderDTO> getOrderItemFromOrderId(UserDetails userDetails, String orderId) {
@@ -173,6 +173,7 @@ public class StoreServices {
                     .statusType(orderItem.getStatusType())
                     .quantity(orderItem.getQuantity())
                     .productId(orderItem.getProduct().getId())
+                    .store(orderItem.getProduct().getStore())
                     .productPrice(orderItem.getProductPrice())
                     .build();
             orderHistory.getOrderItemHistories().add(orderItemHistory);
@@ -213,20 +214,74 @@ public class StoreServices {
     }
 
 
+    //todo: refactor user
     public List<StoreOrderDTO> getStoreOrderHistory(UserDetails userDetails) {
-        var user= userRepository.getReferenceById(((User) userDetails).getId());
-        var storeEmployee= storeEmployeeRepository.findByUser(user);
+        var user= userRepository.findById(((User) userDetails).getId());
+        if(!user.isPresent()){
+            throw new UserNotFoundException("Couldn't find the user");
+        }
+        var storeEmployee= storeEmployeeRepository.findByUser(user.get());
 
         if(storeEmployee.isEmpty()){
             throw new UserNotFoundException("User is not connected with any store");
         }
+        var orderHistory=orderHistoryRepository.findAllByStores(storeEmployee.get().getStore());
+        var totalOrders=StoreMapper.INSTANCE.orderHistoryListToStoreOrderDTOList(orderHistory);
 
-        var ordersHistory=orderHistoryRepository.findAllByStores(storeEmployee.get().getStore());
-        return StoreMapper.INSTANCE.orderHistoryListToStoreOrderDTOList(ordersHistory);
+        var orderStores=orderStoreRepository.findAllByStore(storeEmployee.get().getStore());
+        var filteredFinishedOrders=orderStores.stream().filter(OrderStore::isFinished).map(OrderStore::getOrder).toList();
+        var finishedOrders= StoreMapper.INSTANCE.orderListToStoreOrderDTOList(filteredFinishedOrders);
+
+        totalOrders.addAll(finishedOrders);
+
+        return totalOrders;
     }
 
+    public List<SellerOrderDTO> getOrderItemHistoriesFromOrderHistoryId(UserDetails userDetails, String orderHistoryId) {
+        var user = userRepository.getReferenceById(((User) userDetails).getId());
+        var storeEmployee = storeEmployeeRepository.findByUser(user);
 
-    public void deleteOrder(String orderId) {
-        orderRepository.deleteById(UUID.fromString(orderId));
+        if (storeEmployee.isEmpty()) {
+            throw new UserNotFoundException("User is not connected with any store");
+        }
+        var orderHistory = orderHistoryRepository.findById(UUID.fromString(orderHistoryId));
+        if(orderHistory.isPresent()  &&
+                orderHistory.get()
+                        .getOrderItemHistories()
+                        .stream().filter(
+                                item->item.getStore().equals(storeEmployee.get().getStore())
+                        )
+                        .toList()
+                        .isEmpty()
+        ){
+            throw new UnAuthorizedEmployeeException("User Not authorized for this operation");
+        }
+        if(orderHistory.isEmpty()){
+            var unfinishedOrder= orderRepository.findById(UUID.fromString(orderHistoryId));
+            if(unfinishedOrder.isEmpty() || unfinishedOrder
+                    .get()
+                    .getOrderStores()
+                    .stream()
+                    .filter(item->item.getStore()==storeEmployee.get().getStore())
+                    .toList().isEmpty()){
+                //means the user is trying to fetch something randomly from other store or the id is incorrect
+                throw new UnAuthorizedEmployeeException("User Not authorized for this operation");
+
+            }
+
+            return OrderItemMapper.INSTANCE.orderItemListToSellerOrderDTOList(
+                    unfinishedOrder.get().getOrderItems()
+                            .stream()
+                            .filter(
+                                    item->item.getProduct()
+                                            .getStore()
+                                            .equals(storeEmployee.get().getStore()))
+                            .toList());
+        }
+        else{
+
+            var filteredList= orderHistory.get().getOrderItemHistories().stream().filter(item->item.getStore().equals(storeEmployee.get().getStore())).toList();
+            return OrderItemMapper.INSTANCE.orderItemHistoryListToSellerOrderDTOList(filteredList);
+        }
     }
 }

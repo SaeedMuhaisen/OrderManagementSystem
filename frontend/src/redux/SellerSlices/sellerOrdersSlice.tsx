@@ -81,7 +81,7 @@ export const fetchHistoryOrderItemsByOrderId = createAsyncThunk(
         const result: CustomFetchResult = await dispatch(fetchWithRefresh({ endpoint: `/api/seller/v1/orders/history/${orderId}`, config: config })).unwrap()
         if (result.status === 200) {
             // console.log(JSON.stringify(result));
-            dispatch(setUpSellerOrderItems(result.data));
+            dispatch(setUpSellerHistoryOrderItems(result.data));
         }
         else {
             // console.log(JSON.stringify(result))

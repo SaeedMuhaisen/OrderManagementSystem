@@ -110,12 +110,17 @@ public class SellerController {
         }
     }
 
-    @GetMapping("v1/orders/delete/{orderId}")
-    public ResponseEntity<?> deleteOrderById(@PathVariable String orderId){
-
-        storeServices.deleteOrder(orderId);
-        return ResponseEntity.ok().build();
-
+    @GetMapping("/v1/orders/history/{orderHistoryId}")
+    @PreAuthorize("hasAuthority('seller:read')")
+    public ResponseEntity<?> getOrderItemHistory(@AuthenticationPrincipal UserDetails userDetails,@PathVariable String orderHistoryId){
+        try{
+            logger.info("getOrderItemHistory() - employee fetching order details of orderHistory : ${}",orderHistoryId );
+            var products=storeServices.getOrderItemHistoriesFromOrderHistoryId(userDetails,orderHistoryId);
+            return ResponseEntity.ok().body(products);
+        }catch (Exception e){
+            logger.info("getOrderItemFromOrderId() - failed error :{}", e.getMessage());
+            return ResponseEntity.status(HttpStatus.NOT_ACCEPTABLE).build();
+        }
     }
 
 }

@@ -23,7 +23,7 @@ public class OrderHistory {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     private UUID id;
-    @ManyToOne(cascade =CascadeType.ALL,fetch = FetchType.EAGER)
+    @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "buyer_id")
     private User buyer;
     private Instant created_t;

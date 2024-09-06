@@ -123,4 +123,8 @@ public class OrderServices {
         return OrderMapper.INSTANCE.orderListToBuyerOrderDTOList(user.get().getOrders());
     }
 
+    public List<BuyerOrderDTO> getAllBuyerOrderHistory(UserDetails userDetails) {
+        var user= userRepository.findById(((User) userDetails).getId());
+        return OrderMapper.INSTANCE.orderHistoryListToBuyerOrderDTOList(user.get().getOrderHistory());
+    }
 }

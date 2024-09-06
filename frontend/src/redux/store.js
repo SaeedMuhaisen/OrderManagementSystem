@@ -4,7 +4,7 @@ import storage from 'redux-persist/lib/storage'; // or whatever storage you want
 import userReducer from "./userSlice";
 import buyerReducer from "./BuyerSlices/buyerStoreSlice";
 import shoppingCartReducer from "./BuyerSlices/shoppingCartSlice";
-import orderHistoryReducer from "./BuyerSlices/orderHistorySlice";
+import buyerOrdersReducer from "./BuyerSlices/buyerOrdersSlice";
 import notificationsReducer from "./notificationsSlice";
 import sellerOrdersReducer from "./SellerSlices/sellerOrdersSlice";
 import sellerProductsReducer from "./SellerSlices/sellerProductsSlice";
@@ -15,7 +15,7 @@ const rootReducer = combineReducers({
   user: userReducer,
   buyerStore: buyerReducer,
   shoppingCart: shoppingCartReducer,
-  orderHistory: orderHistoryReducer,
+  buyerOrders: buyerOrdersReducer,
   notifications: notificationsReducer,
 
   sellerOrders: sellerOrdersReducer,
