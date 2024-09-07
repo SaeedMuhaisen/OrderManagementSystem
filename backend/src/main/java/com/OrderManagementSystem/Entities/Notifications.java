@@ -1,19 +1,28 @@
 package com.OrderManagementSystem.Entities;
 
+import jakarta.persistence.*;
+import lombok.*;
+
+import java.time.Instant;
+import java.util.UUID;
+
+@Builder
+@NoArgsConstructor
+@AllArgsConstructor
+@Entity
+@Getter
+@Setter
+
 public class Notifications {
 
-    private int count;
+    @Id
+    @GeneratedValue(strategy = GenerationType.AUTO)
+    private Long id;
+    @ManyToOne
+    private User user;
 
-    public Notifications(int count) {
-        this.count = count;
-    }
-    public int getCount() {
-        return count;
-    }
-    public void setCount(int count) {
-        this.count = count;
-    }
-    public void increment() {
-        this.count++;
-    }
+    private Instant connectedAt;
+
+    private String sessionId;
+
 }

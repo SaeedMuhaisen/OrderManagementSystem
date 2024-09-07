@@ -67,7 +67,7 @@
      height: 100vh;
      box-shadow: rgba(0, 0, 0, 0.16) 0px 1px 4px;
      z-index: 1;
-     
+
 
  }
 
@@ -120,4 +120,86 @@
  .buyer-sidebar-button-active {
      color: #333333;
 
+ }
+
+ .buyer-sidebar-notifications-container {
+     display: flex;
+     flex-direction: column;
+     flex: 1;
+     overflow-y: scroll;
+ }
+
+ .buyer-sidebar-notifications-list-container {
+     display: flex;
+
+     flex-direction: column;
+     gap: 5px;
+
+ }
+
+ .notification-item-container {
+     border-bottom: solid silver 1px;
+ }
+
+ .notification-item-notification-title {
+     font-size: small;
+     padding: 5px 0px 10px 20px;
+ }
+
+ .notification-item-body {
+     font-size: smaller;
+     padding: 5px 0px 10px 20px;
+ }
+
+
+
+
+
+
+
+ .navigationbar-container {
+     height: 100vh;
+     display: flex;
+     flex-direction: column;
+     border-right: silver solid 1px;
+     justify-content: flex-start;
+     overflow: hidden;
+ }
+
+ .navigationbar-header {
+     display: flex;
+     flex-direction: row;
+     align-items: center;
+     gap: 20px;
+     border-bottom: silver solid 1px;
+     
+     padding: 20px;
+
+ }
+
+ .navigationbar-body {
+     display: flex;
+     flex-direction: column;
+     flex: 1;
+ }
+
+ .navigationbar-body nav {
+     display: flex;
+     flex-direction: column;
+     flex: 1;
+
+     justify-content: flex-start;
+
+ }
+
+ .navigationbar-notification-container {
+     display: flex;
+     flex-direction: column;
+     flex: 1;
+
+     overflow-y: scroll;
+ }
+
+ .notification-items-list {
+     max-height: 300px;
  }

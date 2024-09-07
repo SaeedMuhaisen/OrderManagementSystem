@@ -1,5 +1,6 @@
 package com.OrderManagementSystem.CSR.Controllers;
 
+import com.OrderManagementSystem.CSR.Services.NotificationServices;
 import com.OrderManagementSystem.CSR.Services.ProductServices;
 import com.OrderManagementSystem.CSR.Services.StoreServices;
 import com.OrderManagementSystem.Models.DTO.CreateProductDTO;
@@ -24,6 +25,7 @@ public class StoreController {
 
     private final ProductServices productServices;
     private final StoreServices storeServices;
+    private final NotificationServices notificationServices;
     private static final Logger logger = LoggerFactory.getLogger(StoreController.class);
 
     @PostMapping("/v1/product")
@@ -113,6 +115,19 @@ public class StoreController {
             return ResponseEntity.ok().body(products);
         }catch (Exception e){
             logger.info("getOrderItemHistory() - failed to fetch items of order history, orderHistoryId:{}, error :{}",orderHistoryId, e.getMessage());
+            return ResponseEntity.status(HttpStatus.NOT_ACCEPTABLE).build();
+        }
+    }
+
+    @GetMapping("v1/notifications")
+    @PreAuthorize("hasAuthority('seller:read')")
+    public ResponseEntity<?> fetchStoreNotifications(@AuthenticationPrincipal UserDetails userDetails) {
+        try {
+            logger.info("fetchStoreNotifications() - employee is fetching queued notifications: user:{}", userDetails.getUsername());
+            var messages = notificationServices.fetchStoreNotifications(userDetails);
+            return ResponseEntity.ok().body(messages);
+        } catch (Exception e) {
+            logger.info("fetchStoreNotifications() - failed to fetch notifications, user:{}, error:{}", userDetails.getUsername(),e.getMessage());
             return ResponseEntity.status(HttpStatus.NOT_ACCEPTABLE).build();
         }
     }

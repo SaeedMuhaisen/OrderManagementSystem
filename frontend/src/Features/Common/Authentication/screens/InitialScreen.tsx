@@ -1,9 +1,10 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { CustomFetchResult, setUser } from '@/Redux';
 import { useDispatch, useSelector } from 'react-redux';
 import { useNavigate, } from 'react-router-dom';
 import { host } from '../../connectionConfig';
 import "./InitialScreen.css";
+
 //import { Alert, AlertDescription } from '@/components/ui/alert';
 
 async function originalRequest(endpoint, config) {
@@ -41,6 +42,7 @@ export const InitialScreen = () => {
     const navigate = useNavigate();
     const user = useSelector((state: any) => state.user)
     const sellerOrders = useSelector((state: any) => state.sellerOrders)
+
 
     const handleSubmit = async (e: any) => {
         e.preventDefault();
@@ -85,6 +87,7 @@ export const InitialScreen = () => {
                     role: customResponse.data.role
                 }))
                 navigate('/home');
+
             } else {
                 console.log('somethign went wrong: ', customResponse.data, customResponse.status, customResponse.statusText);
             }
@@ -123,6 +126,7 @@ export const InitialScreen = () => {
             }
         }
     };
+
 
     return (
 

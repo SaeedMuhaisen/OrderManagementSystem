@@ -15,6 +15,9 @@ import com.OrderManagementSystem.Models.DTO.*;
 import com.OrderManagementSystem.Models.Notifications.NotificationMessage;
 import com.OrderManagementSystem.Models.Notifications.NotificationType;
 import com.OrderManagementSystem.Models.Notifications.UpdateStatusNotification;
+
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -197,16 +200,20 @@ public class StoreServices {
 
         orderRepository.delete(order);
     }
-    private void sendNotification(UUID buyerId, OrderItem orderItem, StatusType newStatus) {
+    private void sendNotification(UUID buyerId, OrderItem orderItem, StatusType newStatus) throws JsonProcessingException {
+
+        var message= UpdateStatusNotification.builder()
+                .orderId(String.valueOf(orderItem.getOrder().getId()))
+                .productId(String.valueOf(orderItem.getProduct().getId()))
+                .newStatus(newStatus.name())
+                .build();
+        ObjectMapper objectMapper=new ObjectMapper();
+        var strMessage= objectMapper.writeValueAsString(message);
         template.convertAndSend(
                 "/topic/notification/" + buyerId,
                 NotificationMessage.builder()
                         .notificationType(NotificationType.BUYER_UPDATE_ORDER_STATUS)
-                        .message(UpdateStatusNotification.builder()
-                                .orderId(String.valueOf(orderItem.getOrder().getId()))
-                                .productId(String.valueOf(orderItem.getProduct().getId()))
-                                .newStatus(newStatus.name())
-                                .build())
+                        .message(strMessage)
                         .build()
         );
     }

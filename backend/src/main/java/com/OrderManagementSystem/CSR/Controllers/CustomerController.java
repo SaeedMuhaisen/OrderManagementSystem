@@ -1,5 +1,6 @@
 package com.OrderManagementSystem.CSR.Controllers;
 
+import com.OrderManagementSystem.CSR.Services.NotificationServices;
 import com.OrderManagementSystem.CSR.Services.OrderServices;
 import com.OrderManagementSystem.CSR.Services.StoreServices;
 import com.OrderManagementSystem.Models.DTO.CreateOrderDTO;
@@ -22,6 +23,7 @@ public class CustomerController {
 
     private final StoreServices storeServices;
     private final OrderServices orderServices;
+    private final NotificationServices notificationServices;
 
     private static final Logger logger = LoggerFactory.getLogger(StoreController.class);
 
@@ -87,6 +89,19 @@ public class CustomerController {
             return ResponseEntity.ok().build();
         }catch (Exception e){
             logger.info("createOrder() - order for product: {} - failed error :{}", createOrderDTO.getProducts(),e.getMessage());
+            return ResponseEntity.status(HttpStatus.NOT_ACCEPTABLE).build();
+        }
+    }
+
+    @GetMapping("v1/notifications")
+    @PreAuthorize("hasAuthority('buyer:read')")
+    public ResponseEntity<?> fetchCustomerNotifications(@AuthenticationPrincipal UserDetails userDetails) {
+        try {
+            logger.info("fetchCustomerNotifications() - customer is fetching queued notifications: user:{}", userDetails.getUsername());
+            var messages = notificationServices.fetchCustomerNotifications(userDetails);
+            return ResponseEntity.ok().body(messages);
+        } catch (Exception e) {
+            logger.info("fetchCustomerNotifications() - failed to fetch notifications, user:{}", userDetails.getUsername());
             return ResponseEntity.status(HttpStatus.NOT_ACCEPTABLE).build();
         }
     }

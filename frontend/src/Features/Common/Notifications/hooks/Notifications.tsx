@@ -1,75 +1,40 @@
-import { insertIntoSellerOrders, insertNotification, updateOrderItemStatus, UserState } from "@/Redux";
-import { StoreOrderDTO, UpdateStatusNotification } from "@/Types";
-import { Stomp } from "@stomp/stompjs";
-import { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import SockJS from "sockjs-client";
-import { host } from "../../connectionConfig";
+import useWebSocket from "./useWebSocket";
+import { useEffect } from "react";
+import { StoreOrderDTO, UpdateStatusNotification } from "@/Types";
+import { insertIntoSellerOrders, insertNotification, updateOrderItemStatus } from "@/Redux";
+import { chdir } from "process";
 
-const useWebSocket = () => {
-    const [stompClient, setStompClient] = useState(null);
-    const [connected, setConnected] = useState(false);
-    
-    useEffect(() => {
-        const socket = new SockJS(`${host}/socket`);
-        const client = Stomp.over(socket);
-
-        client.connect({}, () => {
-            setConnected(true);
-            alert("COnnected")
-        });
-
-        setStompClient(client);
-
-        return () => {
-            if (client !== null) {
-                client.disconnect();
-            }
-        };
-    }, []);
-
-    return { stompClient, connected };
-};
 export const Notifications = ({ children }) => {
-    const { stompClient, connected } = useWebSocket();
-    const user: UserState = useSelector((state: any) => state.user);
-    const dispatch = useDispatch();
+    // const { stompClient, connected, ready } = useWebSocket();
+    // const user = useSelector((state: any) => state.user);
+    // const dispatch = useDispatch();
 
-    useEffect(() => {
-        if (!connected || !user.userId || !user.signedIn) {
-            alert('websocket not going to connect')
-            return;
-        }
-        alert('subscribing now')
-        const subscription = stompClient.subscribe(`/topic/notification/${user.userId}`, (message) => {
-            alert('websocket connected')
-            let obj = JSON.parse(message.body);
-            if (obj.notificationType === 'BUYER_UPDATE_ORDER_STATUS') {
-                let obj: UpdateStatusNotification = JSON.parse(message.body).message;
-                dispatch(updateOrderItemStatus(obj));
-                dispatch(insertNotification({ userType: 'BUYER', screen: 'Orders' }));
-            } else if (obj.notificationType === 'SELLER_ORDER') {
-                let obj: StoreOrderDTO = JSON.parse(message.body).message;
-                dispatch(insertIntoSellerOrders(obj));
-                dispatch(insertNotification({ userType: 'SELLER', screen: 'Orders' }));
-            }
-        });
+    // useEffect(() => {
+    //     let subscription = null;
+    //     alert("---");
+    //     if (ready === true) {
+    //         alert("Subscribing to notifications");
+    //         subscription = stompClient.subscribe(`/topic/notification/${user.userId}`, (message) => {
+    //             let obj = JSON.parse(message.body);
+    //             if (obj.notificationType === 'BUYER_UPDATE_ORDER_STATUS') {
+    //                 let obj: UpdateStatusNotification = JSON.parse(message.body).message;
+    //                 dispatch(updateOrderItemStatus(obj));
+    //                 dispatch(insertNotification({ userType: 'BUYER', screen: 'Orders' }));
+    //             } else if (obj.notificationType === 'SELLER_ORDER') {
+    //                 let obj: StoreOrderDTO = JSON.parse(message.body).message;
+    //                 dispatch(insertIntoSellerOrders(obj));
+    //                 dispatch(insertNotification({ userType: 'SELLER', screen: 'Orders' }));
+    //             }
+    //         });
+    //     }
+    //     return () => {
+    //         if (subscription) {
+    //             subscription.unsubscribe();
+    //         }
+    //     };
+    // }, [ready]);
 
-
-        return () => {
-            if (subscription) {
-                alert('unsubscribing now')
-                subscription.unsubscribe();
-            }
-        };
-    }, [connected]);
-
-    useEffect(() => {
-        if (!user.signedIn && stompClient) {
-            alert('disconnecting from websocket')
-            stompClient.disconnect();
-        }
-    }, [user.signedIn, stompClient]);
-
-    return children;
+    // return children;
+    return children
 };

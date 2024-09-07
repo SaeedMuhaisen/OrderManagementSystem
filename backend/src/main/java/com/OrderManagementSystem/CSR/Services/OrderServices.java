@@ -15,6 +15,8 @@ import com.OrderManagementSystem.Mappers.StoreMapper;
 import com.OrderManagementSystem.Models.DTO.*;
 import com.OrderManagementSystem.Models.Notifications.NotificationMessage;
 import com.OrderManagementSystem.Models.Notifications.NotificationType;
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.RequiredArgsConstructor;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -32,10 +34,11 @@ public class OrderServices {
     private final ProductRepository productRepository;
     private final OrderItemRepository orderItemRepository;
     private final SimpMessagingTemplate template;
-
+    private final NotificationServices notificationServices;
+    private final MessageBrokerServices messageBrokerServices;
 
     @Transactional
-    public void createOrder(UserDetails userDetails, CreateOrderDTO createOrderDTO) {
+    public void createOrder(UserDetails userDetails, CreateOrderDTO createOrderDTO) throws JsonProcessingException {
         var user= userRepository.findById(((User) userDetails).getId());
         if(!user.isPresent()){
             throw new UserNotFoundException("User couldn't be found");
@@ -104,16 +107,17 @@ public class OrderServices {
           }
         }
         for (var admin : admins) {
-//            var newOrderItems = orderItems.stream().filter(orderItem -> {
-//                return orderItem.getProduct().getStore().getId() == admin.getStore().getId();
-//            }).toList();
 
-            template.convertAndSend("/topic/notification/" + admin.getUser().getId(),
-                    NotificationMessage.builder()
-                            .notificationType(NotificationType.SELLER_ORDER)
-                            .message(StoreMapper.INSTANCE.orderToStoreOrderDTO(order))
-                            .build()
-            );
+            var message=StoreMapper.INSTANCE.orderToStoreOrderDTO(order);
+            var objectMapper=new ObjectMapper();
+            var messageStr=objectMapper.writeValueAsString(message);
+            messageBrokerServices.sendNotification(
+                    "/topic/notification/"+admin.getUser().getId()
+                    ,admin.getUser()
+                    ,NotificationMessage.builder()
+                    .notificationType(NotificationType.SELLER_ORDER)
+                    .message(messageStr)
+                    .build());
         }
     }
 

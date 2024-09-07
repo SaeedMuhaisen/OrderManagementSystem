@@ -5,6 +5,7 @@ import { useNavigate } from "react-router-dom";
 export const BuyerStoreScreen = () => {
     const stores: [SellerDTO] = useSelector((state: any) => state.buyerStore.stores)
     const navigate = useNavigate()
+
     return (
         <div className='store-container'>
             <h1>Shop By Store!</h1>

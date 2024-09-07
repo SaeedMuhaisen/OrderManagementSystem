@@ -60,7 +60,7 @@ export const buyerOrdersSlice = createSlice({
         },
 
         updateOrderItemStatus(state, action) {
-            alert('updating status redux!' + JSON.stringify(action.payload))
+            
             for (var order in state.orders) {
                 if (state.orders[order].orderId === action.payload.orderId) {
                     for (var item in state.orders[order].orderItems) {
