@@ -25,7 +25,7 @@ public class ProductServices {
     private final StoreEmployeeRepository storeEmployeeRepository;
 
 
-    public void createProduct(UserDetails userDetails,CreateProductDTO createProductDTO) {
+    public void createStoreProduct(UserDetails userDetails, CreateProductDTO createProductDTO) {
         var user= userRepository.findById(((User) userDetails).getId());
         var storeEmployee = storeEmployeeRepository.findByUser(user.get());
 

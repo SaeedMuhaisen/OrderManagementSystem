@@ -1,7 +1,6 @@
 package com.OrderManagementSystem.CSR.Controllers;
 
 import com.OrderManagementSystem.CSR.Services.OrderServices;
-import com.OrderManagementSystem.CSR.Services.ProductServices;
 import com.OrderManagementSystem.CSR.Services.StoreServices;
 import com.OrderManagementSystem.Models.DTO.CreateOrderDTO;
 import lombok.AllArgsConstructor;
@@ -19,12 +18,12 @@ import org.springframework.web.bind.annotation.*;
 @RequestMapping("/api/buyer")
 @PreAuthorize("hasRole('BUYER')")
 @AllArgsConstructor
-public class BuyerController {
+public class CustomerController {
 
     private final StoreServices storeServices;
     private final OrderServices orderServices;
 
-    private static final Logger logger = LoggerFactory.getLogger(SellerController.class);
+    private static final Logger logger = LoggerFactory.getLogger(StoreController.class);
 
 
     @GetMapping("v1/stores")
@@ -36,47 +35,49 @@ public class BuyerController {
             return ResponseEntity.ok().body(stores);
         }catch (Exception e){
             logger.info("getAllAvailableSellers() - failed error :{}", e.getMessage());
-            return ResponseEntity.ok().build();
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
         }
     }
 
-    @GetMapping("/v1/store/{sellerId}")
+    @GetMapping("/v1/store/{storeId}")
     @PreAuthorize("hasAuthority('buyer:read')")
-    public ResponseEntity<?> getStoreProducts(@PathVariable String sellerId){
+    public ResponseEntity<?> getStoreProducts(@PathVariable String storeId){
         try{
-            logger.info("getSellerStore() - init" );
-            var products=storeServices.getStoreProducts(sellerId);
+            logger.info("getStoreProducts() - storeId: {}", storeId);
+            var products=storeServices.getStoreProducts(storeId);
             return ResponseEntity.ok().body(products);
         }catch (Exception e){
-            logger.info("getAllAvailableSellers() - failed error :{}", e.getMessage());
-            return ResponseEntity.ok().build();
+            logger.error("getStoreProducts() - failed storeId:{}, error :{}", storeId, e.getMessage());
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
         }
     }
 
     @GetMapping("v1/orders")
     @PreAuthorize("hasAuthority('buyer:read')")
-    public ResponseEntity<?> getAllBuyerOrders(@AuthenticationPrincipal UserDetails userDetails){
+    public ResponseEntity<?> getCustomerActiveOrders(@AuthenticationPrincipal UserDetails userDetails){
         try{
-            logger.info("getAllBuyerOrders() - buyer fetching his orders ,username: {}",userDetails.getUsername());
-            var orders=orderServices.getAllBuyerOrders(userDetails);
+            logger.info("getCustomerActiveOrders() - username: {}",userDetails.getUsername());
+            var orders=orderServices.getCustomerActiveOrders(userDetails);
             return ResponseEntity.ok().body(orders);
         }catch (Exception e){
-            logger.info("getAllBuyerOrders() - failed error :{}",e.getMessage());
+            logger.info("getCustomerActiveOrders() - failed error :{}",e.getMessage());
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
         }
     }
+
     @GetMapping("v1/orders/history")
     @PreAuthorize("hasAuthority('buyer:read')")
-    public ResponseEntity<?> getAllBuyerHistoryOrderHistory(@AuthenticationPrincipal UserDetails userDetails){
+    public ResponseEntity<?> getCustomerOrdersHistory(@AuthenticationPrincipal UserDetails userDetails){
         try{
             logger.info("getAllBuyerOrders() - buyer fetching his orders ,username: {}",userDetails.getUsername());
-            var orders=orderServices.getAllBuyerOrderHistory(userDetails);
+            var orders=orderServices.getCustomerOrdersHistory(userDetails);
             return ResponseEntity.ok().body(orders);
         }catch (Exception e){
             logger.info("getAllBuyerOrders() - failed error :{}",e.getMessage());
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
         }
     }
+
     @PostMapping("v1/order")
     @PreAuthorize("hasAuthority('buyer:create')")
     public ResponseEntity<?> createOrder(@AuthenticationPrincipal UserDetails userDetails, @RequestBody CreateOrderDTO createOrderDTO){
@@ -89,8 +90,5 @@ public class BuyerController {
             return ResponseEntity.status(HttpStatus.NOT_ACCEPTABLE).build();
         }
     }
-
-
-
 
 }

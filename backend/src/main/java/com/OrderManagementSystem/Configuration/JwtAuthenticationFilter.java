@@ -1,6 +1,5 @@
 package com.OrderManagementSystem.Configuration;
 
-import com.OrderManagementSystem.CSR.Controllers.SellerController;
 import com.OrderManagementSystem.CSR.Repositories.TokenRepository;
 import com.OrderManagementSystem.CSR.Services.CustomUserDetailsService;
 import com.OrderManagementSystem.CSR.Services.JwtService;
@@ -21,10 +20,7 @@ import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
 
 import java.io.IOException;
-import java.util.Collections;
 import java.util.UUID;
-import java.util.function.Function;
-import java.util.stream.Collectors;
 
 @Component
 @RequiredArgsConstructor
@@ -51,19 +47,12 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
     }
     if (request.getServletPath().contains("socket") || request.getServletPath().contains("notify")) {
       logger.info("Skipping authentication for websocket");
+
       filterChain.doFilter(request, response);
       return;
     }
-    String authHeader="";
-    if(request.getServletPath().contains("chat")){
-      authHeader="Bearer "+request.getQueryString();
+    String authHeader= request.getHeader("Authorization");
 
-      var temp=request.getHeaderNames();
-      logger.info(temp.toString());
-    }
-    else {
-      authHeader = request.getHeader("Authorization");
-    }
     if (authHeader == null || !authHeader.startsWith("Bearer ")) {
       logger.warn("Missing or invalid Authorization header");
       response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);

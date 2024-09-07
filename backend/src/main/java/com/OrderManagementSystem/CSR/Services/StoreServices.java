@@ -1,6 +1,6 @@
 package com.OrderManagementSystem.CSR.Services;
 
-import com.OrderManagementSystem.CSR.Controllers.SellerController;
+import com.OrderManagementSystem.CSR.Controllers.StoreController;
 import com.OrderManagementSystem.Entities.*;
 import com.OrderManagementSystem.Exceptions.StoreExceptions.UnAuthorizedEmployeeException;
 import com.OrderManagementSystem.Mappers.OrderItemMapper;
@@ -16,13 +16,11 @@ import com.OrderManagementSystem.Models.Notifications.NotificationMessage;
 import com.OrderManagementSystem.Models.Notifications.NotificationType;
 import com.OrderManagementSystem.Models.Notifications.UpdateStatusNotification;
 import lombok.RequiredArgsConstructor;
-import org.aspectj.weaver.ast.Or;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.nio.file.AccessDeniedException;
@@ -39,7 +37,7 @@ public class StoreServices {
     private final SimpMessagingTemplate template;
     private final OrderRepository orderRepository;
     private final OrderStoreRepository orderStoreRepository;
-    private static final Logger logger = LoggerFactory.getLogger(SellerController.class);
+    private static final Logger logger = LoggerFactory.getLogger(StoreController.class);
     private final OrderItemHistoryRepository orderItemHistoryRepository;
     private final OrderHistoryRepository orderHistoryRepository;
 
@@ -69,7 +67,7 @@ public class StoreServices {
     }
 
     //todo: refactor user
-    public List<StoreOrderDTO> getAllStoreOrders(UserDetails userDetails) {
+    public List<StoreOrderDTO> getActiveStoreOrders(UserDetails userDetails) {
         var user= userRepository.findById(((User) userDetails).getId());
         if(!user.isPresent()){
             throw new UserNotFoundException("Couldn't find the user");
@@ -84,7 +82,7 @@ public class StoreServices {
         return StoreMapper.INSTANCE.orderListToStoreOrderDTOList(filteredFinishedOrders);
     }
 
-    public List<SellerOrderDTO> getOrderItemFromOrderId(UserDetails userDetails, String orderId) {
+    public List<SellerOrderDTO> getOrderItemsByOrderId(UserDetails userDetails, String orderId) {
         var user = userRepository.getReferenceById(((User) userDetails).getId());
         var storeEmployee = storeEmployeeRepository.findByUser(user);
 
@@ -237,7 +235,7 @@ public class StoreServices {
         return totalOrders;
     }
 
-    public List<SellerOrderDTO> getOrderItemHistoriesFromOrderHistoryId(UserDetails userDetails, String orderHistoryId) {
+    public List<SellerOrderDTO> getOrderItemHistory(UserDetails userDetails, String orderHistoryId) {
         var user = userRepository.getReferenceById(((User) userDetails).getId());
         var storeEmployee = storeEmployeeRepository.findByUser(user);
 

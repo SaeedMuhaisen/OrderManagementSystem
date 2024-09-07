@@ -1,6 +1,5 @@
 package com.OrderManagementSystem.CSR.Services;
 
-import com.OrderManagementSystem.Mappers.OrderItemMapper;
 import com.OrderManagementSystem.Mappers.OrderMapper;
 import com.OrderManagementSystem.CSR.Repositories.OrderItemRepository;
 import com.OrderManagementSystem.CSR.Repositories.OrderRepository;
@@ -118,12 +117,12 @@ public class OrderServices {
         }
     }
 
-    public List<BuyerOrderDTO> getAllBuyerOrders(UserDetails userDetails) {
+    public List<BuyerOrderDTO> getCustomerActiveOrders(UserDetails userDetails) {
         var user= userRepository.findById(((User) userDetails).getId());
         return OrderMapper.INSTANCE.orderListToBuyerOrderDTOList(user.get().getOrders());
     }
 
-    public List<BuyerOrderDTO> getAllBuyerOrderHistory(UserDetails userDetails) {
+    public List<BuyerOrderDTO> getCustomerOrdersHistory(UserDetails userDetails) {
         var user= userRepository.findById(((User) userDetails).getId());
         return OrderMapper.INSTANCE.orderHistoryListToBuyerOrderDTOList(user.get().getOrderHistory());
     }
