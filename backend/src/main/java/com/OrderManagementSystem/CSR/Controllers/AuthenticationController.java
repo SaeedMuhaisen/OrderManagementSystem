@@ -7,6 +7,7 @@ import com.OrderManagementSystem.Exceptions.AuthExceptions.UserBannedException;
 import com.OrderManagementSystem.Exceptions.AuthExceptions.UserNotFoundException;
 import com.OrderManagementSystem.Models.Authentication.AuthenticationRequest;
 import com.OrderManagementSystem.Models.Authentication.RegisterRequest;
+import com.OrderManagementSystem.Models.Authentication.SellerRegisterRequest;
 import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -16,15 +17,17 @@ import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
 
 
 @Controller
+@RestController
 @RequestMapping("/api/register")
 @RequiredArgsConstructor
 public class AuthenticationController {
     private final AuthenticationServices authenticationServices;
     private static final Logger logger = LoggerFactory.getLogger(AuthenticationController.class);
-    private final JwtService jwtService;
+
     /**
      * On Signup:
      * 200 ok
@@ -62,11 +65,33 @@ public class AuthenticationController {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
         }
     }
-    @PostMapping("/Signup")
-    public ResponseEntity<?> register(@RequestBody RegisterRequest registerRequest) {
+    @PostMapping("/Signup/Customer")
+    public ResponseEntity<?> registerCustomer(@RequestBody RegisterRequest registerRequest) {
         logger.info("register - register request received: {}", registerRequest);
         try {
             var response = authenticationServices.register(
+                    registerRequest);
+            logger.info("register - success for :{}", registerRequest.getEmail());
+            return ResponseEntity.ok(response);
+        } catch (UserAlreadyExistsException e) {
+            logger.warn("register - failed - email already in use: {}", e.getMessage());
+            return ResponseEntity.status(HttpStatus.CONFLICT).build();
+        } catch (UserBannedException e) {
+            logger.warn("register - failed - User exists but banned: {}", e.getMessage());
+            return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
+        } catch (CouldNotAuthException e) {
+            logger.warn("register - failed - Couldn't authenticate: {}", e.getMessage());
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
+        } catch (Exception e) {
+            logger.error("register - failed - something unexpected happened: {}", e.getMessage());
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
+        }
+    }
+    @PostMapping("/Signup/Seller")
+    public ResponseEntity<?> registerSeller(@RequestBody SellerRegisterRequest registerRequest) {
+        logger.info("register - register request received: {}", registerRequest);
+        try {
+            var response = authenticationServices.registerSeller(
                     registerRequest);
             logger.info("register - success for :{}", registerRequest.getEmail());
             return ResponseEntity.ok(response);

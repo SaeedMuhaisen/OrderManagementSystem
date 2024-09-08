@@ -82,7 +82,7 @@ public class NotificationServices {
         return mappedMessages;
     }
 
-    public List<UpdateOrderItemStatusDTO> fetchCustomerNotifications(UserDetails userDetails){
+    public List<UpdateStatusNotification> fetchCustomerNotifications(UserDetails userDetails){
         var user= userRepository.findById(((User) userDetails).getId());
         if(!user.isPresent()){
             throw new UserNotFoundException("User couldn't be found");
@@ -96,7 +96,7 @@ public class NotificationServices {
         var mappedMessages = messages.stream()
                 .map(item -> {
                     try {
-                        return objectMapper.readValue(item, UpdateOrderItemStatusDTO.class);
+                        return objectMapper.readValue(item, UpdateStatusNotification.class);
                     } catch (JsonProcessingException e) {
                         System.out.println("Failed to parse JSON" + e.getMessage()+ e);
                         return null;

@@ -40,10 +40,10 @@ public class StoreServices {
     private final SimpMessagingTemplate template;
     private final OrderRepository orderRepository;
     private final OrderStoreRepository orderStoreRepository;
-    private static final Logger logger = LoggerFactory.getLogger(StoreController.class);
-    private final OrderItemHistoryRepository orderItemHistoryRepository;
-    private final OrderHistoryRepository orderHistoryRepository;
 
+
+    private final OrderHistoryRepository orderHistoryRepository;
+    private final MessageBrokerServices messageBrokerServices;
 
     public List<SellerDTO> getAllAvailableStores() {
         var stores=storeRepository.findAll();
@@ -121,9 +121,9 @@ public class StoreServices {
         orderItem.setStatusType(newStatus);
         orderItemRepository.saveAndFlush(orderItem);
 
-        UUID buyerId = orderItem.getOrder().getBuyer().getId();
 
-        sendNotification(buyerId, orderItem, newStatus);
+
+        sendNotification(orderItem.getOrder().getBuyer(),orderItem, newStatus);
 
         checkStoreOrderItemsCompleted(orderItem.getOrder(), orderItem.getProduct().getStore());
 
@@ -199,7 +199,8 @@ public class StoreServices {
 
         orderRepository.delete(order);
     }
-    private void sendNotification(UUID buyerId, OrderItem orderItem, StatusType newStatus) throws JsonProcessingException {
+
+    private void sendNotification(User buyer, OrderItem orderItem, StatusType newStatus) throws JsonProcessingException {
 
         var message= UpdateStatusNotification.builder()
                 .orderId(String.valueOf(orderItem.getOrder().getId()))
@@ -208,13 +209,11 @@ public class StoreServices {
                 .build();
         ObjectMapper objectMapper=new ObjectMapper();
         var strMessage= objectMapper.writeValueAsString(message);
-        template.convertAndSend(
-                "/topic/notification/" + buyerId,
+        messageBrokerServices.sendNotification("/topic/notification/" + buyer.getId(),buyer,
                 NotificationMessage.builder()
-                        .notificationType(NotificationType.BUYER_UPDATE_ORDER_STATUS)
-                        .message(strMessage)
-                        .build()
-        );
+                .notificationType(NotificationType.BUYER_UPDATE_ORDER_STATUS)
+                .message(strMessage)
+                .build());
     }
 
 

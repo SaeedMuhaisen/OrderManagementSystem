@@ -42,6 +42,11 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
           @NonNull FilterChain filterChain
   ) throws ServletException, IOException {
 
+    if (request.getServletPath().contains("/swagger") || request.getServletPath().contains("/api-docs")) {
+      logger.info("Skipping authentication for swagger endpoint");
+      filterChain.doFilter(request, response);
+      return;
+    }
     if (request.getServletPath().contains("/api/register")) {
       logger.info("Skipping authentication for /api/register");
       filterChain.doFilter(request, response);

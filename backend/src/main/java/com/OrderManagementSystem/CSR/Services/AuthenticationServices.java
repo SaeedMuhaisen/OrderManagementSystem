@@ -1,7 +1,11 @@
 package com.OrderManagementSystem.CSR.Services;
 
+import com.OrderManagementSystem.CSR.Repositories.StoreRepository;
 import com.OrderManagementSystem.CSR.Repositories.TokenRepository;
 import com.OrderManagementSystem.CSR.Repositories.UserRepository;
+import com.OrderManagementSystem.Entities.Store;
+import com.OrderManagementSystem.Entities.StoreEmployee;
+import com.OrderManagementSystem.Entities.enums.EmployeeRole;
 import com.OrderManagementSystem.Entities.enums.Role;
 import com.OrderManagementSystem.Entities.Token;
 import com.OrderManagementSystem.Entities.User;
@@ -16,6 +20,7 @@ import com.OrderManagementSystem.Models.Authentication.AuthenticationResponse;
 
 import com.OrderManagementSystem.Models.Authentication.RegisterRequest;
 
+import com.OrderManagementSystem.Models.Authentication.SellerRegisterRequest;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -25,6 +30,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Component;
 
 import java.util.HashSet;
+import java.util.List;
 
 
 @RequiredArgsConstructor
@@ -37,7 +43,7 @@ public class AuthenticationServices {
     private final UserDetailsService userDetailsService;
     private final PasswordEncoder passwordEncoder;
     private final AuthenticationManager authenticationManager;
-
+    private final StoreRepository storeRepository;
     public AuthenticationResponse login(AuthenticationRequest authenticationRequest) {
 
 
@@ -94,14 +100,14 @@ public class AuthenticationServices {
             }
         }
         var set=new HashSet<Role>();
-        set.add(Role.SELLER);
+        set.add(Role.BUYER);
         var user = User.builder()
                 .firstname(registerRequest.getFirstname())
                 .lastname(registerRequest.getLastname())
                 .email(registerRequest.getEmail())
                 .password(passwordEncoder.encode(registerRequest.getPassword()))
                 .userStatus(UserStatus.ACTIVE)
-                .role(Role.SELLER)
+                .role(Role.BUYER)
                 .build();
 
         var savedUser = userRepository.save(user);
@@ -146,4 +152,50 @@ public class AuthenticationServices {
            throw new Exception("failed to generate new tokens");
         }
     }
+
+    public AuthenticationResponse registerSeller(SellerRegisterRequest registerRequest) {
+        if (registerRequest.getEmail() == null || registerRequest.getEmail().isBlank() ||
+                registerRequest.getPassword()==null || registerRequest.getPassword().isBlank()) {
+            throw new CouldNotAuthException("Something wrong with user Credentials, registerRequest contains invalid items");
+        }
+        var userExists = userRepository.findByEmail(registerRequest.getEmail());
+        if (userExists.isPresent()) {
+            if(userExists.get().getUserStatus().equals(UserStatus.BANNED)){
+                throw new UserBannedException("User is banned, id: "+ userExists.get().getId());
+            }
+            else{
+                throw new UserAlreadyExistsException("Email address is already in use: " + userExists.get().getEmail());
+            }
+        }
+        var set=new HashSet<Role>();
+        set.add(Role.SELLER);
+        var user = User.builder()
+                .firstname(registerRequest.getFirstname())
+                .lastname(registerRequest.getLastname())
+                .email(registerRequest.getEmail())
+                .password(passwordEncoder.encode(registerRequest.getPassword()))
+                .userStatus(UserStatus.ACTIVE)
+                .role(Role.SELLER)
+                .build();
+
+        var savedUser = userRepository.save(user);
+        var jwtToken = jwtService.generateToken(user);
+        var refreshToken = jwtService.generateRefreshToken(user);
+        saveUserToken(savedUser, jwtToken);
+        var store= Store.builder()
+                .build();
+
+        var storeEmployee= StoreEmployee.builder().store(store).employeeRole(EmployeeRole.ADMIN).user(savedUser).build();
+        store.setEmployees(List.of(storeEmployee));
+
+        storeRepository.save(store);
+
+
+        return AuthenticationResponse.builder()
+                .accessToken(jwtToken)
+                .refreshToken(refreshToken)
+                .role(user.getRole().name())
+                .build();
+    }
+
 }

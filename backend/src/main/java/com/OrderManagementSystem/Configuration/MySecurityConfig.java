@@ -70,4 +70,5 @@ public class MySecurityConfig {
 
         return http.build();
     }
+
 }

@@ -10,6 +10,7 @@ import com.OrderManagementSystem.Entities.StoreEmployee;
 import com.OrderManagementSystem.Entities.enums.EmployeeRole;
 import com.OrderManagementSystem.Entities.enums.Role;
 import com.OrderManagementSystem.Models.Authentication.RegisterRequest;
+import com.OrderManagementSystem.Models.Authentication.SellerRegisterRequest;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.CommandLineRunner;
@@ -41,33 +42,21 @@ public class OrderManagementSystemApplication {
 		if(userRepository.findByEmail("seller@w.cn").isPresent()){
 			return;
 		}
-		var seller = RegisterRequest.builder().email("seller@w.cn").password("123123").firstname("seller").lastname("1").build();
-		var seller2 = RegisterRequest.builder().email("seller2@w.cn").password("123123").firstname("seller").lastname("1").build();
+		var seller = SellerRegisterRequest.builder().email("seller@w.cn").password("123123").firstname("seller").lastname("1").build();
+		var seller2 = SellerRegisterRequest.builder().email("seller2@w.cn").password("123123").firstname("seller").lastname("1").build();
 		var buyer = RegisterRequest.builder().email("buyer@w.cn").password("123123").firstname("buyer").lastname("1").build();
-		var admin = RegisterRequest.builder().email("admin@w.cn").password("123123").firstname("admin").lastname("1").build();
 
-		authenticationController.register(seller);
-		authenticationController.register(seller2);
-		authenticationController.register(buyer);
-		authenticationController.register(admin);
 
-		var buyerUpdated=userRepository.findByEmail("buyer@w.cn");
-		buyerUpdated.get().setRole(Role.BUYER);
-		userRepository.save(buyerUpdated.get());
+		authenticationController.registerSeller(seller);
+		authenticationController.registerSeller(seller2);
+		authenticationController.registerCustomer(buyer);
+
 
 		var storeAdmin=userRepository.findByEmail("seller@w.cn");
 		var storeAdmin2=userRepository.findByEmail("seller2@w.cn");
 
-		var store = Store.builder().name("Store 1").build();
-		var store2 = Store.builder().name("Store 2").build();
-		var storeEmployee= StoreEmployee.builder().store(store).employeeRole(EmployeeRole.ADMIN).user(storeAdmin.get()).build();
-		var storeEmployee2= StoreEmployee.builder().store(store2).employeeRole(EmployeeRole.ADMIN).user(storeAdmin2.get()).build();
-
-		store.setEmployees(List.of(storeEmployee));
-		store2.setEmployees(List.of(storeEmployee2));
-
-		storeRepository.save(store);
-		storeRepository.save(store2);
+		var store= storeRepository.findByEmployees_User(storeAdmin.get());
+		var store2= storeRepository.findByEmployees_User(storeAdmin2.get());
 
 		for(int i=1;i<=20;i++){
 		var product = Product.builder()
@@ -79,7 +68,7 @@ public class OrderManagementSystemApplication {
 				.price(100.0)
 				.description("First Product ")
 				.name("Product "+i)
-				.store(store).build();
+				.store(store.get()).build();
 
 			var product2 = Product.builder()
 					.availableQuantity(100)
@@ -90,7 +79,7 @@ public class OrderManagementSystemApplication {
 					.price(100.0)
 					.description("First Product ")
 					.name("Product "+i)
-					.store(store2).build();
+					.store(store2.get()).build();
 
 			productRepository.save(product);
 			productRepository.save(product2);

@@ -1,12 +1,12 @@
 package com.OrderManagementSystem.Models.Notifications;
 
-import lombok.Builder;
-import lombok.Getter;
-import lombok.Setter;
+import lombok.*;
 
 @Getter
 @Setter
 @Builder
+@AllArgsConstructor
+@NoArgsConstructor
 public class UpdateStatusNotification {
     private String orderId;
     private String productId;
