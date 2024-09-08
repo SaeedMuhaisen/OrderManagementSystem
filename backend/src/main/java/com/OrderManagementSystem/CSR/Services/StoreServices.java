@@ -50,7 +50,6 @@ public class StoreServices {
         return SellerMapper.INSTANCE.sellerListToSellerDTOList(stores.stream().filter(store -> store.getProducts().size()>0).toList());
     }
 
-    //todo this is actually bad impl, a seller account can call a buyer endpoint to get competitor products i believe
     //productDTO should change to something else.
     //for buyer
     public List<ProductDTO> getStoreProducts(String sellersId) {

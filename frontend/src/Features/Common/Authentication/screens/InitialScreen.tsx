@@ -58,8 +58,6 @@ export const InitialScreen = () => {
             return;
         }
 
-        // Here you would typically make an API call to your backend
-        console.log(isLogin ? 'Logging in...' : 'Registering...', { email, password });
         if (isLogin) {
             const config = {
                 method: 'POST',
@@ -163,18 +161,34 @@ export const InitialScreen = () => {
                         </div>
 
                         {!isLogin && (
-                            <div >
-                                <label htmlFor="confirmPassword">Confirm Password</label>
-                                <input
-                                    type="password"
-                                    id="confirmPassword"
-                                    value={confirmPassword}
-                                    onChange={(e) => setConfirmPassword(e.target.value)}
-                                    required
-                                />
-                            </div>
+                            <>
+                                <div >
+                                    <label htmlFor="confirmPassword">Confirm Password</label>
+                                    <input
+                                        type="password"
+                                        id="confirmPassword"
+                                        value={confirmPassword}
+                                        onChange={(e) => setConfirmPassword(e.target.value)}
+                                        required
+                                    />
 
-                        )}
+                                </div>
+                                <div >
+                                    <label htmlFor="confirmPassword">Confirm Password</label>
+                                    <input
+                                        type="password"
+                                        id="confirmPassword"
+                                        value={confirmPassword}
+                                        onChange={(e) => setConfirmPassword(e.target.value)}
+                                        required
+                                    />
+
+                                </div>
+                            </>
+
+                        )
+
+                        }
 
                         {
                             error &&
@@ -195,79 +209,3 @@ export const InitialScreen = () => {
     );
 };
 
-const styles = {
-    container: {
-        display: 'flex',
-        justifyContent: 'center',
-        alignItems: 'center',
-        minHeight: '100vh',
-        width: '100%',
-        backgroundColor: '#f7fafc',
-    },
-    formContainer: {
-        backgroundColor: '#ffffff',
-        padding: '2rem',
-        borderRadius: '0.5rem',
-        boxShadow: '0 0.5rem 1rem rgba(0, 0, 0, 0.1)',
-        width: '24rem',
-    },
-    title: {
-        fontSize: '1.5rem',
-        fontWeight: 'bold',
-        marginBottom: '1.5rem',
-        textAlign: 'center',
-    },
-    form: {
-        display: 'grid',
-        gap: '1rem',
-    },
-    label: {
-        display: 'block',
-        fontSize: '0.875rem',
-        fontWeight: '500',
-        color: '#4a5568',
-    },
-    input: {
-        marginTop: '0.25rem',
-        display: 'block',
-        width: '100%',
-        borderRadius: '0.375rem',
-        border: '1px solid #cbd5e0',
-        boxShadow: '0 0.125rem 0.25rem rgba(0, 0, 0, 0.075)',
-        padding: '0.5rem',
-        fontSize: '1rem',
-        outline: 'none',
-        transition: 'border-color 0.2s, box-shadow 0.2s',
-    },
-    inputFocus: {
-        borderColor: '#5a67d8',
-        boxShadow: '0 0.125rem 0.375rem rgba(90, 103, 216, 0.2)',
-    },
-    error: {
-        color: 'red',
-    },
-    button: {
-        width: '100%',
-        padding: '0.5rem 1rem',
-        borderRadius: '0.375rem',
-        border: 'none',
-        boxShadow: '0 0.125rem 0.25rem rgba(0, 0, 0, 0.075)',
-        backgroundColor: '#5a67d8',
-        color: 'white',
-        fontWeight: '500',
-        fontSize: '0.875rem',
-        cursor: 'pointer',
-        outline: 'none',
-        transition: 'background-color 0.2s, box-shadow 0.2s',
-    },
-    buttonHover: {
-        backgroundColor: '#434190',
-    },
-    switchText: {
-        marginTop: '1rem',
-        textAlign: 'center',
-        fontSize: '0.875rem',
-        color: '#5a67d8',
-        cursor: 'pointer',
-    },
-}
