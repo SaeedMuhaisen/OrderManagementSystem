@@ -13,17 +13,19 @@ export const ReduxLoader = ({ children }) => {
     const dispatch = useDispatch<any>();
     const fetchAllForBuyer = async () => {
 
-        await dispatch(fetchAvailableStores())
-        await dispatch(fetchOrders())
-        await dispatch(fetchOrderHistory())
+        await dispatch(fetchAvailableStores());
+        await dispatch(fetchOrders());
+        await dispatch(fetchOrderHistory());
         await dispatch(fetchAllBuyerNotifications());
+
     };
     const fetchAllForSeller = async () => {
 
-        await dispatch(fetchAllProductsForSeller())
-        await dispatch(fetchAllSellerOrders())
-        await dispatch(fetchAllSellerHistoryOrders())
+        await dispatch(fetchAllProductsForSeller());
+        await dispatch(fetchAllSellerOrders());
+        await dispatch(fetchAllSellerHistoryOrders());
         await dispatch(fetchAllSellerNotifications());
+
 
     }
     useEffect(() => {

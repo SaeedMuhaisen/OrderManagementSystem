@@ -14,8 +14,6 @@ import com.OrderManagementSystem.Models.Notifications.UpdateStatusNotification;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.RequiredArgsConstructor;
-import org.json.JSONObject;
-import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -32,10 +30,6 @@ public class NotificationServices {
     private final UserRepository userRepository;
     private final StoreEmployeeRepository storeEmployeeRepository;
 
-    @Transactional
-    public void deleteByUser(User user) {
-        notificationsRepository.deleteByUser(user);
-    }
 
     public boolean userIsConnected(User user){
         var alive=notificationsRepository.findByUser(user);
@@ -43,9 +37,7 @@ public class NotificationServices {
     }
 
     public void queueMessage(User user, NotificationMessage notificationMessage) {
-
         try{
-
             notificationQueueRepository.save(NotificationQueue.builder()
                     .notificationMessage(notificationMessage.getMessage())
                     .user(user)
@@ -84,7 +76,7 @@ public class NotificationServices {
 
     public List<UpdateStatusNotification> fetchCustomerNotifications(UserDetails userDetails){
         var user= userRepository.findById(((User) userDetails).getId());
-        if(!user.isPresent()){
+        if(user.isEmpty()){
             throw new UserNotFoundException("User couldn't be found");
         }
 
@@ -93,7 +85,7 @@ public class NotificationServices {
                 .map(NotificationQueue::getNotificationMessage)
                 .toList();
         var objectMapper = new ObjectMapper();
-        var mappedMessages = messages.stream()
+        return messages.stream()
                 .map(item -> {
                     try {
                         return objectMapper.readValue(item, UpdateStatusNotification.class);
@@ -103,7 +95,6 @@ public class NotificationServices {
                     }
                 })
                 .toList();
-        return mappedMessages;
     }
     @Transactional
     public void deleteBySessionId(String sessionId) {

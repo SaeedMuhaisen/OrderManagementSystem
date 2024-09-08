@@ -11,6 +11,7 @@ import java.util.UUID;
 
 public interface OrderStoreRepository extends JpaRepository<OrderStore, UUID> {
     List<OrderStore> findAllByStore(Store store);
+    List<OrderStore> findAllByStoreAndFinishedIsFalse(Store store);
     Optional<OrderStore> findByOrderAndStore(Order order, Store store);
 
     List<OrderStore> findAllByOrder(Order order);

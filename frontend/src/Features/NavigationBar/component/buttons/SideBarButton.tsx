@@ -1,4 +1,4 @@
-import { Navigate, useNavigate } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 
 export const SideBarButton = ({ title, setActive, active, navigateTo = "", icon = null, notificationReset = () => { } }) => {
     const navigate = useNavigate()

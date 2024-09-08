@@ -34,7 +34,7 @@ export const confirmPurchase = createAsyncThunk(
         }
         const result: CustomFetchResult = await dispatch(fetchWithRefresh({ endpoint: "/api/buyer/v1/order", config: config })).unwrap()
         if (result.status === 200) {
-            alert('order has been created!');
+        
             dispatch(clearCart());
             dispatch(fetchOrders())
         }
@@ -52,7 +52,7 @@ export const shoppingCartSlice = createSlice({
     },
     reducers: {
         insertIntoShoppingCart(state: ShoppingCartState, action: PayloadAction<StoreProductDTO>) {
-            console.log('received something:::', action.payload);
+
             for (var product in state.products) {
                 if (state.products[product].product.id === action.payload.id) {
                     state.products[product].quantity += 1;

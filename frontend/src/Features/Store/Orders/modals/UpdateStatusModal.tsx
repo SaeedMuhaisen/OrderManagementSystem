@@ -28,7 +28,7 @@ export const UpdateStatusModal = ({ onClose, orderItemId, currentStatus }) => {
         }
         else {
             setErrorMessage("something unexpected happened:" + result.status + " ," + result.statusText);
-            alert(result.status);
+
         }
     };
     const handleContentClick = (event) => {

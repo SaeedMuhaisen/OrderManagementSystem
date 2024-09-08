@@ -2,7 +2,7 @@ import { Navigation } from '@/Navigation';
 import { persistor, ReduxLoader, store } from '@/Redux';
 import { Provider } from "react-redux";
 import { PersistGate } from 'redux-persist/integration/react';
-import SockJSWrapper from './Features/Common/Notifications/hooks/SockJSWrapper';
+import { SockJSWrapper } from '@/Features/Notifications';
 
 function App() {
 

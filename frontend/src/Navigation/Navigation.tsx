@@ -1,5 +1,5 @@
-import { InitialScreen } from '@/Authentication';
-import { NavigationBar } from '@/Features/Common/NavigationBar';
+import { InitialScreen } from '@/Features/Authentication';
+import { NavigationBar } from 'src/Features/NavigationBar';
 import { OrderHistoryScreen } from 'src/Features/Customer/OrderHistory';
 import { ShoppingCartScreen } from 'src/Features/Customer/ShoppingCart';
 import { BuyerStoreScreen, SpecificStoreScreen } from 'src/Features/Customer/Store';

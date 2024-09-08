@@ -7,30 +7,29 @@ import com.OrderManagementSystem.CSR.Repositories.UserRepository;
 import com.OrderManagementSystem.Entities.Product;
 import com.OrderManagementSystem.Entities.User;
 import com.OrderManagementSystem.Entities.enums.EmployeeRole;
+import com.OrderManagementSystem.Exceptions.AuthExceptions.UserNotFoundException;
 import com.OrderManagementSystem.Exceptions.StoreExceptions.UnAuthorizedEmployeeException;
+import com.OrderManagementSystem.Mappers.ProductMapper;
 import com.OrderManagementSystem.Models.DTO.*;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
 
 import java.time.Instant;
+import java.util.List;
 import java.util.UUID;
 
 @Service
 @RequiredArgsConstructor
 public class ProductServices {
 
-    private final UserRepository userRepository;
     private final ProductRepository productRepository;
     private final StoreEmployeeRepository storeEmployeeRepository;
 
-
     public void createStoreProduct(UserDetails userDetails, CreateProductDTO createProductDTO) {
-        var user= userRepository.findById(((User) userDetails).getId());
-        var storeEmployee = storeEmployeeRepository.findByUser(user.get());
-
+        var storeEmployee = storeEmployeeRepository.findByUser(((User) userDetails));
         if(storeEmployee.isEmpty() || !storeEmployee.get().getEmployeeRole().equals(EmployeeRole.ADMIN)){
-            throw new UnAuthorizedEmployeeException("User has no Authorization to do this operation");
+            throw new UnAuthorizedEmployeeException("Store Employee has no Authorization to do this operation");
         }
 
         var product= Product.builder()
@@ -48,8 +47,16 @@ public class ProductServices {
         productRepository.save(product);
     }
 
+    public List<ProductDTO> getVisibleProductsByStoreId(String sellersId) {
+        var products=productRepository.findByStore_IdAndVisibleIsTrue(UUID.fromString(sellersId));
+        return ProductMapper.INSTANCE.productListToProductDTOList(products);
+    }
 
-
-
-
+    public List<ProductDTO> getStoreProductsByEmployee(UserDetails userDetails) {
+        var storeEmployee = storeEmployeeRepository.findByUser(((User) userDetails));
+        if(storeEmployee.isEmpty() || !storeEmployee.get().getEmployeeRole().equals(EmployeeRole.ADMIN)){
+            throw new UnAuthorizedEmployeeException("Store Employee has no Authorization to do this operation");
+        }
+        return ProductMapper.INSTANCE.productListToProductDTOList(storeEmployee.get().getStore().getProducts());
+    }
 }

@@ -1,8 +1,6 @@
 package com.OrderManagementSystem.CSR.Controllers;
 
-import com.OrderManagementSystem.CSR.Services.NotificationServices;
-import com.OrderManagementSystem.CSR.Services.ProductServices;
-import com.OrderManagementSystem.CSR.Services.StoreServices;
+import com.OrderManagementSystem.CSR.Services.*;
 import com.OrderManagementSystem.Models.DTO.CreateProductDTO;
 
 import com.OrderManagementSystem.Models.DTO.UpdateOrderItemStatusDTO;
@@ -26,6 +24,10 @@ public class StoreController {
 
     private final ProductServices productServices;
     private final StoreServices storeServices;
+    private final OrderServices orderServices;
+    private final OrderItemServices orderItemServices;
+    private final OrderHistoryServices orderHistoryServices;
+    private final OrderItemHistoryServices orderItemHistoryServices;
     private final NotificationServices notificationServices;
     private static final Logger logger = LoggerFactory.getLogger(StoreController.class);
 
@@ -47,7 +49,7 @@ public class StoreController {
     public ResponseEntity<?> getStoreProductsByEmployee(@AuthenticationPrincipal UserDetails userDetails){
         try{
             logger.info("getStoreProductsByEmployee() - store employee fetching all store products : ${}",userDetails.getUsername() );
-            var products=storeServices.getStoreProductsByEmployee(userDetails);
+            var products=productServices.getStoreProductsByEmployee(userDetails);
             return ResponseEntity.ok().body(products);
         }catch (Exception e){
             logger.info("getStoreProductsByEmployee() - failed to get store products by employee, error :{}", e.getMessage());
@@ -56,23 +58,23 @@ public class StoreController {
     }
     @GetMapping("/v1/orders")
     @PreAuthorize("hasAuthority('seller:read')")
-    public ResponseEntity<?> getActiveStoreOrders(@AuthenticationPrincipal UserDetails userDetails){
+    public ResponseEntity<?> getStoreActiveOrders(@AuthenticationPrincipal UserDetails userDetails){
         try{
-            logger.info("getActiveStoreOrders() - Store employee fetching all active orders : ${}",userDetails.getUsername() );
-            var products=storeServices.getActiveStoreOrders(userDetails);
+            logger.info("getStoreActiveOrders() - Store employee fetching all active orders : ${}",userDetails.getUsername() );
+            var products=   orderServices.getStoreActiveOrders(userDetails);
             return ResponseEntity.ok().body(products);
         }catch (Exception e){
-            logger.info("getActiveStoreOrders() - failed to fetch store active orders username:{}, error :{}",userDetails.getUsername(), e.getMessage());
+            logger.info("getStoreActiveOrders() - failed to fetch store active orders username:{}, error :{}",userDetails.getUsername(), e.getMessage());
             return ResponseEntity.status(HttpStatus.NOT_ACCEPTABLE).build();
         }
     }
 
-    @GetMapping("/v1/orders/{orderId}")
+    @GetMapping("/v1/order/{orderId}")
     @PreAuthorize("hasAuthority('seller:read')")
     public ResponseEntity<?> getOrderItemsByOrderId(@AuthenticationPrincipal UserDetails userDetails,@PathVariable String orderId){
         try{
             logger.info("getOrderItemsByOrderId() - store employee fetching order items of orderId: {}" ,orderId );
-            var products=storeServices.getOrderItemsByOrderId(userDetails,orderId);
+            var products=orderItemServices.getOrderItemsByOrderId(userDetails,orderId);
             return ResponseEntity.ok().body(products);
         }catch (Exception e){
             logger.info("getOrderItemsByOrderId() - failed to fetch orderItems for order:{}, error :{}",orderId, e.getMessage());
@@ -86,7 +88,7 @@ public class StoreController {
     public ResponseEntity<?> updateOrderItemStatus(@AuthenticationPrincipal UserDetails userDetails,@RequestBody UpdateOrderItemStatusDTO updateOrderItemStatusDTO){
         try{
             logger.info("updateOrderStatus() - employee updating order item status - request body:{}",updateOrderItemStatusDTO );
-            storeServices.updateOrderItemStatus(userDetails, updateOrderItemStatusDTO);
+            orderItemServices.updateOrderItemStatus(userDetails, updateOrderItemStatusDTO);
             return ResponseEntity.ok().build();
         }catch (Exception e){
             logger.info("updateOrderStatus() - failed to update order item status, request was :{} , error  :{}",updateOrderItemStatusDTO, e.getMessage());
@@ -99,7 +101,7 @@ public class StoreController {
     public ResponseEntity<?> getStoreOrderHistory(@AuthenticationPrincipal UserDetails userDetails){
         try{
             logger.info("getStoreOrderHistory() - Store employee fetching order history: username: {}",userDetails.getUsername() );
-            var products=storeServices.getStoreOrderHistory(userDetails);
+            var products=orderHistoryServices.getStoreOrderHistory(userDetails);
             return ResponseEntity.ok().body(products);
         }catch (Exception e){
             logger.info("getStoreOrderHistory() - failed to fetch store order history, username:{}, error :{}",userDetails.getUsername(), e.getMessage());
@@ -107,15 +109,15 @@ public class StoreController {
         }
     }
 
-    @GetMapping("/v1/orders/history/{orderHistoryId}")
+    @GetMapping("/v1/order/history/{orderHistoryId}")
     @PreAuthorize("hasAuthority('seller:read')")
-    public ResponseEntity<?> getOrderItemHistory(@AuthenticationPrincipal UserDetails userDetails,@PathVariable String orderHistoryId){
+    public ResponseEntity<?> getOrderItemHistoryByOrderHistoryId(@AuthenticationPrincipal UserDetails userDetails,@PathVariable String orderHistoryId){
         try{
-            logger.info("getOrderItemHistory() - Store employee fetching order item history of orderHistoryId: ${}",orderHistoryId );
-            var products=storeServices.getOrderItemHistory(userDetails,orderHistoryId);
+            logger.info("getOrderItemHistoryByOrderHistoryId() - Store employee fetching order item history of orderHistoryId: ${}",orderHistoryId );
+            var products=orderItemHistoryServices.getOrderItemHistoryByOrderHistoryId(userDetails,orderHistoryId);
             return ResponseEntity.ok().body(products);
         }catch (Exception e){
-            logger.info("getOrderItemHistory() - failed to fetch items of order history, orderHistoryId:{}, error :{}",orderHistoryId, e.getMessage());
+            logger.info("getOrderItemHistoryByOrderHistoryId() - failed to fetch items of order history, orderHistoryId:{}, error :{}",orderHistoryId, e.getMessage());
             return ResponseEntity.status(HttpStatus.NOT_ACCEPTABLE).build();
         }
     }

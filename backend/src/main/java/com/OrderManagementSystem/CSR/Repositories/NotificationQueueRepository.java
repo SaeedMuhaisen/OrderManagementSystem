@@ -7,5 +7,7 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import java.util.List;
 
 public interface NotificationQueueRepository extends JpaRepository<NotificationQueue,Long> {
+
     List<NotificationQueue> findAllByUser(User user);
+
 }

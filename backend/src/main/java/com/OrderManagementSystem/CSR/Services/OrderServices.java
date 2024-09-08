@@ -1,10 +1,9 @@
 package com.OrderManagementSystem.CSR.Services;
 
+import com.OrderManagementSystem.CSR.Repositories.*;
+import com.OrderManagementSystem.Exceptions.OrderExceptions.OrderStatusIllegalTransitionException;
+import com.OrderManagementSystem.Exceptions.StoreExceptions.UnAuthorizedEmployeeException;
 import com.OrderManagementSystem.Mappers.OrderMapper;
-import com.OrderManagementSystem.CSR.Repositories.OrderItemRepository;
-import com.OrderManagementSystem.CSR.Repositories.OrderRepository;
-import com.OrderManagementSystem.CSR.Repositories.ProductRepository;
-import com.OrderManagementSystem.CSR.Repositories.UserRepository;
 import com.OrderManagementSystem.Entities.*;
 import com.OrderManagementSystem.Entities.enums.EmployeeRole;
 import com.OrderManagementSystem.Entities.enums.StatusType;
@@ -15,6 +14,7 @@ import com.OrderManagementSystem.Mappers.StoreMapper;
 import com.OrderManagementSystem.Models.DTO.*;
 import com.OrderManagementSystem.Models.Notifications.NotificationMessage;
 import com.OrderManagementSystem.Models.Notifications.NotificationType;
+import com.OrderManagementSystem.Models.Notifications.UpdateStatusNotification;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.RequiredArgsConstructor;
@@ -25,27 +25,30 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.time.Instant;
 import java.util.*;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
 public class OrderServices {
     private final OrderRepository orderRepository;
     private final UserRepository userRepository;
-    private final ProductRepository productRepository;
+    private final StoreEmployeeRepository storeEmployeeRepository;
+    private final OrderStoreRepository orderStoreRepository;
     private final OrderItemRepository orderItemRepository;
-    private final SimpMessagingTemplate template;
-    private final NotificationServices notificationServices;
+    private final OrderHistoryRepository orderHistoryRepository;
+    private final ProductRepository productRepository;
     private final MessageBrokerServices messageBrokerServices;
+
 
     @Transactional
     public void createOrder(UserDetails userDetails, CreateOrderDTO createOrderDTO) throws JsonProcessingException {
         var user= userRepository.findById(((User) userDetails).getId());
-        if(!user.isPresent()){
+        if(user.isEmpty()){
             throw new UserNotFoundException("User couldn't be found");
         }
+
         List<Product> orderProducts=new ArrayList<>();
         List<OrderItem> orderItems=new ArrayList<>();
-
         Set<OrderStore> orderStores=new HashSet<>();
 
         var order = Order.builder()
@@ -54,8 +57,6 @@ public class OrderServices {
                 .orderStores(orderStores)
                 .orderItems(orderItems)
                 .build();
-
-//        var savedOrder=orderRepository.save(order);
 
         for(OrderItemDTO orderItemDTO: createOrderDTO.getProducts()){
             var product= productRepository.findById(UUID.fromString(orderItemDTO.getProductId()));
@@ -98,8 +99,7 @@ public class OrderServices {
 
         productRepository.saveAll(orderProducts);
         orderRepository.save(order);
-        //orderItemRepository.saveAll(orderItems);
-        //O(n^2) nested todo:Get rid of the nested forloop..
+
         Set<StoreEmployee> admins=new HashSet<>();
         for(var orderStore:orderStores) {
           for (var adminOfStore : orderStore.getStore().getEmployees().stream().filter(storeEmployee -> storeEmployee.getEmployeeRole().equals(EmployeeRole.ADMIN)).toList()) {
@@ -107,7 +107,6 @@ public class OrderServices {
           }
         }
         for (var admin : admins) {
-
             var message=StoreMapper.INSTANCE.orderToStoreOrderDTO(order);
             var objectMapper=new ObjectMapper();
             var messageStr=objectMapper.writeValueAsString(message);
@@ -123,11 +122,22 @@ public class OrderServices {
 
     public List<BuyerOrderDTO> getCustomerActiveOrders(UserDetails userDetails) {
         var user= userRepository.findById(((User) userDetails).getId());
+        if(user.isEmpty()){
+            throw new UserNotFoundException("User couldn't be found");
+        }
         return OrderMapper.INSTANCE.orderListToBuyerOrderDTOList(user.get().getOrders());
     }
 
-    public List<BuyerOrderDTO> getCustomerOrdersHistory(UserDetails userDetails) {
-        var user= userRepository.findById(((User) userDetails).getId());
-        return OrderMapper.INSTANCE.orderHistoryListToBuyerOrderDTOList(user.get().getOrderHistory());
+    public List<StoreOrderDTO> getStoreActiveOrders(UserDetails userDetails) {
+        var storeEmployee = storeEmployeeRepository.findByUser(((User) userDetails));
+        if(storeEmployee.isEmpty() || !storeEmployee.get().getEmployeeRole().equals(EmployeeRole.ADMIN)){
+            throw new UnAuthorizedEmployeeException("Store Employee has no Authorization to do this operation");
+        }
+        var orderStores=orderStoreRepository.findAllByStoreAndFinishedIsFalse(storeEmployee.get().getStore());
+        var orders= orderStores.stream().map(OrderStore::getOrder).toList();
+        return StoreMapper.INSTANCE.orderListToStoreOrderDTOList(orders);
     }
+
+
+
 }

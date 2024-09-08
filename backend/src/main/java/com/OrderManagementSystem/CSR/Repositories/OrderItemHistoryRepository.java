@@ -12,6 +12,5 @@ import java.util.UUID;
 
 public interface OrderItemHistoryRepository extends JpaRepository<OrderItemHistory, UUID> {
 
-//    List<OrderItemHistory> findAllByOrderHistoryAndOrderHistory_Stores(OrderHistory orderHistory, Store store);
     List<OrderItemHistory> findAllByOrderHistoryAndStore(OrderHistory orderHistory,Store store);
 }

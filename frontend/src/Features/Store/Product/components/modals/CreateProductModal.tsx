@@ -34,7 +34,7 @@ export const CreateProductModal = ({ onClose }) => {
         const result: CustomFetchResult = await dispatch(fetchWithRefresh({ endpoint: "/api/seller/v1/product", config: config })).unwrap()
         if (result.status === 200) { onClose() }
         else {
-            alert(result.status);
+            //alert(result.status);
         }
 
     };

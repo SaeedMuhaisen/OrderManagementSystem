@@ -11,10 +11,10 @@ module.exports = {
       '@/Features/Customer/Store': path.resolve(__dirname, 'src/Features/Buyer/Store/index.ts'),
       '@/Features/Seller/Orders': path.resolve(__dirname, 'src/Features/Seller/Orders/index.ts'),
       '@/Features/Seller/Product': path.resolve(__dirname, 'src/Features/Seller/Product/index.ts'),
-      '@/Features/Common/NavigationBar': path.resolve(__dirname, 'src/Features/Common/NavigationBar/index.ts'),
-      '@/Notifications': path.resolve(__dirname, 'src/Features/Common/Notifications/index.ts'),
+      '@/Features/NavigationBar': path.resolve(__dirname, 'src/Features/NavigationBar/index.ts'),
+      '@/Features/Notifications': path.resolve(__dirname, 'src/Features/Notifications/index.ts'),
       '@/Features/Common/Componenets': path.resolve(__dirname, 'src/Features/Common/components/index.ts'),
-      '@/Authentication': path.resolve(__dirname, 'src/Features/Common/Authentication/index.ts'),
+      '@/Features/Authentication': path.resolve(__dirname, 'src/Features/Authentication/index.ts'),
     },
   },
 };

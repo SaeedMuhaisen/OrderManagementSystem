@@ -11,8 +11,5 @@ import java.util.List;
 import java.util.UUID;
 
 public interface OrderHistoryRepository extends JpaRepository<OrderHistory, UUID> {
-//    @Query("SELECT DISTINCT oh FROM OrderHistory oh JOIN store oih WHERE oih.store.id = :storeId")
-//    List<OrderHistory> findAllByStoreId(UUID storeId);
-
     List<OrderHistory> findAllByStores(Store store);
 }

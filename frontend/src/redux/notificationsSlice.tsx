@@ -16,7 +16,7 @@ export interface NotificationsState {
         },
     }
     sellerNotificationHistory: StoreOrderDTO[];
-    customerNotificationHistory: UpdateOrderItemStatusDTO[];
+    customerNotificationHistory: UpdateStatusNotification[];
 }
 
 const initialState: NotificationsState = {
@@ -45,11 +45,11 @@ export const fetchAllSellerNotifications = createAsyncThunk(
         }
         const result: CustomFetchResult = await dispatch(fetchWithRefresh({ endpoint: "/api/seller/v1/notifications", config: config })).unwrap()
         if (result.status === 200) {
-            // alert(JSON.stringify(result));
+            
 
             if (result.data !== null && result.data.length > 0 && result.data[0] !== null) {
                 let notificationsArray: StoreOrderDTO[] = result.data;
-                alert("notification stringified:" + notificationsArray);
+                
 
                 dispatch(initializeSellerNotificationHistory(notificationsArray));
 
@@ -75,12 +75,10 @@ export const fetchAllBuyerNotifications = createAsyncThunk(
         }
         const result: CustomFetchResult = await dispatch(fetchWithRefresh({ endpoint: "/api/buyer/v1/notifications", config: config })).unwrap()
         if (result.status === 200) {
-            // alert(JSON.stringify(result));
+          
 
             if (result.data !== null && result.data.length > 0 && result.data[0] !== null) {
-                let notificationsArray: UpdateOrderItemStatusDTO[] = result.data;
-                alert("notification stringified:" + notificationsArray);
-
+                let notificationsArray: UpdateStatusNotification[] = result.data;
                 dispatch(initializeCustomerNotificationHistory(notificationsArray));
 
             } else {
@@ -113,11 +111,11 @@ export const notificationsSlice = createSlice({
         insertIntoSellerNotificationHistory: (state, action: PayloadAction<StoreOrderDTO>) => {
             state.sellerNotificationHistory.push(action.payload)
         },
-        initializeCustomerNotificationHistory: (state, action: PayloadAction<UpdateOrderItemStatusDTO[]>) => {
+        initializeCustomerNotificationHistory: (state, action: PayloadAction<UpdateStatusNotification[]>) => {
             state.customerNotificationHistory = action.payload
         },
 
-        insertIntoCustomerNotificationHistory: (state, action: PayloadAction<UpdateOrderItemStatusDTO>) => {
+        insertIntoCustomerNotificationHistory: (state, action: PayloadAction<UpdateStatusNotification>) => {
             state.customerNotificationHistory.push(action.payload)
         }
 

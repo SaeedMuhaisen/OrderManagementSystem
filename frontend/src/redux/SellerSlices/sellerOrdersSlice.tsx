@@ -15,9 +15,9 @@ export const fetchAllSellerOrders = createAsyncThunk(
         }
         const result: CustomFetchResult = await dispatch(fetchWithRefresh({ endpoint: "/api/seller/v1/orders", config: config })).unwrap()
         if (result.status === 200) {
-            // alert(JSON.stringify(result));
+            
             if (result.data !== null && result.data.length > 0 && result.data[0] !== null) {
-                alert("received something from backend:" + JSON.stringify(result.data))
+
                 dispatch(setUpSellerOrders(result.data));
                 dispatch(setUpSellerOrderItems([]))
             } else {
@@ -59,7 +59,7 @@ export const fetchOrderItemsByOrderId = createAsyncThunk(
                 'Content-Type': 'application/json',
             },
         }
-        const result: CustomFetchResult = await dispatch(fetchWithRefresh({ endpoint: `/api/seller/v1/orders/${orderId}`, config: config })).unwrap()
+        const result: CustomFetchResult = await dispatch(fetchWithRefresh({ endpoint: `/api/seller/v1/order/${orderId}`, config: config })).unwrap()
         if (result.status === 200) {
             // console.log(JSON.stringify(result));
             dispatch(setUpSellerOrderItems(result.data));
@@ -79,7 +79,7 @@ export const fetchHistoryOrderItemsByOrderId = createAsyncThunk(
                 'Content-Type': 'application/json',
             },
         }
-        const result: CustomFetchResult = await dispatch(fetchWithRefresh({ endpoint: `/api/seller/v1/orders/history/${orderId}`, config: config })).unwrap()
+        const result: CustomFetchResult = await dispatch(fetchWithRefresh({ endpoint: `/api/seller/v1/order/history/${orderId}`, config: config })).unwrap()
         if (result.status === 200) {
             // console.log(JSON.stringify(result));
             dispatch(setUpSellerHistoryOrderItems(result.data));

@@ -88,3 +88,28 @@ button {
     color: #5a67d8;
     cursor: pointer;
 }
+
+.account-type-container {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    gap: 10px;
+}
+
+.account-type {
+    flex: 1;
+    flex-direction: row;
+    text-align: center;
+    background-color: lightgray;
+    border-radius: 10px;
+    padding: 20px;
+    color: gray;
+    font-family: 'Poppins'
+}
+
+.account-type-active {
+    background-color: #5a67d8;
+    font-weight: 600;
+    color: white;
+    font-family: 'Poppins';
+}

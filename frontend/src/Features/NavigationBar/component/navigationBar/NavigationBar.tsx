@@ -206,7 +206,7 @@ const SellerNotificationStack = ({ modalVisible }) => {
 const BuyerNotificationStack = ({ modalVisible }) => {
     const notifications: NotificationsState = useSelector((state: any) => state.notifications)
 
-    const array: UpdateOrderItemStatusDTO[] = notifications.customerNotificationHistory ?? []
+    const array: UpdateStatusNotification[] = notifications.customerNotificationHistory ?? []
 
 
     return (

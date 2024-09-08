@@ -1,12 +1,12 @@
 import React, { useEffect, useState, useCallback, useRef } from 'react';
 import SockJS from 'sockjs-client';
 import { Stomp } from '@stomp/stompjs';
-import { host } from '../../connectionConfig';
+import { host } from '../../Common/connectionConfig'
 import { insertIntoCustomerNotificationHistory, insertIntoSellerNotificationHistory, insertIntoSellerOrders, insertNotification, NotificationsState, updateOrderItemStatus, UserState } from '@/Redux';
 import { useDispatch, useSelector } from 'react-redux';
 import { StoreOrderDTO, UpdateOrderItemStatusDTO, UpdateStatusNotification } from '@/Types';
 
-const SockJSWrapper = ({ children }) => {
+export const SockJSWrapper = ({ children }) => {
     const user: UserState = useSelector((state: any) => state.user);
     const stompClientRef = useRef(null);
     const isConnectedRef = useRef(false);
@@ -28,18 +28,18 @@ const SockJSWrapper = ({ children }) => {
 
             client.subscribe(`/topic/notification/${user.userId}`, (message) => {
                 let obj: any = JSON.parse(message.body);
-                alert("NOTIFICATION Listener received:: " + JSON.stringify(obj));
+
 
 
                 if (obj.notificationType === 'BUYER_UPDATE_ORDER_STATUS') {
-                    let updateStatus: UpdateOrderItemStatusDTO = JSON.parse(obj.message);
-                    alert("NOTIFICATION: " + updateStatus)
+                    let updateStatus: UpdateStatusNotification = JSON.parse(obj.message);
+
                     dispatch(updateOrderItemStatus(updateStatus));
                     dispatch(insertIntoCustomerNotificationHistory(updateStatus));
                     dispatch(insertNotification({ userType: 'BUYER', screen: 'Orders' }));
                 } else if (obj.notificationType === 'SELLER_ORDER') {
                     let storeOrderDTO: StoreOrderDTO = JSON.parse(obj.message);
-                    alert("Recieved something: " + JSON.stringify(storeOrderDTO))
+
                     dispatch(insertIntoSellerOrders(storeOrderDTO));
                     dispatch(insertIntoSellerNotificationHistory(storeOrderDTO));
                     dispatch(insertNotification({ userType: 'SELLER', screen: 'Orders' }));
@@ -63,17 +63,17 @@ const SockJSWrapper = ({ children }) => {
         }
 
         if (isUserSignedIn && !isConnectedRef.current && !stompClientRef.current) {
-            alert('Connecting...');
+
             connect();
             hasConnectedRef.current = true
         } else if (!isUserSignedIn && isConnectedRef.current) {
-            alert('Disconnecting!');
+
             disconnect();
         }
 
         return () => {
             if (isConnectedRef.current) {
-                alert('Return disconnecting!');
+
                 disconnect();
             }
         };
@@ -83,4 +83,3 @@ const SockJSWrapper = ({ children }) => {
     );
 };
 
-export default SockJSWrapper;

@@ -2,10 +2,8 @@ import React, { useEffect, useState } from 'react';
 import { CustomFetchResult, setUser } from '@/Redux';
 import { useDispatch, useSelector } from 'react-redux';
 import { useNavigate, } from 'react-router-dom';
-import { host } from '../../connectionConfig';
+import { host } from '../../Common/connectionConfig';
 import "./InitialScreen.css";
-
-//import { Alert, AlertDescription } from '@/components/ui/alert';
 
 async function originalRequest(endpoint, config) {
     try {
@@ -38,6 +36,7 @@ export const InitialScreen = () => {
     const [password, setPassword] = useState('');
     const [confirmPassword, setConfirmPassword] = useState('');
     const [error, setError] = useState('');
+    const [customerAccountType, setCustomerAccountType] = useState(true)
     const dispatch = useDispatch<any>();
     const navigate = useNavigate();
     const user = useSelector((state: any) => state.user)
@@ -98,13 +97,14 @@ export const InitialScreen = () => {
                     'Content-Type': 'application/json',
                 },
                 body: JSON.stringify({
-                    firstname: "test",
-                    lastname: "testLast",
+                    firstname: email,
+                    lastname: "",
                     email: email,
                     password: password
                 }),
             }
-            const customResponse: CustomFetchResult = await originalRequest('/api/register/Signup', config,);
+            let endpoint = `/api/register/Signup/${customerAccountType ? 'Customer' : 'Seller'}`
+            const customResponse: CustomFetchResult = await originalRequest(endpoint, config,);
             if (customResponse.status === 200) {
                 console.log("Successfully registered");
                 console.log(customResponse.data);
@@ -129,12 +129,6 @@ export const InitialScreen = () => {
     return (
 
         <div className='test-login-main-frame'>
-            <div>
-                {JSON.stringify(user)}
-            </div>
-            <div>
-                {JSON.stringify(sellerOrders)}
-            </div>
             <div className="login-container">
                 <div className="login-form-container">
                     <h2 className="login-title">{isLogin ? 'Login' : 'Register'}</h2>
@@ -173,16 +167,16 @@ export const InitialScreen = () => {
                                     />
 
                                 </div>
-                                <div >
-                                    <label htmlFor="confirmPassword">Confirm Password</label>
-                                    <input
-                                        type="password"
-                                        id="confirmPassword"
-                                        value={confirmPassword}
-                                        onChange={(e) => setConfirmPassword(e.target.value)}
-                                        required
-                                    />
-
+                                <div>
+                                    <label htmlFor="confirmPassword">Account</label>
+                                    <div className='account-type-container'>
+                                        <button onClick={(e) => { e.preventDefault(); setCustomerAccountType(true) }} className={customerAccountType ? 'account-type account-type-active' : 'account-type'}>
+                                            Customer
+                                        </button>
+                                        <button onClick={(e) => { e.preventDefault(); setCustomerAccountType(false) }} className={!customerAccountType ? 'account-type account-type-active' : ' account-type'}>
+                                            Merchant
+                                        </button>
+                                    </div>
                                 </div>
                             </>
 
