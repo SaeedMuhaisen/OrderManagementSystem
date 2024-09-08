@@ -1,9 +1,6 @@
 package com.OrderManagementSystem.Models.DTO;
 
-import lombok.Builder;
-import lombok.Data;
-import lombok.Getter;
-import lombok.Setter;
+import lombok.*;
 
 import java.util.List;
 
@@ -11,6 +8,8 @@ import java.util.List;
 @Setter
 @Builder
 @Data
+@AllArgsConstructor
+@NoArgsConstructor
 public class StoreOrderDTO {
     private String orderId;
     private String orderDate;

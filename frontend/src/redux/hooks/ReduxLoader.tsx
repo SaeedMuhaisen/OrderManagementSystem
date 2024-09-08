@@ -1,11 +1,11 @@
 import { useEffect } from "react"
 import { useDispatch, useSelector } from "react-redux"
 import { fetchAvailableStores } from "../BuyerSlices/buyerStoreSlice"
-import { fetchOrderHistory, fetchOrders } from "../BuyerSlices/buyerOrdersSlice"
+import {  fetchOrderHistory, fetchOrders } from "../BuyerSlices/buyerOrdersSlice"
 import { fetchAllSellerHistoryOrders, fetchAllSellerOrders } from "../SellerSlices/sellerOrdersSlice"
 import { fetchAllProductsForSeller } from "../SellerSlices/sellerProductsSlice"
 import { UserState } from "../userSlice"
-import { fetchAllSellerNotifications } from "../notificationsSlice"
+import { fetchAllBuyerNotifications, fetchAllSellerNotifications } from "../notificationsSlice"
 
 
 export const ReduxLoader = ({ children }) => {
@@ -16,7 +16,7 @@ export const ReduxLoader = ({ children }) => {
         await dispatch(fetchAvailableStores())
         await dispatch(fetchOrders())
         await dispatch(fetchOrderHistory())
-
+        await dispatch(fetchAllBuyerNotifications());
     };
     const fetchAllForSeller = async () => {
 

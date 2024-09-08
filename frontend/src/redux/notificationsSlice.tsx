@@ -1,5 +1,5 @@
 import { createAsyncThunk, createSlice, PayloadAction } from '@reduxjs/toolkit';
-import { BuyerOrderDTO, UpdateOrderItemStatusDTO, UpdateStatusNotification } from '@/Types';
+import { BuyerOrderDTO, StoreOrderDTO, UpdateOrderItemStatusDTO, UpdateStatusNotification } from '@/Types';
 import { CustomFetchResult, fetchWithRefresh } from './userSlice';
 
 export interface NotificationsState {
@@ -15,7 +15,8 @@ export interface NotificationsState {
             notificationAvailable: boolean
         },
     }
-    notificationHistory: any[];
+    sellerNotificationHistory: StoreOrderDTO[];
+    customerNotificationHistory: UpdateOrderItemStatusDTO[];
 }
 
 const initialState: NotificationsState = {
@@ -29,7 +30,8 @@ const initialState: NotificationsState = {
             notificationAvailable: false
         }
     },
-    notificationHistory: [],
+    sellerNotificationHistory: [],
+    customerNotificationHistory: [],
 }
 
 export const fetchAllSellerNotifications = createAsyncThunk(
@@ -46,30 +48,43 @@ export const fetchAllSellerNotifications = createAsyncThunk(
             // alert(JSON.stringify(result));
 
             if (result.data !== null && result.data.length > 0 && result.data[0] !== null) {
-                alert("notification stringified:" + JSON.stringify((JSON.parse(result.data[0].message) as UpdateStatusNotification)));
-                // alert("received notification history from backend queue: data:" + JSON.parse(result.data));
-                // alert("hm," + JSON.stringify(result.data));
-                // alert("damn bro" + JSON.parse(JSON.parse(result.data)[0].message))
-                let notificationsArray: any[] = result.data;
-                for (var i = 0; i < result.data.length; i++) {
-                    alert('okay?')
-                    let n :UpdateStatusNotification= JSON.parse(result.data[i].message);
-                    notificationsArray.push(n);
-                    alert('hmm')
-                    console.log(notificationsArray)
-                }
-                alert('da?')
-                alert(notificationsArray)
-                dispatch(initializeNotificationList(notificationsArray));
-                // for (var notification in notificationsArray) {
-                //     let n.message: UpdateOrderItemStatusDTO = JSON.parse(notification.message);
-                // }
-                // dispatch(initializeNotificationList(result.data));
-                // dispatch(setUpSellerOrders(result.data));
-                // dispatch(setUpSellerOrderItems([]))
+                let notificationsArray: StoreOrderDTO[] = result.data;
+                alert("notification stringified:" + notificationsArray);
+
+                dispatch(initializeSellerNotificationHistory(notificationsArray));
+
             } else {
-                // dispatch(setUpSellerOrders([]));
-                // dispatch(setUpSellerOrderItems([]))
+
+            }
+
+        }
+        else {
+
+        }
+    }
+);
+
+export const fetchAllBuyerNotifications = createAsyncThunk(
+    'sellerOrders/fetchAllSellerOrders',
+    async (worklet, { getState, dispatch }) => {
+        const config = {
+            method: 'GET',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+        }
+        const result: CustomFetchResult = await dispatch(fetchWithRefresh({ endpoint: "/api/buyer/v1/notifications", config: config })).unwrap()
+        if (result.status === 200) {
+            // alert(JSON.stringify(result));
+
+            if (result.data !== null && result.data.length > 0 && result.data[0] !== null) {
+                let notificationsArray: UpdateOrderItemStatusDTO[] = result.data;
+                alert("notification stringified:" + notificationsArray);
+
+                dispatch(initializeCustomerNotificationHistory(notificationsArray));
+
+            } else {
+
             }
 
         }
@@ -91,18 +106,25 @@ export const notificationsSlice = createSlice({
             state[action.payload.userType][action.payload.screen].notificationAvailable = false
         },
 
-        initializeNotificationList: (state, action: PayloadAction<UpdateStatusNotification[]>) => {
-            state.notificationHistory = action.payload
+        initializeSellerNotificationHistory: (state, action: PayloadAction<StoreOrderDTO[]>) => {
+            state.sellerNotificationHistory = action.payload
         },
 
-        insertIntoNotificationHistory: (state, action: PayloadAction<UpdateStatusNotification[]>) => {
-            state.notificationHistory.push(action.payload)
+        insertIntoSellerNotificationHistory: (state, action: PayloadAction<StoreOrderDTO>) => {
+            state.sellerNotificationHistory.push(action.payload)
+        },
+        initializeCustomerNotificationHistory: (state, action: PayloadAction<UpdateOrderItemStatusDTO[]>) => {
+            state.customerNotificationHistory = action.payload
+        },
+
+        insertIntoCustomerNotificationHistory: (state, action: PayloadAction<UpdateOrderItemStatusDTO>) => {
+            state.customerNotificationHistory.push(action.payload)
         }
 
     }
 })
 
 
-export const { insertNotification, removeNotification, initializeNotificationList, insertIntoNotificationHistory } = notificationsSlice.actions;
+export const { insertNotification, removeNotification, initializeSellerNotificationHistory, insertIntoSellerNotificationHistory, initializeCustomerNotificationHistory, insertIntoCustomerNotificationHistory } = notificationsSlice.actions;
 export default notificationsSlice.reducer;
 

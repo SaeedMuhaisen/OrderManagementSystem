@@ -7,7 +7,10 @@ import com.OrderManagementSystem.CSR.Repositories.UserRepository;
 import com.OrderManagementSystem.Entities.NotificationQueue;
 import com.OrderManagementSystem.Entities.User;
 import com.OrderManagementSystem.Exceptions.AuthExceptions.UserNotFoundException;
+import com.OrderManagementSystem.Models.DTO.StoreOrderDTO;
+import com.OrderManagementSystem.Models.DTO.UpdateOrderItemStatusDTO;
 import com.OrderManagementSystem.Models.Notifications.NotificationMessage;
+import com.OrderManagementSystem.Models.Notifications.UpdateStatusNotification;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.RequiredArgsConstructor;
@@ -53,28 +56,54 @@ public class NotificationServices {
 
     }
 
-    public List<String> fetchStoreNotifications(UserDetails userDetails){
-        var user= userRepository.getReferenceById(((User) userDetails).getId());
-        var storeEmployee= storeEmployeeRepository.findByUser(user);
+    public List<StoreOrderDTO> fetchStoreNotifications(UserDetails userDetails){
+        var user= userRepository.findById(((User) userDetails).getId());
+        var storeEmployee= storeEmployeeRepository.findByUser(user.get());
 
         if(storeEmployee.isEmpty()){
             throw new UserNotFoundException("User is not connected with any store");
         }
 
-        var notifications=notificationQueueRepository.findAllByUser(user);
-        var messages=notifications.stream().map(NotificationQueue::getNotificationMessage).toList();
-        return messages;
+        var notifications = notificationQueueRepository.findAllByUser(user.get());
+        var messages = notifications.stream()
+                .map(NotificationQueue::getNotificationMessage)
+                .toList();
+        var objectMapper = new ObjectMapper();
+        var mappedMessages = messages.stream()
+                .map(item -> {
+                    try {
+                       return objectMapper.readValue(item, StoreOrderDTO.class);
+                    } catch (JsonProcessingException e) {
+                        System.out.println("Failed to parse JSON" + e.getMessage()+ e);
+                        return null;
+                    }
+                })
+                .toList();
+        return mappedMessages;
     }
 
-    public List<String> fetchCustomerNotifications(UserDetails userDetails){
+    public List<UpdateOrderItemStatusDTO> fetchCustomerNotifications(UserDetails userDetails){
         var user= userRepository.findById(((User) userDetails).getId());
         if(!user.isPresent()){
             throw new UserNotFoundException("User couldn't be found");
         }
 
-        var notifications=notificationQueueRepository.findAllByUser(user.get());
-        var messages=notifications.stream().map(NotificationQueue::getNotificationMessage).toList();
-        return messages;
+        var notifications = notificationQueueRepository.findAllByUser(user.get());
+        var messages = notifications.stream()
+                .map(NotificationQueue::getNotificationMessage)
+                .toList();
+        var objectMapper = new ObjectMapper();
+        var mappedMessages = messages.stream()
+                .map(item -> {
+                    try {
+                        return objectMapper.readValue(item, UpdateOrderItemStatusDTO.class);
+                    } catch (JsonProcessingException e) {
+                        System.out.println("Failed to parse JSON" + e.getMessage()+ e);
+                        return null;
+                    }
+                })
+                .toList();
+        return mappedMessages;
     }
     @Transactional
     public void deleteBySessionId(String sessionId) {

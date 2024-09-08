@@ -2,9 +2,9 @@ import React, { useEffect, useState, useCallback, useRef } from 'react';
 import SockJS from 'sockjs-client';
 import { Stomp } from '@stomp/stompjs';
 import { host } from '../../connectionConfig';
-import { insertIntoSellerOrders, insertNotification, NotificationsState, updateOrderItemStatus, UserState } from '@/Redux';
+import { insertIntoCustomerNotificationHistory, insertIntoSellerNotificationHistory, insertIntoSellerOrders, insertNotification, NotificationsState, updateOrderItemStatus, UserState } from '@/Redux';
 import { useDispatch, useSelector } from 'react-redux';
-import { StoreOrderDTO, UpdateStatusNotification } from '@/Types';
+import { StoreOrderDTO, UpdateOrderItemStatusDTO, UpdateStatusNotification } from '@/Types';
 
 const SockJSWrapper = ({ children }) => {
     const user: UserState = useSelector((state: any) => state.user);
@@ -29,16 +29,19 @@ const SockJSWrapper = ({ children }) => {
             client.subscribe(`/topic/notification/${user.userId}`, (message) => {
                 let obj: any = JSON.parse(message.body);
                 alert("NOTIFICATION Listener received:: " + JSON.stringify(obj));
-               
+
 
                 if (obj.notificationType === 'BUYER_UPDATE_ORDER_STATUS') {
-                    let updateStatus: UpdateStatusNotification = JSON.parse(obj.message);
+                    let updateStatus: UpdateOrderItemStatusDTO = JSON.parse(obj.message);
                     alert("NOTIFICATION: " + updateStatus)
                     dispatch(updateOrderItemStatus(updateStatus));
+                    dispatch(insertIntoCustomerNotificationHistory(updateStatus));
                     dispatch(insertNotification({ userType: 'BUYER', screen: 'Orders' }));
                 } else if (obj.notificationType === 'SELLER_ORDER') {
-                    let storeOrderDTO: StoreOrderDTO = obj.message;
+                    let storeOrderDTO: StoreOrderDTO = JSON.parse(obj.message);
+                    alert("Recieved something: " + JSON.stringify(storeOrderDTO))
                     dispatch(insertIntoSellerOrders(storeOrderDTO));
+                    dispatch(insertIntoSellerNotificationHistory(storeOrderDTO));
                     dispatch(insertNotification({ userType: 'SELLER', screen: 'Orders' }));
                 }
             }, headers);

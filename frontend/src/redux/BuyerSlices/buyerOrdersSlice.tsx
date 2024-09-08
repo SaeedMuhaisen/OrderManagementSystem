@@ -1,6 +1,6 @@
 import { createAsyncThunk, createSlice, PayloadAction } from '@reduxjs/toolkit';
 import { CustomFetchResult, fetchWithRefresh } from '../userSlice';
-import { BuyerOrderDTO } from '../../Types';
+import { BuyerOrderDTO, UpdateOrderItemStatusDTO } from '../../Types';
 
 
 
@@ -42,6 +42,7 @@ export const fetchOrderHistory = createAsyncThunk(
         }
     }
 );
+
 export interface BuyerOrdersState {
     orders: BuyerOrderDTO[];
     orderHistory: BuyerOrderDTO[];
