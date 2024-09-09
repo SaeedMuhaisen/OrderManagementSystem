@@ -14,7 +14,10 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.security.core.userdetails.UserDetails;
 
 import java.util.List;
+import java.util.Optional;
 import java.util.UUID;
 
 public interface OrderRepository extends JpaRepository<Order, UUID> {
+    List<Order> findAllByBuyer(User user);
+    List<Order> findAllByOrderStores(List<OrderStore> orderStores);
 }

@@ -28,10 +28,10 @@ public class Order {
     private Instant created_t;
 
 
-    @OneToMany(mappedBy = "order",fetch = FetchType.LAZY,cascade = CascadeType.ALL)
+    @OneToMany(mappedBy = "order",fetch = FetchType.EAGER,cascade = CascadeType.ALL)
     private Set<OrderStore> orderStores;
 
-    @OneToMany(mappedBy = "order" ,fetch = FetchType.LAZY,cascade = CascadeType.ALL)
+    @OneToMany(mappedBy = "order" ,fetch = FetchType.EAGER,cascade = CascadeType.ALL)
     private List<OrderItem> orderItems=new ArrayList<>();
 
 }

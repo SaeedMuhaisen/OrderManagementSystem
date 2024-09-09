@@ -2,10 +2,7 @@ package com.OrderManagementSystem.CSR.Repositories;
 
 
 
-import com.OrderManagementSystem.Entities.Product;
-import com.OrderManagementSystem.Entities.Store;
-import com.OrderManagementSystem.Entities.StoreEmployee;
-import com.OrderManagementSystem.Entities.User;
+import com.OrderManagementSystem.Entities.*;
 import com.OrderManagementSystem.Entities.enums.EmployeeRole;
 import com.OrderManagementSystem.Entities.enums.Role;
 import com.OrderManagementSystem.Entities.enums.UserStatus;
@@ -36,7 +33,12 @@ public class CustomerOrderTestHelper {
     ProductRepository productRepository;
     @Autowired
     UserRepository userRepository;
-
+    @Autowired
+    OrderItemRepository orderItemRepository;
+    @Autowired
+    OrderRepository orderRepository;
+    @Autowired
+    OrderStoreRepository orderStoreRepository;
     @Autowired
     TokenRepository tokenRepository;
 
@@ -122,6 +124,9 @@ public class CustomerOrderTestHelper {
 
     @Transactional
     public void deleteAll(){
+        orderItemRepository.deleteAll();
+        orderStoreRepository.deleteAll();
+        orderRepository.deleteAll();
         productRepository.deleteAll();
         tokenRepository.deleteAll();
         storeEmployeeRepository.deleteAll();

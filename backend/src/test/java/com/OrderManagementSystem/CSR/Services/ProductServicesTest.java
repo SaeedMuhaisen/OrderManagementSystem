@@ -37,6 +37,10 @@ public class ProductServicesTest {
     private ProductRepository productRepository;
     @Autowired
     private ProductServices productServices;
+
+    @Autowired
+    private StoreRepository storeRepository;
+
     @Autowired
     UserRepository userRepository;
 
@@ -52,6 +56,9 @@ public class ProductServicesTest {
 
     @Test
     @Transactional
+    /**
+     * To create a product you must have Seller role
+     * */
     void createStoreProduct(){
         var createProductDTO=
                 CreateProductDTO
@@ -89,6 +96,10 @@ public class ProductServicesTest {
 
     }
     @Test
+    /**
+     * employee should be only able to view product that belong to the store he works at
+     *  employee shouldn't be able to find other store products
+     * */
     void getStoreProductsByEmployee(){
         var customerUser=utils.createCustomer();
         var sellerUser1 = utils.createSeller();
@@ -112,27 +123,53 @@ public class ProductServicesTest {
         assert(store1Products.get(0).getId().equals(String.valueOf(productStore1.getId())));
 
         assert(store2Products.get(0).getId().equals(String.valueOf(productStore2.getId())));
-
     }
+
+
+    /**
+     * Customer should only be able
+     * to get visible products that
+     * have available quantity more
+     * than 0
+     * */
     @Test
     void getVisibleProductsByStoreId(){
-        var customerUser=utils.createCustomer();
-        var sellerUser1 = utils.createSeller();
-        var store1=utils.createStore();
-        var product= utils.createProductForStore(store1);
 
-        var products=productServices.getVisibleProductsByStoreId(String.valueOf(store1.getId()));
+        var createCustomer=utils.createCustomer();
+        var createStore=utils.createStore();
+        var createProduct= utils.createProductForStore(createStore);
 
-        assert (products.size()==1);
-        assert (products.get(0).isVisible());
+        var product=productRepository.findById(createProduct.getId());
+        var store = storeRepository.findById(createStore.getId());
 
-        var updatedProduct=productRepository.findById(product.getId());
-        assert (updatedProduct.isPresent());
-        updatedProduct.get().setVisible(false);
-        productRepository.save(updatedProduct.get());
+        assert (product.isPresent() && store.isPresent());
 
-        products=productServices.getVisibleProductsByStoreId(String.valueOf(store1.getId()));
-        assert (products.isEmpty());
+        product.get().setVisible(false);
+        product.get().setAvailableQuantity(0);
+
+        productRepository.save(product.get());
+
+        product=productRepository.findById(createProduct.getId());
+
+        assert(product.isPresent() && !product.get().isVisible() && product.get().getAvailableQuantity()==0);
+        
+        //now we try to fetch from the store:
+        var storeProducts=productServices.getVisibleProductsByStoreId(String.valueOf(store.get().getId()));
+
+        assert(storeProducts.isEmpty());
+
+        product.get().setVisible(true);
+
+        storeProducts=productServices.getVisibleProductsByStoreId(String.valueOf(store.get().getId()));
+        assert(storeProducts.isEmpty());
+
+        product.get().setAvailableQuantity(1);
+        productRepository.save(product.get());
+
+        storeProducts=productServices.getVisibleProductsByStoreId(String.valueOf(store.get().getId()));
+
+        assert (storeProducts.size()==1);
+        assert (storeProducts.get(0).getId().equals(String.valueOf(product.get().getId())));
 
     }
 }

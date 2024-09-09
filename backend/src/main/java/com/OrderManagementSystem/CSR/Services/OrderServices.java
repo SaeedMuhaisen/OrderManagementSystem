@@ -34,8 +34,6 @@ public class OrderServices {
     private final UserRepository userRepository;
     private final StoreEmployeeRepository storeEmployeeRepository;
     private final OrderStoreRepository orderStoreRepository;
-    private final OrderItemRepository orderItemRepository;
-    private final OrderHistoryRepository orderHistoryRepository;
     private final ProductRepository productRepository;
     private final MessageBrokerServices messageBrokerServices;
 
@@ -125,7 +123,8 @@ public class OrderServices {
         if(user.isEmpty()){
             throw new UserNotFoundException("User couldn't be found");
         }
-        return OrderMapper.INSTANCE.orderListToBuyerOrderDTOList(user.get().getOrders());
+        var orders=orderRepository.findAllByBuyer(user.get());
+        return OrderMapper.INSTANCE.orderListToBuyerOrderDTOList(orders);
     }
 
     public List<StoreOrderDTO> getStoreActiveOrders(UserDetails userDetails) {
@@ -134,7 +133,7 @@ public class OrderServices {
             throw new UnAuthorizedEmployeeException("Store Employee has no Authorization to do this operation");
         }
         var orderStores=orderStoreRepository.findAllByStoreAndFinishedIsFalse(storeEmployee.get().getStore());
-        var orders= orderStores.stream().map(OrderStore::getOrder).toList();
+        var orders= orderRepository.findAllByOrderStores(orderStores);
         return StoreMapper.INSTANCE.orderListToStoreOrderDTOList(orders);
     }
 

@@ -15,13 +15,13 @@ import java.util.UUID;
 @Setter
 @Builder
 public class ProductDTO {
-    public String id;
-    public String name;
-    public String description;
-    public Double price;
-    public Instant created_t;
-    public Integer availableQuantity;
-    public Integer amountSold;
-    public Integer amountReturned;
-    public boolean visible;
+    private String id;
+    private String name;
+    private String description;
+    private Double price;
+    private Instant created_t;
+    private Integer availableQuantity;
+    private Integer amountSold;
+    private Integer amountReturned;
+    private boolean visible;
 }

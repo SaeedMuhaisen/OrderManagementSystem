@@ -45,7 +45,7 @@ class StoreServicesTest {
 
     @Test
     /**
-    * Store should be visible only if it has atleast a single product that is visible with Available quantity more than 0
+    * Store should be visible only if it has at least a single product that is visible with Available quantity more than 0
     * */
     void getAllStoresWithVisibleProducts() {
         var store=utils.createStore();
