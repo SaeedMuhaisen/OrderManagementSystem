@@ -18,9 +18,9 @@ The **Order Management System** is a web application designed for managing and t
 ## Technologies
 
 ### Frontend
-- React
-- Redux (if applicable)
-- Webpack (for bundling)
+- React 
+- Redux 
+- Webpack 
 
 ### Backend
 - Spring Boot
