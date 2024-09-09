@@ -102,3 +102,8 @@ If you prefer to run the frontend and backend separately (without Docker), follo
 
 3. The frontend should now be running on `http://localhost:3000`.
 
+4. You can use auto generated accounts:
+```
+Customer account: buyer@w.cn - password: 123123
+Store Employee account: seller@w.cn - password: 123123
+```
