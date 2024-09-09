@@ -1,9 +1,6 @@
 package com.OrderManagementSystem.Models.DTO;
 
-import lombok.Builder;
-import lombok.Data;
-import lombok.Getter;
-import lombok.Setter;
+import lombok.*;
 
 import java.util.List;
 
@@ -11,6 +8,8 @@ import java.util.List;
 @Getter
 @Setter
 @Builder
+@NoArgsConstructor
+@AllArgsConstructor
 public class CreateOrderDTO {
 
     List<OrderItemDTO> products;

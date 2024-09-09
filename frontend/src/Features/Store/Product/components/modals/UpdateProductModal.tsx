@@ -1,54 +1,57 @@
 import { CustomFetchResult, fetchWithRefresh, insertIntoProducts } from '@/Redux';
-import { CreateProductDTO } from '@/Types';
+import { CreateProductDTO, ProductDTO } from '@/Types';
 import { useState } from 'react';
 import { useDispatch } from 'react-redux';
 import { uuidv7 } from 'uuidv7';
 
 
-export const CreateProductModal = ({ onClose }) => {
-    const [name, setName] = useState('');
-    const [description, setDescription] = useState('');
-    const [price, setPrice] = useState('');
-    const [availableQuantity, setAvailableQuantity] = useState('');
+export const UpdateProductModal = ({ onClose, p }: { onClose: any, p: ProductDTO }) => {
+    const [name, setName] = useState(p.name ?? '');
+    const [description, setDescription] = useState(p.description ?? '');
+    const [price, setPrice] = useState(p.price.toString() ?? '');
+    const [availableQuantity, setAvailableQuantity] = useState(p.availableQuantity.toString() ?? '');
     const [visible, setVisible] = useState(true);
     const dispatch = useDispatch<any>();
 
     const handleSubmit = async (e) => {
         e.preventDefault();
-        let id = uuidv7();
+
         let product: CreateProductDTO = {
-            id: uuidv7(),
-            name: name,
+            id: p.id,
+            name: name.toString(),
             description: description,
             price: parseFloat(price),
             availableQuantity: parseFloat(availableQuantity),
             visible: visible,
         }
         const config = {
-            method: 'POST',
+            method: 'PUT',
             headers: {
                 'Content-Type': 'application/json',
             },
-            body: JSON.stringify(product),
+            body: JSON.stringify(
+                product
+            )
+            ,
         }
         const result: CustomFetchResult = await dispatch(fetchWithRefresh({ endpoint: "/api/seller/v1/product", config: config })).unwrap()
-        if (result.status === 200) { 
-            onClose() 
+        if (result.status === 200) {
+            onClose()
             dispatch(insertIntoProducts({
                 id: product.id,
                 name: product.name,
                 description: product.description,
                 price: product.price,
-                created_t: Date() ,
+                created_t: Date(),
                 availableQuantity: product.availableQuantity,
-                amountSold: 0,
-                amountReturned: 0,
+                amountSold: p.amountSold,
+                amountReturned: p.amountReturned,
                 visible: product.visible
             }))
-        
+
         }
         else {
-           
+
         }
 
     };
@@ -64,7 +67,7 @@ export const CreateProductModal = ({ onClose }) => {
     return (
         <div className="createproduct-modal" onClick={handleModalClick}>
             <div className="createproduct-modal-content" onClick={handleContentClick}>
-                <h2>Create a New Product</h2>
+                <h2>Update your Product</h2>
                 <form onSubmit={handleSubmit}>
                     <div className="createproduct-modal-form-group">
                         <label>Product Name</label>
@@ -109,7 +112,7 @@ export const CreateProductModal = ({ onClose }) => {
                                 checked={visible}
                                 onChange={(e) => setVisible(e.target.checked)}
                             />
-                            <label>Make it Visible to public immidiatly</label>
+                            <label>Visible</label>
 
                         </div>
                     </div>

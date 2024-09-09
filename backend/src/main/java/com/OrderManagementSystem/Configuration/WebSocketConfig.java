@@ -60,7 +60,7 @@ public class WebSocketConfig implements WebSocketMessageBrokerConfigurer {
     @Override
     public void registerStompEndpoints(StompEndpointRegistry registry) {
         registry.addEndpoint("/socket")
-                .setAllowedOrigins("http://localhost:50576","http://192.168.8.181:50576") // Replace with your frontend origin
+                .setAllowedOrigins("http://localhost:3000","http://192.168.8.181:3000") // Replace with your frontend origin
                 //.setAllowedOrigins("http://192.168.8.181:50576") // Replace with your frontend origin
                 .withSockJS();
     }

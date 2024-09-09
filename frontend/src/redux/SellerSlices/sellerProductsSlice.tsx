@@ -1,5 +1,5 @@
 import { createAsyncThunk, createSlice, PayloadAction } from '@reduxjs/toolkit';
-import { ProductDTO } from  '@/Types';
+import { ProductDTO } from '@/Types';
 import { CustomFetchResult, fetchWithRefresh } from '../userSlice';
 
 
@@ -44,6 +44,12 @@ export const sellerProductsSlice = createSlice({
             state.products = action.payload
         },
         insertIntoProducts(state, action: PayloadAction<ProductDTO>) {
+            if (state.products.filter((item) => item.id === action.payload.id).length > 0) {
+                state.products = state.products.filter((item) => item.id !== action.payload.id);
+                state.products.push(action.payload);
+                return
+            }
+
             state.products.push(action.payload);
         },
         removeFromProducts(state, action: PayloadAction<string>) {

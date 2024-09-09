@@ -151,7 +151,7 @@
      display: flex;
      flex-direction: column;
      font-size: smaller;
-     
+
  }
 
 
@@ -161,48 +161,50 @@
 
 
  .navigationbar-container {
-     height: 100vh;
-     display: flex;
-     flex-direction: column;
-     border-right: silver solid 1px;
-     justify-content: flex-start;
-     overflow: hidden;
- }
+    height: 100vh;
+    display: flex;
+    flex-direction: column;
+    border-right: silver solid 1px;
+}
 
- .navigationbar-header {
-     display: flex;
-     flex-direction: row;
-     align-items: center;
-     gap: 20px;
-     border-bottom: silver solid 1px;
+.navigationbar-header {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    gap: 20px;
+    border-bottom: silver solid 1px;
+    padding: 20px;
+}
 
-     padding: 20px;
+.navigationbar-body {
+    display: flex;
+    flex-direction: column;
+    flex: 1;
+}
 
- }
+.navigationbar-body nav {
+    display: flex;
+    flex-direction: column;
+    flex: 1;
+    justify-content: flex-start;
+    position: relative;
+}
 
- .navigationbar-body {
-     display: flex;
-     flex-direction: column;
-     flex: 1;
- }
+.navigationbar-notification-container {
+    display: flex;
+    flex-direction: column;
+    flex-grow: 1; /* Allows this container to take available space */
+    overflow-y: auto; /* Allows scrolling when content exceeds height */
+}
 
- .navigationbar-body nav {
-     display: flex;
-     flex-direction: column;
-     flex: 1;
+.notification-items-list {
+    overflow-y: auto;
+    max-height: 50vh;
+}
 
-     justify-content: flex-start;
-
- }
-
- .navigationbar-notification-container {
-     display: flex;
-     flex-direction: column;
-     flex: 1;
-
-     overflow-y: scroll;
- }
-
- .notification-items-list {
-     max-height: 300px;
- }
+/* Fix for User and Logout buttons */
+.buyer-sidebar-button.logout,
+.buyer-sidebar-button.user {
+    align-self: flex-end; /* Aligns these buttons to the bottom */
+    margin-bottom: 10px; /* Adds some spacing at the bottom */
+}

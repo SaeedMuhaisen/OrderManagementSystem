@@ -1,12 +1,13 @@
 package com.OrderManagementSystem.Models.DTO;
 
-import lombok.Builder;
-import lombok.Getter;
-import lombok.Setter;
+import lombok.*;
 
+@Data
 @Getter
 @Setter
 @Builder
+@NoArgsConstructor
+@AllArgsConstructor
 public class OrderItemDTO {
     private String productId;
     private Integer quantity;

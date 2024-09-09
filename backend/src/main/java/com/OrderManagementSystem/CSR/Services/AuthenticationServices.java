@@ -153,12 +153,12 @@ public class AuthenticationServices {
         }
     }
 
-    public AuthenticationResponse registerSeller(SellerRegisterRequest registerRequest) {
-        if (registerRequest.getEmail() == null || registerRequest.getEmail().isBlank() ||
-                registerRequest.getPassword()==null || registerRequest.getPassword().isBlank()) {
+    public AuthenticationResponse registerSeller(SellerRegisterRequest sellerRegisterRequest) {
+        if (sellerRegisterRequest.getEmail() == null || sellerRegisterRequest.getEmail().isBlank() ||
+                sellerRegisterRequest.getPassword()==null || sellerRegisterRequest.getPassword().isBlank()) {
             throw new CouldNotAuthException("Something wrong with user Credentials, registerRequest contains invalid items");
         }
-        var userExists = userRepository.findByEmail(registerRequest.getEmail());
+        var userExists = userRepository.findByEmail(sellerRegisterRequest.getEmail());
         if (userExists.isPresent()) {
             if(userExists.get().getUserStatus().equals(UserStatus.BANNED)){
                 throw new UserBannedException("User is banned, id: "+ userExists.get().getId());
@@ -170,10 +170,10 @@ public class AuthenticationServices {
         var set=new HashSet<Role>();
         set.add(Role.SELLER);
         var user = User.builder()
-                .firstname(registerRequest.getFirstname())
-                .lastname(registerRequest.getLastname())
-                .email(registerRequest.getEmail())
-                .password(passwordEncoder.encode(registerRequest.getPassword()))
+                .firstname(sellerRegisterRequest.getFirstname())
+                .lastname(sellerRegisterRequest.getLastname())
+                .email(sellerRegisterRequest.getEmail())
+                .password(passwordEncoder.encode(sellerRegisterRequest.getPassword()))
                 .userStatus(UserStatus.ACTIVE)
                 .role(Role.SELLER)
                 .build();
@@ -183,13 +183,19 @@ public class AuthenticationServices {
         var refreshToken = jwtService.generateRefreshToken(user);
         saveUserToken(savedUser, jwtToken);
         var store= Store.builder()
+                .name(sellerRegisterRequest.getStoreName())
                 .build();
 
-        var storeEmployee= StoreEmployee.builder().store(store).employeeRole(EmployeeRole.ADMIN).user(savedUser).build();
+        var storeEmployee= StoreEmployee
+                .builder()
+                .store(store)
+                .employeeRole(EmployeeRole.ADMIN)
+                .user(savedUser)
+                .build();
+
         store.setEmployees(List.of(storeEmployee));
 
         storeRepository.save(store);
-
 
         return AuthenticationResponse.builder()
                 .accessToken(jwtToken)

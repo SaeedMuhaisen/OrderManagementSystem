@@ -21,15 +21,15 @@ export const SockJSWrapper = ({ children }) => {
         const headers = {
             Authorization: `Bearer ${user.access_token}`,
         };
-
+       
         client.connect(headers, () => {
             isConnectedRef.current = true;
             stompClientRef.current = client;
 
             client.subscribe(`/topic/notification/${user.userId}`, (message) => {
+                
                 let obj: any = JSON.parse(message.body);
-
-
+                
 
                 if (obj.notificationType === 'BUYER_UPDATE_ORDER_STATUS') {
                     let updateStatus: UpdateStatusNotification = JSON.parse(obj.message);

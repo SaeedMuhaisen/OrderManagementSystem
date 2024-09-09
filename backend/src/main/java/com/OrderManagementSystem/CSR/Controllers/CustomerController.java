@@ -13,7 +13,7 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 
-@Controller
+
 @RestController
 @RequestMapping("/api/buyer")
 @PreAuthorize("hasRole('BUYER')")
@@ -36,7 +36,7 @@ public class CustomerController {
             var stores=storeServices.getAllAvailableStores();
             return ResponseEntity.ok().body(stores);
         }catch (Exception e){
-            logger.info("getAllAvailableSellers() - failed error :{}", e.getMessage());
+            logger.error("getAllAvailableSellers() - failed error :{}", e.getMessage());
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
         }
     }
@@ -47,6 +47,7 @@ public class CustomerController {
         try{
             logger.info("getVisibleProductsByStoreId() - storeId: {}", storeId);
             var products=productServices.getVisibleProductsByStoreId(storeId);
+            products=products.stream().filter(item->item.getAvailableQuantity()>0).toList();
             return ResponseEntity.ok().body(products);
         }catch (Exception e){
             logger.error("getVisibleProductsByStoreId() - failed storeId:{}, error :{}", storeId, e.getMessage());
@@ -62,7 +63,7 @@ public class CustomerController {
             var orders=orderServices.getCustomerActiveOrders(userDetails);
             return ResponseEntity.ok().body(orders);
         }catch (Exception e){
-            logger.info("getCustomerActiveOrders() - failed - user: {}, error :{} ",userDetails.getUsername(),e.getMessage());
+            logger.error("getCustomerActiveOrders() - failed - user: {}, error :{} ",userDetails.getUsername(),e.getMessage());
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
         }
     }
@@ -75,7 +76,7 @@ public class CustomerController {
             var orders=orderHistoryServices.getCustomerOrdersHistory(userDetails);
             return ResponseEntity.ok().body(orders);
         }catch (Exception e){
-            logger.info("getCustomerOrdersHistory() - failed ,user: {}, error :{} ",userDetails.getUsername(),e.getMessage());
+            logger.error("getCustomerOrdersHistory() - failed ,user: {}, error :{} ",userDetails.getUsername(),e.getMessage());
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
         }
     }
@@ -88,7 +89,7 @@ public class CustomerController {
             orderServices.createOrder(userDetails,createOrderDTO);
             return ResponseEntity.ok().build();
         }catch (Exception e){
-            logger.info("createOrder() - order for product: {} - failed error :{}", createOrderDTO.getProducts(),e.getMessage());
+            logger.error("createOrder() - order for product: {} - failed error :{}", createOrderDTO.getProducts(),e.getMessage());
             return ResponseEntity.status(HttpStatus.NOT_ACCEPTABLE).build();
         }
     }
@@ -101,7 +102,7 @@ public class CustomerController {
             var messages = notificationServices.fetchCustomerNotifications(userDetails);
             return ResponseEntity.ok().body(messages);
         } catch (Exception e) {
-            logger.info("fetchCustomerNotifications() - failed to fetch notifications, user:{}, error:{}", userDetails.getUsername(),e.getMessage());
+            logger.error("fetchCustomerNotifications() - failed to fetch notifications, user:{}, error:{}", userDetails.getUsername(),e.getMessage());
             return ResponseEntity.status(HttpStatus.NOT_ACCEPTABLE).build();
         }
     }

@@ -1,5 +1,5 @@
 import { IconProduct } from '@/Features/Common/Componenets';
-import { CartItem, CustomFetchResult, fetchWithRefresh, insertIntoShoppingCart, removeFromCart, ShoppingCartState, updateQuantity } from '@/Redux';
+import { CartItem, CustomFetchResult, fetchWithRefresh, insertIntoProducts, insertIntoShoppingCart, removeFromCart, ShoppingCartState, updateQuantity } from '@/Redux';
 import { CreateProductDTO, StoreProductDTO } from '@/Types';
 import { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
@@ -32,6 +32,7 @@ export const SpecificStoreScreen = () => {
             if (result.status === 200) {
                 console.log(JSON.stringify(result));
                 setProducts(result.data);
+                
             }
             else {
                 console.log(JSON.stringify(result))

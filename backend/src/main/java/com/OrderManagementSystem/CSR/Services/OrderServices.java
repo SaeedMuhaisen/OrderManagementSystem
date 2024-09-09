@@ -80,6 +80,7 @@ public class OrderServices {
                     .productPrice(product.get().getPrice())
                     .statusType(StatusType.PENDING)
                     .order(order)
+
                     .build();
             orderItems.add(orderItem);
 
@@ -126,17 +127,19 @@ public class OrderServices {
         var orders=orderRepository.findAllByBuyer(user.get());
         return OrderMapper.INSTANCE.orderListToBuyerOrderDTOList(orders);
     }
-
+    //No reason why but transactional actually fixed the issue with lazy initialization session error
+    @Transactional
     public List<StoreOrderDTO> getStoreActiveOrders(UserDetails userDetails) {
         var storeEmployee = storeEmployeeRepository.findByUser(((User) userDetails));
         if(storeEmployee.isEmpty() || !storeEmployee.get().getEmployeeRole().equals(EmployeeRole.ADMIN)){
             throw new UnAuthorizedEmployeeException("Store Employee has no Authorization to do this operation");
         }
         var orderStores=orderStoreRepository.findAllByStoreAndFinishedIsFalse(storeEmployee.get().getStore());
-        var orders= orderRepository.findAllByOrderStores(orderStores);
+        List<Order> orders=new ArrayList<>();
+        for(var orderStore:orderStores){
+            orders.add(orderStore.getOrder());
+        }
         return StoreMapper.INSTANCE.orderListToStoreOrderDTOList(orders);
     }
-
-
 
 }

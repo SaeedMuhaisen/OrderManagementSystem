@@ -4,12 +4,12 @@ import lombok.*;
 
 import java.util.List;
 
+@Data
 @Getter
 @Setter
 @Builder
-@Data
-@AllArgsConstructor
 @NoArgsConstructor
+@AllArgsConstructor
 public class StoreOrderDTO {
     private String orderId;
     private String orderDate;

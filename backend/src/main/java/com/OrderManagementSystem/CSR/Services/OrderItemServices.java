@@ -30,8 +30,10 @@ public class OrderItemServices {
     private final StoreEmployeeRepository storeEmployeeRepository;
     private final OrderStoreRepository orderStoreRepository;
     private final OrderItemRepository orderItemRepository;
+    private final StoreRepository storeRepository;
     private final OrderHistoryRepository orderHistoryRepository;
     private final MessageBrokerServices messageBrokerServices;
+    private final ProductRepository productRepository;
 
     @Transactional
     public void updateOrderItemStatus(UserDetails userDetails, UpdateOrderItemStatusDTO updateOrderItemStatusDTO) throws Exception {
@@ -58,15 +60,24 @@ public class OrderItemServices {
             product.setAmountSold(product.getAmountSold()-orderItem.getQuantity());
             product.setAvailableQuantity(product.getAvailableQuantity()+orderItem.getQuantity());
             product.setAmountReturned(product.getAmountReturned()+orderItem.getQuantity());
+            productRepository.save(product);
         }
         orderItemRepository.saveAndFlush(orderItem);
         sendNotification(orderItem.getOrder().getBuyer(),orderItem, newStatus);
         checkStoreOrderItemsCompleted(orderItem.getOrder(), orderItem.getProduct().getStore());
     }
-    private void checkStoreOrderItemsCompleted(Order order, Store store) throws Exception {
+
+    private void checkStoreOrderItemsCompleted(Order orderEntity, Store storeEntity) throws Exception {
+        var orderCheck= orderRepository.findById(orderEntity.getId());
+        var storeCheck= storeRepository.findById(storeEntity.getId());
+        if(orderCheck.isEmpty() || storeCheck.isEmpty()){
+            throw new Exception("checkStoreOrderItemsCompleted() - Couldn't find store or order to update");
+        }
+        var order=orderCheck.get();
+        var store=storeCheck.get();
         List<OrderItem> orderItemsFromStore = order.getOrderItems().stream()
-                .filter(item -> item.getProduct().getStore().equals(store))
-                .collect(Collectors.toList());
+                .filter(item -> item.getProduct().getStore().getId().equals(store.getId()))
+                .toList();
 
         boolean allCompleted = orderItemsFromStore.stream()
                 .allMatch(item -> !item.getStatusType().equals(StatusType.ACCEPTED) &&
@@ -93,7 +104,14 @@ public class OrderItemServices {
         }
     }
 
-    private void createOrderHistory(Order order) {
+    private void createOrderHistory(Order orderEntity) throws Exception {
+        var orderCheck=orderRepository.findById(orderEntity.getId());
+        if(orderCheck.isEmpty()) {
+            throw new Exception("createOrderHistory() - Couldn't find order history!");
+        }
+
+        var order=orderCheck.get();
+
         var orderHistory = OrderHistory.builder()
                 .orderItemHistories(new ArrayList<>())
                 .stores(order.getOrderStores().stream().map(OrderStore::getStore).collect(Collectors.toSet()))
@@ -117,13 +135,17 @@ public class OrderItemServices {
     }
 
 
-    private void deleteOrder(Order order) throws Exception {
+    private void deleteOrder(Order orderEntity) throws Exception {
+        var orderCheck=orderRepository.findById(orderEntity.getId());
+        if(orderCheck.isEmpty()){
+            throw new Exception("deleteOrder() - Couldn't find order");
+        }
+        var order=orderCheck.get();
 
         for(var orderItem:order.getOrderItems()){
             orderItem.setOrder(null);
-
+            orderItemRepository.delete(orderItem);
         }
-
         for(var orderStore:order.getOrderStores()){
             orderStore.setOrder(null);
             orderStore.getStore().getOrderStores().remove(orderStore);
@@ -142,7 +164,9 @@ public class OrderItemServices {
                 .newStatus(newStatus.name())
                 .build();
         ObjectMapper objectMapper=new ObjectMapper();
+
         var strMessage= objectMapper.writeValueAsString(message);
+
         messageBrokerServices.sendNotification("/topic/notification/" + buyer.getId(),buyer,
                 NotificationMessage.builder()
                         .notificationType(NotificationType.BUYER_UPDATE_ORDER_STATUS)

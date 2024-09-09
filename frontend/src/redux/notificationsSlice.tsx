@@ -49,10 +49,9 @@ export const fetchAllSellerNotifications = createAsyncThunk(
 
             if (result.data !== null && result.data.length > 0 && result.data[0] !== null) {
                 let notificationsArray: StoreOrderDTO[] = result.data;
-                
-
-                dispatch(initializeSellerNotificationHistory(notificationsArray));
-
+                for(let i = 0; i < notificationsArray.length; i++) {
+                    dispatch(insertIntoSellerNotificationHistory(notificationsArray[i]));
+                }
             } else {
 
             }
@@ -79,7 +78,10 @@ export const fetchAllBuyerNotifications = createAsyncThunk(
 
             if (result.data !== null && result.data.length > 0 && result.data[0] !== null) {
                 let notificationsArray: UpdateStatusNotification[] = result.data;
-                dispatch(initializeCustomerNotificationHistory(notificationsArray));
+                for(let i = 0; i < notificationsArray.length; i++) {
+                    dispatch(insertIntoCustomerNotificationHistory(notificationsArray[i]));
+                }
+               
 
             } else {
 
@@ -104,18 +106,16 @@ export const notificationsSlice = createSlice({
             state[action.payload.userType][action.payload.screen].notificationAvailable = false
         },
 
-        initializeSellerNotificationHistory: (state, action: PayloadAction<StoreOrderDTO[]>) => {
-            state.sellerNotificationHistory = action.payload
-        },
+
 
         insertIntoSellerNotificationHistory: (state, action: PayloadAction<StoreOrderDTO>) => {
+            if(state.sellerNotificationHistory.filter((item) => item.orderId === action.payload.orderId ).length > 0) return
             state.sellerNotificationHistory.push(action.payload)
         },
-        initializeCustomerNotificationHistory: (state, action: PayloadAction<UpdateStatusNotification[]>) => {
-            state.customerNotificationHistory = action.payload
-        },
+
 
         insertIntoCustomerNotificationHistory: (state, action: PayloadAction<UpdateStatusNotification>) => {
+            if(state.customerNotificationHistory.filter((item) => item.orderId === action.payload.orderId && item.productId === action.payload.productId && item.newStatus === action.payload.newStatus).length > 0) return
             state.customerNotificationHistory.push(action.payload)
         }
 
@@ -123,6 +123,6 @@ export const notificationsSlice = createSlice({
 })
 
 
-export const { insertNotification, removeNotification, initializeSellerNotificationHistory, insertIntoSellerNotificationHistory, initializeCustomerNotificationHistory, insertIntoCustomerNotificationHistory } = notificationsSlice.actions;
+export const { insertNotification, removeNotification, insertIntoSellerNotificationHistory, insertIntoCustomerNotificationHistory } = notificationsSlice.actions;
 export default notificationsSlice.reducer;
 

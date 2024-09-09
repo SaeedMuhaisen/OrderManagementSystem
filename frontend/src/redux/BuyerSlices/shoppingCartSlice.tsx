@@ -1,7 +1,7 @@
 import { createAsyncThunk, createSlice, PayloadAction } from '@reduxjs/toolkit';
 
 import { CustomFetchResult, fetchWithRefresh } from '../userSlice';
-import { StoreProductDTO } from  '@/Types';
+import { StoreProductDTO } from '@/Types';
 import { fetchOrders } from './buyerOrdersSlice';
 
 
@@ -21,8 +21,10 @@ export const confirmPurchase = createAsyncThunk(
         const sc: ShoppingCartState = shoppingCart;
         let orderProducts = [];
         for (var p in sc.products) {
-            orderProducts.push({ productId: sc.products[p].product.id, quantity: sc.products[p].quantity })
+            orderProducts.push({ productId: sc.products[p].product.id, quantity: sc.products[p].quantity, productPrice: 0, status: "" })
         }
+        
+
         const config = {
             method: 'POST',
             headers: {
@@ -34,7 +36,7 @@ export const confirmPurchase = createAsyncThunk(
         }
         const result: CustomFetchResult = await dispatch(fetchWithRefresh({ endpoint: "/api/buyer/v1/order", config: config })).unwrap()
         if (result.status === 200) {
-        
+
             dispatch(clearCart());
             dispatch(fetchOrders())
         }

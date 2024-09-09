@@ -59,4 +59,27 @@ public class ProductServices {
         }
         return ProductMapper.INSTANCE.productListToProductDTOList(storeEmployee.get().getStore().getProducts());
     }
+
+    public void updateStoreProduct(UserDetails userDetails, CreateProductDTO newProduct) {
+        var storeEmployee = storeEmployeeRepository.findByUser(((User) userDetails));
+        if(storeEmployee.isEmpty() || !storeEmployee.get().getEmployeeRole().equals(EmployeeRole.ADMIN)){
+            throw new UnAuthorizedEmployeeException("Store Employee has no Authorization to do this operation");
+        }
+        var productCheck=productRepository.findById(UUID.fromString(newProduct.getId()));
+
+        if(productCheck.isEmpty() || !productCheck.get().getStore().getId().equals(storeEmployee.get().getStore().getId())){
+            throw new UnAuthorizedEmployeeException("Store Employee has no Authorization to do this operation");
+        }
+
+        var product=productCheck.get();
+
+        product.setVisible(newProduct.isVisible());
+        product.setAvailableQuantity(newProduct.getAvailableQuantity());
+        product.setDescription(newProduct.getDescription());
+        product.setName(newProduct.getName());
+        product.setPrice(newProduct.getPrice());
+
+        productRepository.save(product);
+
+    }
 }

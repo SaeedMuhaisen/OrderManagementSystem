@@ -33,9 +33,6 @@ export const Navigation = () => {
 
 
 const BuyerRoutes = () => {
-  const user: UserState = useSelector((state: any) => state.user);
-  const sellerOrders = useSelector((state: any) => state.sellerOrders)
-
   return (
     <BrowserRouter>
       <div className="buyer-navigation-container">
@@ -47,7 +44,7 @@ const BuyerRoutes = () => {
           <Route path="/store" element={< BuyerStoreScreen />} />
           <Route path="/store/:specificStore" element={<SpecificStoreScreen />} />
           <Route path="/cart" element={<ShoppingCartScreen />} />
-          <Route path="*" element={<Navigate to="/home" replace />} />
+          <Route path="*" element={<Navigate to="/store" replace />} />
         </Routes>
       </div>
     </BrowserRouter >

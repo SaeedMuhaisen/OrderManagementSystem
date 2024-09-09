@@ -6,8 +6,8 @@ import lombok.*;
 @Getter
 @Setter
 @Builder
-@AllArgsConstructor
 @NoArgsConstructor
+@AllArgsConstructor
 public class UpdateOrderItemStatusDTO {
     private String orderItemId;
     private String status;

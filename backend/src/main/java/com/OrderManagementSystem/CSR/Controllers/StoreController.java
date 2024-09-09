@@ -3,6 +3,7 @@ package com.OrderManagementSystem.CSR.Controllers;
 import com.OrderManagementSystem.CSR.Services.*;
 import com.OrderManagementSystem.Models.DTO.CreateProductDTO;
 
+import com.OrderManagementSystem.Models.DTO.ProductDTO;
 import com.OrderManagementSystem.Models.DTO.UpdateOrderItemStatusDTO;
 import lombok.AllArgsConstructor;
 import org.slf4j.Logger;
@@ -15,7 +16,8 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 
-@Controller
+
+@RestController
 @RequestMapping("/api/seller")
 @PreAuthorize("hasRole('SELLER')")
 @AllArgsConstructor
@@ -38,7 +40,7 @@ public class StoreController {
             productServices.createStoreProduct(userDetails,createProductDTO);
             return ResponseEntity.ok().build();
         }catch (Exception e){
-            logger.info("createStoreProduct() - failed to create product:{}, error :{}",createProductDTO, e.getMessage());
+            logger.error("createStoreProduct() - failed to create product:{}, error :{}",createProductDTO, e.getMessage());
             return ResponseEntity.status(HttpStatus.NOT_ACCEPTABLE).build();
         }
     }
@@ -51,7 +53,7 @@ public class StoreController {
             var products=productServices.getStoreProductsByEmployee(userDetails);
             return ResponseEntity.ok().body(products);
         }catch (Exception e){
-            logger.info("getStoreProductsByEmployee() - failed to get store products by employee, error :{}", e.getMessage());
+            logger.error("getStoreProductsByEmployee() - failed to get store products by employee, error :{}", e.getMessage());
             return ResponseEntity.status(HttpStatus.NOT_ACCEPTABLE).build();
         }
     }
@@ -63,7 +65,7 @@ public class StoreController {
             var products=   orderServices.getStoreActiveOrders(userDetails);
             return ResponseEntity.ok().body(products);
         }catch (Exception e){
-            logger.info("getStoreActiveOrders() - failed to fetch store active orders username:{}, error :{}",userDetails.getUsername(), e.getMessage());
+            logger.error("getStoreActiveOrders() - failed to fetch store active orders username:{}, error :{}",userDetails.getUsername(), e.getMessage());
             return ResponseEntity.status(HttpStatus.NOT_ACCEPTABLE).build();
         }
     }
@@ -76,7 +78,7 @@ public class StoreController {
             var products=orderItemServices.getOrderItemsByOrderId(userDetails,orderId);
             return ResponseEntity.ok().body(products);
         }catch (Exception e){
-            logger.info("getOrderItemsByOrderId() - failed to fetch orderItems for order:{}, error :{}",orderId, e.getMessage());
+            logger.error("getOrderItemsByOrderId() - failed to fetch orderItems for order:{}, error :{}",orderId, e.getMessage());
             return ResponseEntity.status(HttpStatus.NOT_ACCEPTABLE).build();
         }
     }
@@ -90,7 +92,7 @@ public class StoreController {
             orderItemServices.updateOrderItemStatus(userDetails, updateOrderItemStatusDTO);
             return ResponseEntity.ok().build();
         }catch (Exception e){
-            logger.info("updateOrderStatus() - failed to update order item status, request was :{} , error  :{}",updateOrderItemStatusDTO, e.getMessage());
+            logger.error("updateOrderStatus() - failed to update order item status, request was :{} , error  :{}",updateOrderItemStatusDTO, e.getMessage());
             return ResponseEntity.status(HttpStatus.NOT_ACCEPTABLE).build();
         }
     }
@@ -103,7 +105,7 @@ public class StoreController {
             var products=orderHistoryServices.getStoreOrderHistory(userDetails);
             return ResponseEntity.ok().body(products);
         }catch (Exception e){
-            logger.info("getStoreOrderHistory() - failed to fetch store order history, username:{}, error :{}",userDetails.getUsername(), e.getMessage());
+            logger.error("getStoreOrderHistory() - failed to fetch store order history, username:{}, error :{}",userDetails.getUsername(), e.getMessage());
             return ResponseEntity.status(HttpStatus.NOT_ACCEPTABLE).build();
         }
     }
@@ -116,7 +118,7 @@ public class StoreController {
             var products=orderItemHistoryServices.getOrderItemHistoryByOrderHistoryId(userDetails,orderHistoryId);
             return ResponseEntity.ok().body(products);
         }catch (Exception e){
-            logger.info("getOrderItemHistoryByOrderHistoryId() - failed to fetch items of order history, orderHistoryId:{}, error :{}",orderHistoryId, e.getMessage());
+            logger.error("getOrderItemHistoryByOrderHistoryId() - failed to fetch items of order history, orderHistoryId:{}, error :{}",orderHistoryId, e.getMessage());
             return ResponseEntity.status(HttpStatus.NOT_ACCEPTABLE).build();
         }
     }
@@ -129,9 +131,20 @@ public class StoreController {
             var messages = notificationServices.fetchStoreNotifications(userDetails);
             return ResponseEntity.ok().body(messages);
         } catch (Exception e) {
-            logger.info("fetchStoreNotifications() - failed to fetch notifications, user:{}, error:{}", userDetails.getUsername(),e.getMessage());
+            logger.error("fetchStoreNotifications() - failed to fetch notifications, user:{}, error:{}", userDetails.getUsername(),e.getMessage());
             return ResponseEntity.status(HttpStatus.NOT_ACCEPTABLE).build();
         }
     }
-
+    @PutMapping("/v1/product")
+    @PreAuthorize("hasAuthority('seller:read')")
+    public ResponseEntity<?> updateStoreProduct(@AuthenticationPrincipal UserDetails userDetails,@RequestBody CreateProductDTO newProductDTO) {
+        try {
+            logger.info("updateStoreProduct() - employee is updating a product : user:{}", userDetails.getUsername());
+            productServices.updateStoreProduct(userDetails,newProductDTO);
+            return ResponseEntity.ok().build();
+        } catch (Exception e) {
+            logger.error("updateStoreProduct() - failed to update product , user:{}, error:{}", userDetails.getUsername(),e.getMessage());
+            return ResponseEntity.status(HttpStatus.NOT_ACCEPTABLE).build();
+        }
+    }
 }

@@ -8,14 +8,11 @@ import { IconProduct } from "@/Features/Common/Componenets";
 
 
 export const OrderHistoryScreen = () => {
-    const buyerOrders: BuyerOrdersState = useSelector((state: any) => state.buyerOrders)
-    const [visibleOrderDetails, setVisibleOrderDetails] = useState({});
+    const buyerOrders: BuyerOrdersState = useSelector((state: any) => state.buyerOrders);
+    const [visibleOrder, setVisibleOrder] = useState<string | null>(null);
 
-    const toggleOrderDetails = (index) => {
-        setVisibleOrderDetails((prevState) => ({
-            ...prevState,
-            [index]: !prevState[index],
-        }));
+    const toggleOrderDetails = (id: string) => {
+        setVisibleOrder((prevState) => (prevState === id ? null : id));
     };
 
     return (
@@ -27,7 +24,7 @@ export const OrderHistoryScreen = () => {
 
                 <span style={{ padding: '20px', fontSize: '20px', }}>Your Current Active Orders</span>
                 {buyerOrders.orders.map((row, index) => (
-                    <div className="order-list-container" key={index}>
+                    <div className="order-list-container" key={row.orderId}>
                         <div className="order-row-container">
                             <div className="order-row-label">
                                 <div>
@@ -40,19 +37,19 @@ export const OrderHistoryScreen = () => {
                                     {row.orderItems.map((item) => item.productId.slice(0, 5)).join(", ")}
                                 </div>
                             </div>
-                            <div >
-                                <button className="order-row-label-details-button" onClick={() => toggleOrderDetails(index)}>
+                            <div>
+                                <button className="order-row-label-details-button" onClick={() => toggleOrderDetails(row.orderId)}>
                                     Order Details
                                 </button>
                             </div>
                         </div>
-                        {visibleOrderDetails[index] &&
+                        {visibleOrder === row.orderId && (
                             <div className="order-extra-details-container">
                                 {row.orderItems !== null && row.orderItems.length > 0 && row.orderItems.map((item, index) => {
                                     return (
-                                        <div className="order-extra-details-item" key={index} >
+                                        <div className="order-extra-details-item" key={index}>
                                             <div className="order-extra-details-status">
-                                                <div style={{ width: '10px', height: '10px', borderRadius: '100%', backgroundColor: statusColor[item.status], boxShadow: `1px 1px 1px 1px  lightgray` }} />
+                                                <div style={{ width: '10px', height: '10px', borderRadius: '100%', backgroundColor: statusColor[item.status], boxShadow: `1px 1px 1px 1px lightgray` }} />
                                                 {statusMapping[item.status]}
                                             </div>
                                             <div className="order-extra-details-productid-and-icon">
@@ -65,19 +62,17 @@ export const OrderHistoryScreen = () => {
                                                 </div>
                                             </div>
                                         </div>
-                                    )
+                                    );
                                 })}
                                 <div className="order-details-total">
-                                    total {row.orderItems !== null && row.orderItems.length > 0 && `${row.orderItems.map((item) => item.productPrice * item.quantity).reduce((a, b) => a + b, 0)}$`}
+                                    Total: {row.orderItems && row.orderItems.length > 0 && `${row.orderItems.reduce((total, item) => total + item.productPrice * item.quantity, 0)}$`}
                                 </div>
                             </div>
-                        }
+                        )}
                     </div>
-                )
-                )
-                }
+                ))}
                 {buyerOrders.orderHistory.map((row, index) => (
-                    <div className="order-list-container" key={index}>
+                    <div className="order-list-container" key={row.orderId}>
                         <div className="order-row-container">
                             <div className="order-row-label">
                                 <div>
@@ -91,16 +86,16 @@ export const OrderHistoryScreen = () => {
                                 </div>
                             </div>
                             <div >
-                                <button className="order-row-label-details-button" onClick={() => toggleOrderDetails(index)}>
+                                <button className="order-row-label-details-button" onClick={() => toggleOrderDetails(row.orderId)}>
                                     Order Details
                                 </button>
                             </div>
                         </div>
-                        {visibleOrderDetails[index] &&
+                        {visibleOrder === row.orderId &&
                             <div className="order-extra-details-container">
                                 {row.orderItems !== null && row.orderItems.length > 0 && row.orderItems.map((item, index) => {
                                     return (
-                                        <div className="order-extra-details-item" key={index} >
+                                        <div className="order-extra-details-item" key={index + buyerOrders.orders.length} >
                                             <div className="order-extra-details-status">
                                                 <div style={{ width: '10px', height: '10px', borderRadius: '100%', backgroundColor: statusColor[item.status], boxShadow: `1px 1px 1px 1px  lightgray` }} />
                                                 {statusMapping[item.status]}
@@ -126,7 +121,7 @@ export const OrderHistoryScreen = () => {
                 )
                 )
                 }
-                {JSON.stringify(buyerOrders, null, 2)}
+
             </div>
         </div >
     );

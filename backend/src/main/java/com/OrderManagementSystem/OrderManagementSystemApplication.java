@@ -20,6 +20,7 @@ import org.springframework.stereotype.Component;
 
 import java.time.Instant;
 import java.util.List;
+import java.util.UUID;
 
 @SpringBootApplication
 public class OrderManagementSystemApplication {
@@ -39,52 +40,57 @@ public class OrderManagementSystemApplication {
 	private final StoreRepository storeRepository;
 	@Override
 	public void run(String...args) throws Exception {
-//		if(userRepository.findByEmail("seller@w.cn").isPresent()){
-//			return;
-//		}
-//		var seller = SellerRegisterRequest.builder().email("seller@w.cn").password("123123").firstname("seller").lastname("1").build();
-//		var seller2 = SellerRegisterRequest.builder().email("seller2@w.cn").password("123123").firstname("seller").lastname("1").build();
-//		var buyer = RegisterRequest.builder().email("buyer@w.cn").password("123123").firstname("buyer").lastname("1").build();
-//
-//
-//		authenticationController.registerSeller(seller);
-//		authenticationController.registerSeller(seller2);
-//		authenticationController.registerCustomer(buyer);
-//
-//
-//		var storeAdmin=userRepository.findByEmail("seller@w.cn");
-//		var storeAdmin2=userRepository.findByEmail("seller2@w.cn");
-//
-//		var store= storeRepository.findByEmployees_User(storeAdmin.get());
-//		var store2= storeRepository.findByEmployees_User(storeAdmin2.get());
-//
-//		for(int i=1;i<=20;i++){
-//		var product = Product.builder()
-//				.availableQuantity(100)
-//				.amountSold(0)
-//				.amountReturned(0)
-//				.visible(true)
-//				.created_t(Instant.now())
-//				.price(100.0)
-//				.description("First Product ")
-//				.name("Product "+i)
-//				.store(store.get()).build();
-//
-//			var product2 = Product.builder()
-//					.availableQuantity(100)
-//					.amountSold(0)
-//					.amountReturned(0)
-//					.visible(true)
-//					.created_t(Instant.now())
-//					.price(100.0)
-//					.description("First Product ")
-//					.name("Product "+i)
-//					.store(store2.get()).build();
-//
-//			productRepository.save(product);
-//			productRepository.save(product2);
-//		}
-//
+		if(userRepository.findByEmail("seller@w.cn").isPresent()){
+			return;
+		}
+		var seller = SellerRegisterRequest.builder().email("seller@w.cn").password("123123").storeName("Store 1").firstname("seller").lastname("1").build();
+		var seller2 = SellerRegisterRequest.builder().email("seller2@w.cn").password("123123").storeName("Store 2").firstname("seller").lastname("1").build();
+		var buyer = RegisterRequest.builder().email("buyer@w.cn").password("123123").firstname("buyer").lastname("1").build();
+
+
+		authenticationController.registerSeller(seller);
+		authenticationController.registerSeller(seller2);
+		authenticationController.registerCustomer(buyer);
+
+
+		var storeAdmin=userRepository.findByEmail("seller@w.cn");
+		var storeAdmin2=userRepository.findByEmail("seller2@w.cn");
+
+		var store= storeRepository.findByEmployees_User(storeAdmin.get());
+		var store2= storeRepository.findByEmployees_User(storeAdmin2.get());
+
+		for(int i=1;i<=20;i++){
+		var product = Product.builder()
+				.id(UUID.randomUUID())
+				.availableQuantity(100)
+				.amountSold(0)
+				.amountReturned(0)
+				.visible(true)
+				.created_t(Instant.now())
+				.price(100.0)
+				.description("First Product ")
+				.name("Product "+i)
+				.store(store.get()).build();
+
+			var product2 = Product.builder()
+					.id(UUID.randomUUID())
+					.availableQuantity(100)
+					.amountSold(0)
+					.amountReturned(0)
+					.visible(true)
+					.created_t(Instant.now())
+					.price(100.0)
+					.description("First Product ")
+					.name("Product "+i)
+					.store(store2.get()).build();
+
+			store.get().getProducts().add(product);
+			store2.get().getProducts().add(product);
+			storeRepository.save(store.get());
+			storeRepository.save(store2.get());
+			productRepository.save(product);
+			productRepository.save(product2);
+		}
 
 	}
 }

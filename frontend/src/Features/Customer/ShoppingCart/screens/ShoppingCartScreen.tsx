@@ -2,6 +2,7 @@ import { confirmPurchase, ShoppingCartState } from "@/Redux"
 import { useDispatch, useSelector } from "react-redux"
 
 import { IconProduct } from "@/Features/Common/Componenets"
+import { useNavigate, useNavigation } from "react-router-dom"
 export const ShoppingCartScreen = () => {
     const shopingCart: ShoppingCartState = useSelector((state: any) => state.shoppingCart)
     const dispatch = useDispatch<any>()
@@ -9,9 +10,10 @@ export const ShoppingCartScreen = () => {
         return shopingCart.products !== null ? shopingCart.products.map((row) => row.product.price * row.quantity).reduce((a, b) => a + b, 0)
             : 0;
     }
-
+    const navigate = useNavigate();
     const hanleConfirmPurchase = async () => {
         await dispatch(confirmPurchase())
+        navigate("/orders")
     }
     return (
         <div className="cart-container">

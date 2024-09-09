@@ -5,6 +5,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { SellerProductsState } from "@/Redux";
 import { IconSettings } from "@/Features/Common/Componenets";
 import { CreateProductModal } from "../components/modals/CreateProductModal";
+import { UpdateProductModal } from "../components/modals/UpdateProductModal";
 export const ManageProducts = () => {
 
     const dispatch = useDispatch<any>();
@@ -13,6 +14,8 @@ export const ManageProducts = () => {
     const columns = ['ID', 'Name', 'Description', 'Price', 'Available Quantity', 'Amount Sold', 'Amount Returned', 'Visible'];
 
     const [createProductModalVisible, setCreateProductModalVisible] = useState(false);
+    const [updateProductModal, setUpdatedProductModal] = useState(false);
+    const [selectedProduct, setSelectedProduct] = useState(null);
     const formatDate = (dateString) => {
         const date = new Date(dateString);
         return `${date.getDate()}/${date.getMonth() + 1}/${date.getFullYear()}`;
@@ -58,7 +61,7 @@ export const ManageProducts = () => {
                         {sellerProducts.products.slice().sort((a, b) => new Date(b.created_t).getTime() - new Date(a.created_t).getTime()).map((product) => (
                             <tr key={product.id} >
 
-                                <td data-th="Adjust" onClick={() => alert(JSON.stringify(product))}>
+                                <td data-th="Adjust" onClick={() => { setSelectedProduct(product); setUpdatedProductModal(true) }}>
                                     <div className="status-container" >
                                         <IconSettings className="edit-icon" />
                                     </div>
@@ -85,6 +88,11 @@ export const ManageProducts = () => {
             {
                 createProductModalVisible && <CreateProductModal onClose={() => setCreateProductModalVisible(false)} />
             }
+
+            {
+                updateProductModal && <UpdateProductModal onClose={() => setUpdatedProductModal(false)} p={selectedProduct} />
+            }
+
         </div >
 
     )

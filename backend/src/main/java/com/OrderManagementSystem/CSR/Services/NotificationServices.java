@@ -32,8 +32,8 @@ public class NotificationServices {
 
 
     public boolean userIsConnected(User user){
-        var alive=notificationsRepository.findByUser(user);
-        return alive.isPresent();
+        var sessions=notificationsRepository.findAllByUser(user);
+        return !sessions.isEmpty();
     }
 
     public void queueMessage(User user, NotificationMessage notificationMessage) {

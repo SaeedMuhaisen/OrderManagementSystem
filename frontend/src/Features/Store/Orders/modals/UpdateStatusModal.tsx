@@ -51,19 +51,19 @@ export const UpdateStatusModal = ({ onClose, orderItemId, currentStatus }) => {
                 'ACCEPTED',
                 'DISPATCHED',
                 'DELIVERED',
-                'CANCELED_BY_BUYER'
+                'CANCELED_BY_SELLER'
             ];
         } else if (currentStatus === 'ACCEPTED') {
             return [
                 'DISPATCHED',
                 'DELIVERED',
-                'CANCELED_BY_BUYER',
+                'CANCELED_BY_SELLER',
             ]
         }
         else if (currentStatus === 'DISPATCHED') {
             return [
                 'DELIVERED',
-                'CANCELED_BY_BUYER'
+                'CANCELED_BY_SELLER'
             ]
         }
         else {
