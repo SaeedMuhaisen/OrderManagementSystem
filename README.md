@@ -33,7 +33,7 @@ The **Order Management System** is a web application designed for managing and t
 ### Prerequisites
 - **Docker** installed on your machine.
 - **Node.js** and **npm** (if running frontend without Docker).
-- **Java 11** or higher (if running backend without Docker).
+- **Java 17** or higher (if running backend without Docker).
 
 ### Docker Setup
 
@@ -41,7 +41,7 @@ To run both the frontend and backend using Docker, follow these steps:
 
 1. Clone the repository:
     ```bash
-    git clone <repository-url>
+    git clone git@github.com:SaeedMuhaisen/OrderManagementSystem.git
     cd OrderManagementSystem
     ```
 
