@@ -6,18 +6,15 @@ import com.OrderManagementSystem.Entities.User;
 import com.OrderManagementSystem.Entities.enums.EmployeeRole;
 import com.OrderManagementSystem.Exceptions.AuthExceptions.UserNotFoundException;
 import com.OrderManagementSystem.Exceptions.StoreExceptions.UnAuthorizedEmployeeException;
-import com.OrderManagementSystem.Mappers.OrderItemMapper;
 import com.OrderManagementSystem.Mappers.OrderMapper;
 import com.OrderManagementSystem.Mappers.StoreMapper;
 import com.OrderManagementSystem.Models.DTO.BuyerOrderDTO;
-import com.OrderManagementSystem.Models.DTO.SellerOrderDTO;
 import com.OrderManagementSystem.Models.DTO.StoreOrderDTO;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Component;
 
 import java.util.List;
-import java.util.UUID;
 
 @Component
 @RequiredArgsConstructor

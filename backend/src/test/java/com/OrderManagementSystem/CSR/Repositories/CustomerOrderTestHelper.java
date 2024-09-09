@@ -2,10 +2,6 @@ package com.OrderManagementSystem.CSR.Repositories;
 
 
 
-import com.OrderManagementSystem.CSR.Repositories.ProductRepository;
-import com.OrderManagementSystem.CSR.Repositories.StoreEmployeeRepository;
-import com.OrderManagementSystem.CSR.Repositories.StoreRepository;
-import com.OrderManagementSystem.CSR.Repositories.UserRepository;
 import com.OrderManagementSystem.Entities.Product;
 import com.OrderManagementSystem.Entities.Store;
 import com.OrderManagementSystem.Entities.StoreEmployee;
@@ -15,21 +11,22 @@ import com.OrderManagementSystem.Entities.enums.Role;
 import com.OrderManagementSystem.Entities.enums.UserStatus;
 import com.github.javafaker.Faker;
 
-import lombok.AllArgsConstructor;
-import org.checkerframework.checker.units.qual.A;
+import jakarta.persistence.EntityNotFoundException;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.test.context.ContextConfiguration;
-import org.springframework.test.context.support.AnnotationConfigContextLoader;
+import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
 
 import java.time.Instant;
+import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.UUID;
 
 
-@SpringBootTest
-public class CustomerOrderTests {
+@Component
+public class CustomerOrderTestHelper {
 
     @Autowired
     StoreRepository storeRepository;
@@ -43,10 +40,10 @@ public class CustomerOrderTests {
     @Autowired
     TokenRepository tokenRepository;
 
-    private final Faker faker=new Faker();
+    public final Faker faker=new Faker();
 
-
-    private User createCustomer(){
+    @Transactional
+    public User createCustomer(){
         var customer=  User.builder()
                         .email(faker.bothify("????##@gmail.com"))
                         .userStatus(UserStatus.ACTIVE)
@@ -56,12 +53,10 @@ public class CustomerOrderTests {
                         .password(faker.bothify("??????"))
                         .build();
 
-        return userRepository.save(customer);
+        return userRepository.saveAndFlush(customer);
     }
-
-    private User createSeller(){
-
-
+    @Transactional
+    public User createSeller(){
         var customer=  User.builder()
                 .email(faker.bothify("????##@gmail.com"))
                 .userStatus(UserStatus.ACTIVE)
@@ -70,31 +65,47 @@ public class CustomerOrderTests {
                 .lastname(faker.name().lastName())
                 .password(faker.bothify("??????"))
                 .build();
-
-        return userRepository.save(customer);
+        return userRepository.saveAndFlush(customer);
     }
-
-    private Store createStore(){
+    @Transactional
+    public Store createStore(){
         var store=Store.builder()
                 .name(faker.app().name())
+                .employees(new ArrayList<>())
+                .orderStores(new HashSet<>())
                 .build();
-
-        return storeRepository.save(store);
+        return storeRepository.saveAndFlush(store);
     }
-
-    private StoreEmployee createStoreEmployeeWithUserAndStore(User user, Store store){
+    @Transactional
+    public StoreEmployee createStoreEmployeeWithUserAndStore(User user, Store store) {
+        user = userRepository.findById(user.getId())
+                .orElseThrow(() -> new EntityNotFoundException("User not found"));
         user.setRole(Role.SELLER);
-        userRepository.save(user);
-        var storeEmployee=StoreEmployee
-                .builder()
+        user = userRepository.save(user);
+
+        store = storeRepository.findById(store.getId())
+                .orElseThrow(() -> new EntityNotFoundException("Store not found"));
+
+        StoreEmployee storeEmployee = StoreEmployee.builder()
                 .employeeRole(EmployeeRole.ADMIN)
                 .store(store)
-                .user(user).build();
-        return storeEmployeeRepository.save(storeEmployee);
-    }
+                .user(user)
+                .build();
 
-    private Product createProductForStore(Store store){
+        storeEmployee = storeEmployeeRepository.save(storeEmployee);
+
+        store.getEmployees().add(storeEmployee);
+        storeRepository.save(store);
+
+        return storeEmployee;
+    }
+    @Transactional
+    public Product createProductForStore(Store store){
+        store = storeRepository.findById(store.getId())
+                .orElseThrow(() -> new EntityNotFoundException("Store not found"));
+
         var product=Product.builder()
+                .id(UUID.randomUUID())
                 .created_t(Instant.now())
                 .price(faker.random().nextDouble())
                 .description(faker.superhero().descriptor())
@@ -104,15 +115,10 @@ public class CustomerOrderTests {
                 .store(store)
                 .availableQuantity(100)
                 .build();
-        return productRepository.save(product);
+
+        return productRepository.saveAndFlush(product);
     }
 
-    @Test
-    public void testCreateMethods() {
-
-
-        deleteAll();
-    }
 
     @Transactional
     public void deleteAll(){

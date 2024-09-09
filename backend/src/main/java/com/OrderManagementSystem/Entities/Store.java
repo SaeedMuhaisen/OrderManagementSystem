@@ -3,9 +3,7 @@ package com.OrderManagementSystem.Entities;
 import jakarta.persistence.*;
 import lombok.*;
 
-import java.util.List;
-import java.util.Set;
-import java.util.UUID;
+import java.util.*;
 
 @Builder
 @NoArgsConstructor
@@ -19,11 +17,11 @@ public class Store {
     private UUID id;
     private String name;
     @OneToMany(mappedBy = "store", cascade = CascadeType.ALL, fetch = FetchType.EAGER)
-    private List<Product> products;
+    private List<Product> products=new ArrayList<>();
     @OneToMany(mappedBy = "store", cascade = CascadeType.ALL, fetch = FetchType.EAGER)
-    private List<StoreEmployee> employees;
+    private List<StoreEmployee> employees=new ArrayList<>();
 
     @OneToMany(mappedBy = "store",cascade = CascadeType.ALL,fetch = FetchType.EAGER)
-    private Set<OrderStore> orderStores;
+    private Set<OrderStore> orderStores=new HashSet<>();
 
 }

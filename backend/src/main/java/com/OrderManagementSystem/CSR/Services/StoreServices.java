@@ -30,8 +30,14 @@ public class StoreServices {
     private final StoreRepository storeRepository;
 
     public List<SellerDTO> getAllAvailableStores() {
-        var stores=storeRepository.findAll();
-        return SellerMapper.INSTANCE.sellerListToSellerDTOList(stores.stream().filter(store -> store.getProducts().size()>0).toList());
+        List<Store> availableStores = storeRepository
+                .findAll()
+                .stream()
+                .filter(store -> store.getProducts().stream()
+                        .anyMatch(product -> product.isVisible() && product.getAvailableQuantity() > 0))
+                .toList();
+
+        return SellerMapper.INSTANCE.sellerListToSellerDTOList(availableStores);
     }
 
 }

@@ -16,19 +16,18 @@ import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 
 @Controller
-@RestController
 @RequestMapping("/api/seller")
 @PreAuthorize("hasRole('SELLER')")
 @AllArgsConstructor
 public class StoreController {
 
     private final ProductServices productServices;
-    private final StoreServices storeServices;
     private final OrderServices orderServices;
     private final OrderItemServices orderItemServices;
     private final OrderHistoryServices orderHistoryServices;
     private final OrderItemHistoryServices orderItemHistoryServices;
     private final NotificationServices notificationServices;
+
     private static final Logger logger = LoggerFactory.getLogger(StoreController.class);
 
     @PostMapping("/v1/product")

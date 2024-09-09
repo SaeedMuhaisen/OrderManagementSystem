@@ -5,7 +5,7 @@ import org.hibernate.engine.spi.SharedSessionContractImplementor;
 import org.hibernate.id.IdentifierGenerator;
 import org.springframework.stereotype.Component;
 
-
+@Component
 public class CustomUUIDGenerator implements IdentifierGenerator {
 
     @Override

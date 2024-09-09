@@ -14,10 +14,11 @@ import com.OrderManagementSystem.Models.DTO.SellerOrderDTO;
 import com.OrderManagementSystem.Models.DTO.StoreOrderDTO;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.stereotype.Component;
 
 import java.util.List;
 import java.util.UUID;
-
+@Component
 @RequiredArgsConstructor
 public class OrderItemHistoryServices {
     private final OrderHistoryRepository orderHistoryRepository;
